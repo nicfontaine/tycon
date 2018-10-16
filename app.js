@@ -1,4 +1,5 @@
-(function() {"use strict"})()
+#! /usr/bin/env node
+(function(){"use strict"})()
 
 const keypress = require("keypress")
 const chalk = require("chalk")
