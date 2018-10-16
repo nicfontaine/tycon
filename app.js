@@ -48,10 +48,12 @@ var time = {
 // App states, with console printout, initialization, variable reset
 var state = {
 
+	// Clear console
 	clear: function() {
 		process.stdout.write("\033c")
 	},
 
+	// Initial launch state, pre-run
 	init: function() {
 		state.clear()
 		console.log(chalk.bold.green("[Tycon]"))
@@ -64,6 +66,7 @@ var state = {
 		console.log("")
 	},
 
+	// Begin, reset values, and start interval
 	start: function() {
 		// Reset
 		time.begin = Date.now()
@@ -83,6 +86,7 @@ var state = {
 		time.timer.start()
 	},
 
+	// Calculate time differential. Stop interval if non time remaining
 	timeCheck: function() {
 		time.remaining = Number(time.testLen - (Math.floor((Date.now() - time.begin)/1000)))
 		if (time.remaining >= 0) {
@@ -94,6 +98,7 @@ var state = {
 
 	statToggle: false,
 
+	// Show typing stats, Time left, and Avg. typed
 	stats: function() {
 		// Blinking ellipsis toggle
 		if (time.remaining % 2 == 0) {
@@ -109,6 +114,7 @@ var state = {
 		console.log("")
 	},
 
+	// Complete state, show Correct, Incorrect, and Hotkeys
 	done: function() {
 		state.clear()
 		console.log(chalk.bold.green("[Test Results]"))
@@ -127,6 +133,7 @@ state.init()
 // Logic for text content. From text.system (prompt text) and text.user (input)
 var text = {
 
+	// Prompt word logic from app
 	system: {
 
 		// Good/Bad state for "active" word, and incorrect word entry
@@ -140,8 +147,11 @@ var text = {
 			c: "green"
 		},
 
-		max: maxWordsPerLine,  // Max for set, and for width of console line
-		array: [], // Holds words to be user
+		// Max for set, and for width of console line
+		max: maxWordsPerLine,
+
+		// Holds words to be typed by user
+		array: [],
 
 		// rm word when typed correctly, and push one to end
 		shiftWord: function() {
@@ -170,7 +180,7 @@ var text = {
 			}
 		},
 
-		// Format word array for string output
+		// Format text.system.array, word array, for string output
 		format: function() {
 			let out = ""
 			for (var i=0; i<text.system.array.length; i++) {
@@ -189,27 +199,29 @@ var text = {
 			return out
 		},
 
+		// Print formatted text
 		print: function() {
 			console.log(" " + text.system.format())
 		}
 
 	},
 
+	// User input and logic, calculation
 	user: {
 
-		current: "", // Log value of currently typed word
+		// Log value of currently typed word
+		current: "",
 
-		partial: function() {
-			// return new Promise(res, rej) => {
-				if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
-					text.system.colours.good()
-				} else {
-					text.system.colours.bad()
-				}
-				// res()
-			// }
+		// Check if user input so far matches active word
+		check: function() {
+			if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
+				text.system.colours.good()
+			} else {
+				text.system.colours.bad()
+			}
 		},
 
+		// Keep track of typed numbers
 		number: {
 			correct: 0,
 			incorrect: 0,
@@ -221,21 +233,27 @@ var text = {
 			}
 		},
 
+		// Print & visual format typed user input
 		print: function() {
 			console.log(" " + chalk.bold(text.user.current) + chalk.gray("_"))
 			console.log("")
 		},
 
+		// Clear input log
 		clear: function() {
 			text.user.current = ""
 		},
 
+		// Run when incorrect word is entered
 		incorrect: function() {
+			// (Note) flash error for a second before cleaning
+			text.user.clear()
 			text.user.number.incorrect++
 			state.clear()
 			state.timeCheck()
 			text.system.colours.bad()
 			text.system.print()
+			text.user.print()
 		}
 
 	}
@@ -283,7 +301,6 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 					// Wrong word
 					else {
-						text.user.clear()
 						text.user.incorrect()
 					}
 				}
@@ -299,7 +316,7 @@ process.stdin.on("keypress", (ch, key) => {
 						}
 					}
 					// state.timeCheck()
-					text.user.partial()
+					text.user.check()
 					text.system.print()
 					text.user.print()
 				}
@@ -312,7 +329,7 @@ process.stdin.on("keypress", (ch, key) => {
 					} else {
 						text.user.current += key.name
 					}
-					text.user.partial()
+					text.user.check()
 					text.system.print()
 					// Print word
 					text.user.print()

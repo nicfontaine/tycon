@@ -1,5 +1,5 @@
 {
-  "name": "conty",
+  "name": "tycon",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -14,5 +14,5 @@
   },
   "bin": {
     "tycon": "app.js"
-  },
+  }
 }
