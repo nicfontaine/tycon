@@ -85,7 +85,7 @@ var state = {
 		text.user.current = ""
 		text.user.number.correct = 0
 		text.user.number.incorrect = 0
-		text.user.number.log.array = []
+		text.user.number.log.array = [0]
 
 		state.clear()
 		state.timeCheck()
@@ -162,7 +162,12 @@ var text = {
 		// rm word when typed correctly, and push one to end
 		shiftWord: function() {
 			text.system.array.shift()
-			text.system.array.push(source[difficulty][Math.floor((Math.random() * source[difficulty].length))])
+			let len = source[difficulty].length
+			let word = source[difficulty][Math.floor((Math.random() * len))]
+			if (text.system.array.indexOf(word) > -1) {
+				word = source[difficulty][Math.floor((Math.random() * len))]
+			}
+			text.system.array.push(word)
 			state.timeCheck()
 			text.system.print()
 			console.log(chalk.gray(" _")) // Add line for formatting
@@ -233,7 +238,7 @@ var text = {
 			incorrect: 0,
 			// Hold avg wpm at interval
 			log: {
-				array: []
+				array: [0]
 			},
 			avg: function() {
 				let num = Math.floor((text.user.number.correct * 60) / (time.testLen - time.remaining))
