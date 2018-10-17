@@ -26,13 +26,11 @@ if (process.argv.length > 2) {
 		if (typeof ar === "number" || !isNaN(ar)) {
 			if (ar > 0 && ar <= 300) {
 				testLength = ar
-				console.log(testLength)
 			}
 		}
 		// String for difficulty
 		else if (ar === "easy" || ar === "med" || ar === "hard") {
 			difficulty = ar
-			console.log(difficulty)
 		}
 	}
 }
@@ -137,7 +135,7 @@ var state = {
 }
 
 // Init on run
-// state.init()
+state.init()
 
 // Logic for text content. From text.system (prompt text) and text.user (input)
 var text = {
