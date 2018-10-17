@@ -9,10 +9,10 @@ Written in and runs great on Linux. Haven't tried yet on MacOS, but should be si
 
 ```bash
 $ sudo npm i tycon -g   # Install
-$ tycon easy            # Weak sauce
+$ tycon easy            # Weak sauce for 60 seconds
 $ tycon med             # Groove time
 $ tycon hard            # Wtf are these words
-$ tycon 10            	# 10 seconds
+$ tycon 10            	# Medium for 10 seconds
 $ tycon easy 300
 ```  
 
