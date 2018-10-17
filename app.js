@@ -127,7 +127,6 @@ var state = {
 		console.log("")
 		console.log(chalk.inverse("^R") + " Restart")
 		console.log(chalk.inverse("^C") + " Exit")
-		console.log("length: " + text.user.number.log.array.length)
 		console.log("")
 		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 	}
