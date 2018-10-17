@@ -1,19 +1,27 @@
 {
   "name": "tycon",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node.js console typing test. Easy|Med|Hard Difficulties, Speed graph, Shortcuts",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngpfontaine/tycon.git"
+  },
+  "author": "nic fontaine",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngpfontaine/tycon/issues"
+  },
+  "homepage": "https://github.com/ngpfontaine/tycon/blob/master/README.md",
+  "bin": {
+    "tycon": "app.js"
+  },
   "dependencies": {
     "asciichart": "^1.5.7",
     "chalk": "^2.4.1",
     "keypress": "^0.2.1"
-  },
-  "bin": {
-    "tycon": "app.js"
   }
 }
