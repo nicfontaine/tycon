@@ -12,6 +12,8 @@ $ sudo npm i tycon -g   # Install
 $ tycon easy            # Weak sauce
 $ tycon med             # Groove time
 $ tycon hard            # Wtf are these words
+$ tycon 10            	# 10 seconds
+$ tycon easy 300
 ```  
 
 ## Shortcuts
