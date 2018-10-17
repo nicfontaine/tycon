@@ -1,11 +1,8 @@
 # Typing Test + Console
-Node.js console typing test
+Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts   
+[npmjs.com/package/tycon](https://www.npmjs.com/package/tycon)    
 
-# NPM
-
-[npmjs.com/package/tycon](https://www.npmjs.com/package/clpsm)    
-
-# Platform
+# Platforms
 Written in and runs great on Linux. Haven't tried yet on MacOS, but should be similar.  Windows is never going to like the frequency of console clear / writes, so unless there's some great GPU accelerated terminal it runs well on, I wouldn't recommend it.   
 
 # Run
@@ -17,7 +14,7 @@ $ tycon med             # Groove time
 $ tycon hard            # Wtf are these words
 ```  
 
-# Shortcuts
+## Shortcuts
 
 ```bash
 $ ^R                    # Start / Restart

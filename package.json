@@ -1,7 +1,7 @@
 {
   "name": "tycon",
-  "version": "1.0.2",
-  "description": "Node.js console typing test. Easy|Med|Hard Difficulties, Speed graph, Shortcuts",
+  "version": "1.0.3",
+  "description": "Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,7 @@
     "url": "git+https://github.com/ngpfontaine/tycon.git"
   },
   "author": "nic fontaine",
+  "keywords": ["typing", "typing test", "training", "terminal", "console", "wpm", "harder better faster stronger", "node", "linux"],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ngpfontaine/tycon/issues"
