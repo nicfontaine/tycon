@@ -3,6 +3,7 @@
 
 const keypress = require("keypress")
 const chalk = require("chalk")
+const chart = require("asciichart")
 
 // Mod
 const source = require("./mod/source.js")
@@ -30,8 +31,11 @@ var step = function step() {
 	state.timeCheck()
 	if (time.remaining > 0) {
 		text.system.print()
+		text.user.number.log.array.push(text.user.number.avg())
 		text.user.print()
-	} else {
+	}
+	// End
+	else {
 		state.done()
 		time.timer.stop()
 	}
@@ -56,13 +60,10 @@ var state = {
 	// Initial launch state, pre-run
 	init: function() {
 		state.clear()
-		console.log(chalk.bold.green("[Tycon]"))
+		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
-		console.log("Level: " + chalk.bold(difficulty.toUpperCase()))
-		console.log(chalk.gray("This is a 60 second typing test of the 200 most common english words"))
-		console.log("")
-		console.log("Start: " + chalk.bold("^R"))
-		console.log("Exit: " + chalk.bold("^C"))
+		console.log(chalk.inverse("^R") + " Start")
+		console.log(chalk.inverse("^C") + " Exit")
 		console.log("")
 	},
 
@@ -74,6 +75,7 @@ var state = {
 		text.user.current = ""
 		text.user.number.correct = 0
 		text.user.number.incorrect = 0
+		text.user.number.log.array = []
 
 		state.clear()
 		state.timeCheck()
@@ -96,33 +98,28 @@ var state = {
 		}
 	},
 
-	statToggle: false,
-
 	// Show typing stats, Time left, and Avg. typed
 	stats: function() {
-		// Blinking ellipsis toggle
-		if (time.remaining % 2 == 0) {
-			console.log(chalk.bold("[Test Running.. ]"))
-			statToggle = false
-		} else {
-			console.log(chalk.bold("[Test Running...]"))
-			statToggle = true
-		}
-		console.log("")
-		console.log("Time: " + time.remaining)
-		console.log("Avg: " + text.user.number.avg())
+		console.log(chalk.bold("[" +
+			chalk.bold(time.remaining)) +
+			" Avg: " +
+			chalk.bold(text.user.number.avg()) +
+			"]")
 		console.log("")
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	done: function() {
 		state.clear()
-		console.log(chalk.bold.green("[Test Results]"))
+		console.log(chalk.bold.green("[Complete] ") +
+			(chalk.bold(text.user.number.correct)) + "/" +
+			chalk.bold(text.user.number.incorrect + text.user.number.correct))
 		console.log("")
-		console.log("Correct: " + chalk.bold(text.user.number.correct))
-		console.log("Incorrect: " + chalk.bold(text.user.number.incorrect))
+		console.log(chalk.inverse("^R") + " Restart")
+		console.log(chalk.inverse("^C") + " Exit")
+		console.log("length: " + text.user.number.log.array.length)
 		console.log("")
-		console.log("Restart: " + chalk.bold("^R") + "  Exit: " + chalk.bold("^C"))
+		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 	}
 
 }
@@ -225,6 +222,10 @@ var text = {
 		number: {
 			correct: 0,
 			incorrect: 0,
+			// Hold avg wpm at interval
+			log: {
+				array: []
+			},
 			avg: function() {
 				let num = Math.floor((text.user.number.correct * 60) / (time.testLen - time.remaining))
 				// NaN on first tick
@@ -277,6 +278,8 @@ process.stdin.on("keypress", (ch, key) => {
 
 		// Start / restart
 		else if (key.ctrl && key.name == "r") {
+			if (time.timer != undefined) time.timer.stop()
+			time.remaining = 0
 			state.start()
 		}
 
