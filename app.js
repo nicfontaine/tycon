@@ -17,11 +17,23 @@ var maxWordsPerLine = 5
 var testLength = 60
 var difficulty = "med"
 
-// Level, if arguement exists
-var arg = process.argv[2]
-if (arg) {
-	if (arg === "easy" || arg === "med" || arg === "hard") {
-		difficulty = process.argv[2]
+// Have extra args
+if (process.argv.length > 2) {
+	let args = process.argv.slice(2)
+	for (var i=0; i<args.length; i++) {
+		let ar = args[i]
+		// Number for length
+		if (typeof ar === "number" || !isNaN(ar)) {
+			if (ar > 0 && ar <= 300) {
+				testLength = ar
+				console.log(testLength)
+			}
+		}
+		// String for difficulty
+		else if (ar === "easy" || ar === "med" || ar === "hard") {
+			difficulty = ar
+			console.log(difficulty)
+		}
 	}
 }
 
@@ -125,7 +137,7 @@ var state = {
 }
 
 // Init on run
-state.init()
+// state.init()
 
 // Logic for text content. From text.system (prompt text) and text.user (input)
 var text = {
