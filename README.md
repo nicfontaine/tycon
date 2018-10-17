@@ -9,18 +9,20 @@ Written in and runs great on Linux. Haven't tried yet on MacOS, but should be si
 
 ```bash
 $ sudo npm i tycon -g   # Install
-$ tycon easy            # Weak sauce for 60 seconds
+
+$ tycon                 # Default: 60 seconds on Medium
+$ tycon easy            # Weak sauce
 $ tycon med             # Groove time
-$ tycon hard            # Wtf are these words
-$ tycon 10            	# Medium for 10 seconds
-$ tycon easy 300
+$ tycon hard            # Wtf are these words..?
+$ tycon 10            	# 10 seconds
+$ tycon easy 300        # Test has max of 5 minutes
 ```  
 
 ## Shortcuts
 
 ```bash
-$ ^R                    # Start / Restart
-$ ^C                    # Quit
+$ ^R        # Start / Restart
+$ ^C        # Quit
 ```  
 
 ### More
@@ -28,4 +30,4 @@ website: [nicfontaine.com](https://nicfontaine.com)
 twitter: [@ngpfontaine](https://twitter.com/ngpfontaine)
 
 ### License
-Buy it, use it, break it, fix it, trash it, change it, mail, upgrade it.
+Buy it, use it, break it, fix it, trash it, change it, mail, upgrade it. ;v

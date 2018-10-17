@@ -62,6 +62,9 @@ var time = {
 // App states, with console printout, initialization, variable reset
 var state = {
 
+	// Keep track of running state. For run on first keypress
+	currentStatus: "stopped",
+
 	// Clear console
 	clear: function() {
 		process.stdout.write("\033c")
@@ -69,6 +72,7 @@ var state = {
 
 	// Initial launch state, pre-run
 	init: function() {
+		state.currentStatus = "waiting"
 		state.clear()
 		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
@@ -81,6 +85,7 @@ var state = {
 	start: function() {
 		// Reset
 		time.begin = Date.now()
+		time.testLen = testLength
 		time.remaining = testLength
 		text.user.current = ""
 		text.user.number.correct = 0
@@ -93,6 +98,10 @@ var state = {
 		text.system.print()
 		console.log(chalk.gray(" _"))
 		console.log("")
+	},
+
+	run: function() {
+		state.currentStatus = "running"
 		// Init & start timer
 		time.timer = new interval(step, 1000)
 		time.timer.start()
@@ -120,15 +129,23 @@ var state = {
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	done: function() {
+		state.isRunning = "stopped"
 		state.clear()
-		console.log(chalk.bold.green("[Complete] ") +
-			(chalk.bold(text.user.number.correct)) + "/" +
-			chalk.bold(text.user.number.incorrect + text.user.number.correct))
+		// Correct, and total incorrect
+		// console.log(chalk.bold.green("[Complete] ") +
+		// 	(chalk.bold(text.user.number.correct)) + "/" +
+		// 	chalk.bold(text.user.number.incorrect + text.user.number.correct))
+		console.log(chalk.bold.green("[Complete]"))
+		console.log("")
+		console.log("Duration:  " + time.testLen + "s")
+		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
+		console.log("Incorrect: " + text.user.number.incorrect)
+		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
+		console.log("")
+		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 		console.log("")
 		console.log(chalk.inverse("^R") + " Restart")
 		console.log(chalk.inverse("^C") + " Exit")
-		console.log("")
-		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 	}
 
 }
@@ -223,15 +240,6 @@ var text = {
 		// Log value of currently typed word
 		current: "",
 
-		// Check if user input so far matches active word
-		check: function() {
-			if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
-				text.system.colours.good()
-			} else {
-				text.system.colours.bad()
-			}
-		},
-
 		// Keep track of typed numbers
 		number: {
 			correct: 0,
@@ -246,6 +254,28 @@ var text = {
 				if (isNaN(num)) { num = 0 }
 				return num
 			}
+		},
+
+		// Check if user input so far matches active word
+		check: function() {
+			if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
+				text.system.colours.good()
+			} else {
+				text.system.colours.bad()
+			}
+		},
+
+		process: function(key) {
+			// Shift to upper
+			if (key.shift) {
+				text.user.current += key.name.toUpperCase()
+			} else {
+				text.user.current += key.name
+			}
+			text.user.check()
+			text.system.print()
+			// Print word
+			text.user.print()
 		},
 
 		// Print & visual format typed user input
@@ -294,16 +324,18 @@ process.stdin.on("keypress", (ch, key) => {
 		else if (key.ctrl && key.name == "r") {
 			if (time.timer != undefined) time.timer.stop()
 			time.remaining = 0
+			state.currentStatus = "waiting"
 			state.start()
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
 		else if (!/[^a-zA-Z]/.test(key.name) && key.name !== "escape" && key.name !== "delete") {
+
 			// Don't respond if test is over
-			if (time.remaining > 0) {
-				// Clear console
+			if (time.remaining > 0 && state.currentStatus === "running") {
+
+				// Clear console & Output stats
 				state.clear()
-				// Output stats
 				state.stats()
 
 				// Space
@@ -340,17 +372,19 @@ process.stdin.on("keypress", (ch, key) => {
 
 				// Typing
 				else {
-					// Shift to upper
-					if (key.shift) {
-						text.user.current += key.name.toUpperCase()
-					} else {
-						text.user.current += key.name
-					}
-					text.user.check()
-					text.system.print()
-					// Print word
-					text.user.print()
+					text.user.process(key)
 				}
+			}
+
+			// Test is waiting for first keypress to begin
+			else if (state.currentStatus === "waiting") {
+				// Clear console & Output stats
+				state.clear()
+				state.stats()
+
+				text.user.process(key)
+				// Begin
+				state.run()
 			}
 
 		}
