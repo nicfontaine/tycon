@@ -41,7 +41,10 @@ var step = function step() {
 	state.timeCheck()
 	if (time.remaining > 0) {
 		text.system.print()
-		text.user.number.log.array.push(text.user.number.avg())
+		// Only log every 5 seconds
+		if (time.remaining%5 === 0) {
+			text.user.number.log.array.push(text.user.number.avg())
+		}
 		text.user.print()
 	}
 	// End
@@ -81,26 +84,28 @@ var state = {
 		console.log("")
 	},
 
-	// Begin, reset values, and start interval
+	// Begin, reset values
 	start: function() {
 		// Reset
-		time.begin = Date.now()
 		time.testLen = testLength
 		time.remaining = testLength
 		text.user.current = ""
 		text.user.number.correct = 0
 		text.user.number.incorrect = 0
 		text.user.number.log.array = [0]
+		text.user.prevAvg = 0
 
 		state.clear()
-		state.timeCheck()
+		state.stats()
 		text.system.newSet()
 		text.system.print()
 		console.log(chalk.gray(" _"))
 		console.log("")
 	},
 
+	// Start running test & create interval
 	run: function() {
+		time.begin = Date.now()
 		state.currentStatus = "running"
 		// Init & start timer
 		time.timer = new interval(step, 1000)
@@ -111,14 +116,14 @@ var state = {
 	timeCheck: function() {
 		time.remaining = Number(time.testLen - (Math.floor((Date.now() - time.begin)/1000)))
 		if (time.remaining >= 0) {
-			state.stats()
+			state.statsTick()
 		} else {
 			time.timer.stop()
 		}
 	},
 
 	// Show typing stats, Time left, and Avg. typed
-	stats: function() {
+	statsTick: function() {
 		console.log(chalk.bold("[" +
 			chalk.bold(time.remaining)) +
 			" Avg: " +
@@ -127,20 +132,25 @@ var state = {
 		console.log("")
 	},
 
+	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
+	stats: function() {
+		console.log(chalk.bold("[" +
+			chalk.bold(time.remaining)) +
+			" Avg: " +
+			chalk.bold(text.user.prevAvg) +
+			"]")
+		console.log("")
+	},
+
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	done: function() {
 		state.isRunning = "stopped"
 		state.clear()
-		// Correct, and total incorrect
-		// console.log(chalk.bold.green("[Complete] ") +
-		// 	(chalk.bold(text.user.number.correct)) + "/" +
-		// 	chalk.bold(text.user.number.incorrect + text.user.number.correct))
-		console.log(chalk.bold.green("[Complete]"))
+		console.log(chalk.bold.green("[Complete] ") + time.testLen + " sec")
 		console.log("")
-		console.log("Duration:  " + time.testLen + "s")
+		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
 		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
 		console.log("Incorrect: " + text.user.number.incorrect)
-		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
 		console.log("")
 		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 		console.log("")
@@ -185,7 +195,7 @@ var text = {
 				word = source[difficulty][Math.floor((Math.random() * len))]
 			}
 			text.system.array.push(word)
-			state.timeCheck()
+			state.stats()
 			text.system.print()
 			console.log(chalk.gray(" _")) // Add line for formatting
 			console.log("")
@@ -240,6 +250,8 @@ var text = {
 		// Log value of currently typed word
 		current: "",
 
+		prevAvg: 0,
+
 		// Keep track of typed numbers
 		number: {
 			correct: 0,
@@ -250,8 +262,11 @@ var text = {
 			},
 			avg: function() {
 				let num = Math.floor((text.user.number.correct * 60) / (time.testLen - time.remaining))
+				// Save
 				// NaN on first tick
-				if (isNaN(num)) { num = 0 }
+				if (isNaN(num) || num === Infinity) { num = 0 }
+				if (time.remaining < 1) { num = 0 }
+				text.user.prevAvg = num
 				return num
 			}
 		},

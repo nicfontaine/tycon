@@ -25,6 +25,10 @@ $ ^R        # Start / Restart
 $ ^C        # Quit
 ```  
 
+### To-Do
+- Randomly (scale with difficulty) first-caps words
+- Menu for length, difficulty, and run states with Inquirer
+
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  
 twitter: [@ngpfontaine](https://twitter.com/ngpfontaine)
