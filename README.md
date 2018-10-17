@@ -5,6 +5,9 @@ Node.js console typing test
 
 [npmjs.com/package/tycon](https://www.npmjs.com/package/clpsm)    
 
+# Platform
+Haven't tried it on MacOS, but any Linux terminal is fine. Windows is never going to like the frequency of console clear / writes, so unless there's some great GPU accelerated terminal it runs well on, I would recommend it.   
+
 # Run
 
 ```bash
