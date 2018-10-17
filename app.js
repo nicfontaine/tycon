@@ -10,7 +10,7 @@ const source = require("./mod/source.js")
 const interval = require("./mod/interval.js")
 
 keypress(process.stdin)
-process.stdin.setRawMode(true)
+if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Global config variables
 var maxWordsPerLine = 5
