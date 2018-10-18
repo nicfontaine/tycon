@@ -6,16 +6,17 @@ const chalk = require("chalk")
 const chart = require("asciichart")
 
 // Mod
-const source = require("./mod/source.js")
-const interval = require("./mod/interval.js")
+const source = require("./mod/source.js") // Source text
+const interval = require("./mod/interval.js") // Step interval
 
 keypress(process.stdin)
+// For Windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Global config variables
-var maxWordsPerLine = 5
-var testLength = 60
-var difficulty = "med"
+var maxWordsPerLine = 5 // Test prompt words to display in single line
+var testLength = 60 // In seconds
+var difficulty = "med" // easy med hard
 
 // Have extra args
 if (process.argv.length > 2) {
@@ -57,9 +58,9 @@ var step = function step() {
 // Keep track of time: test started, remaining, total length
 var time = {
 	begin: Date.now(),  // Stamp start time for calc remaining
-	remaining: 0,
+	remaining: 0,      // Countdown number from test length. Helps determine if running, or complete
 	timer: undefined,  // Keep reference of timer
-	testLen: testLength
+	testLen: testLength // Length of test
 }
 
 // App states, with console printout, initialization, variable reset
@@ -94,6 +95,7 @@ var state = {
 		text.user.number.incorrect = 0
 		text.user.number.log.array = [0]
 		text.user.prevAvg = 0
+		text.system.colours.good()
 
 		state.clear()
 		state.stats()
@@ -146,7 +148,7 @@ var state = {
 	done: function() {
 		state.isRunning = "stopped"
 		state.clear()
-		console.log(chalk.bold.green("[Complete] ") + time.testLen + " sec")
+		console.log(chalk.bold.green("[Complete] ") + time.testLen + "sec " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
 		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
@@ -172,12 +174,15 @@ var text = {
 		// Good/Bad state for "active" word, and incorrect word entry
 		colours: {
 			good: function() {
-				text.system.colours.c = "green"
+				text.system.colours.c = chalk.bold.green
+			},
+			success: function() {
+				text.system.colours.c = chalk.reset.bold.inverse.green
 			},
 			bad: function() {
-				text.system.colours.c = "red"
+				text.system.colours.c = chalk.bold.red
 			},
-			c: "green"
+			c: chalk.bold.green
 		},
 
 		// Max for set, and for width of console line
@@ -224,7 +229,7 @@ var text = {
 			for (var i=0; i<text.system.array.length; i++) {
 				// Style active word
 				if (i === 0) {
-					out += chalk.bold[text.system.colours.c](text.system.array[i]) + " "
+					out += text.system.colours.c(text.system.array[i]) + " "
 				}
 				// Fade last word
 				else if (i === text.system.max - 1) {
@@ -273,13 +278,17 @@ var text = {
 
 		// Check if user input so far matches active word
 		check: function() {
-			if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
+			if (text.user.current === text.system.array[0]) {
+				text.system.colours.success()
+			}
+			else if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
 				text.system.colours.good()
 			} else {
 				text.system.colours.bad()
 			}
 		},
 
+		// Handle key input for output
 		process: function(key) {
 			// Shift to upper
 			if (key.shift) {
