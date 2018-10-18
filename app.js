@@ -41,12 +41,13 @@ var step = function step() {
 	state.clear()
 	state.timeCheck()
 	if (time.remaining > 0) {
-		text.system.print()
+		text.system.print(text.system.format)
 		// Only log every 5 seconds
 		if (time.remaining%5 === 0) {
-			text.user.number.log.array.push(text.user.number.avg())
+			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
+			text.user.number.log.array.push(avg)
 		}
-		text.user.print()
+		text.user.print(text.user.current)
 	}
 	// End
 	else {
@@ -80,8 +81,7 @@ var state = {
 		state.clear()
 		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
-		console.log(chalk.inverse("^R") + " Start")
-		console.log(chalk.inverse("^C") + " Exit")
+		state.shortcuts()
 		console.log("")
 	},
 
@@ -93,14 +93,14 @@ var state = {
 		text.user.current = ""
 		text.user.number.correct = 0
 		text.user.number.incorrect = 0
-		text.user.number.log.array = [0]
+		text.user.number.log.array = []
 		text.user.prevAvg = 0
 		text.system.colours.good()
 
 		state.clear()
 		state.stats()
 		text.system.newSet()
-		text.system.print()
+		text.system.print(text.system.format)
 		console.log(chalk.gray(" _"))
 		console.log("")
 	},
@@ -129,7 +129,7 @@ var state = {
 		console.log(chalk.bold("[" +
 			chalk.bold(time.remaining)) +
 			" Avg: " +
-			chalk.bold(text.user.number.avg()) +
+			chalk.bold(text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)) +
 			"]")
 		console.log("")
 	},
@@ -148,7 +148,7 @@ var state = {
 	done: function() {
 		state.isRunning = "stopped"
 		state.clear()
-		console.log(chalk.bold.green("[Complete] ") + time.testLen + "sec " + chalk.bold(difficulty.toUpperCase()))
+		console.log(chalk.bold.green("[Complete] ") + time.testLen + " seconds, " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
 		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
@@ -156,7 +156,13 @@ var state = {
 		console.log("")
 		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 		console.log("")
-		console.log(chalk.inverse("^R") + " Restart")
+		state.shortcuts()
+		console.log("")
+	},
+
+	// Instructions for Start / Exit shortcuts
+	shortcuts: function() {
+		console.log(chalk.inverse("^R") + " Start")
 		console.log(chalk.inverse("^C") + " Exit")
 	}
 
@@ -201,7 +207,7 @@ var text = {
 			}
 			text.system.array.push(word)
 			state.stats()
-			text.system.print()
+			text.system.print(text.system.format)
 			console.log(chalk.gray(" _")) // Add line for formatting
 			console.log("")
 		},
@@ -243,8 +249,8 @@ var text = {
 		},
 
 		// Print formatted text
-		print: function() {
-			console.log(" " + text.system.format())
+		print: function(format) {
+			console.log(" " + format())
 		}
 
 	},
@@ -255,35 +261,41 @@ var text = {
 		// Log value of currently typed word
 		current: "",
 
+		// Keep avg calculated at interval, to display on typing input (b/c avging outside of interval is inaccurate)
 		prevAvg: 0,
 
-		// Keep track of typed numbers
+		// User typing stats. Correct, incorrect, avgs, averaging
 		number: {
 			correct: 0,
 			incorrect: 0,
 			// Hold avg wpm at interval
 			log: {
-				array: [0]
+				array: []
 			},
-			avg: function() {
-				let num = Math.floor((text.user.number.correct * 60) / (time.testLen - time.remaining))
-				// Save
+			// Calculate average wpm at any time by taking current time & typed words
+			avg: function(correct, length, remain) {
+				let num = Math.floor((correct * 60) / (length - remain))
 				// NaN on first tick
 				if (isNaN(num) || num === Infinity) { num = 0 }
-				if (time.remaining < 1) { num = 0 }
+				if (remain < 1) { num = 0 }
+				// Save
 				text.user.prevAvg = num
 				return num
 			}
 		},
 
 		// Check if user input so far matches active word
-		check: function() {
-			if (text.user.current === text.system.array[0]) {
+		check: function(typed, prompted) {
+			// Word fully correct
+			if (typed === prompted) {
 				text.system.colours.success()
 			}
-			else if (text.user.current == text.system.array[0].substring(0,text.user.current.length)) {
+			// Word correct so far
+			else if (typed == prompted.substring(0, typed.length)) {
 				text.system.colours.good()
-			} else {
+			}
+			// Word incorrect
+			else {
 				text.system.colours.bad()
 			}
 		},
@@ -296,15 +308,15 @@ var text = {
 			} else {
 				text.user.current += key.name
 			}
-			text.user.check()
-			text.system.print()
+			text.user.check(text.user.current, text.system.array[0])
+			text.system.print(text.system.format)
 			// Print word
-			text.user.print()
+			text.user.print(text.user.current)
 		},
 
 		// Print & visual format typed user input
-		print: function() {
-			console.log(" " + chalk.bold(text.user.current) + chalk.gray("_"))
+		print: function(current) {
+			console.log(" " + chalk.bold(current) + chalk.gray("_"))
 			console.log("")
 		},
 
@@ -321,8 +333,8 @@ var text = {
 			state.clear()
 			state.timeCheck()
 			text.system.colours.bad()
-			text.system.print()
-			text.user.print()
+			text.system.print(text.system.format)
+			text.user.print(text.user.current)
 		}
 
 	}
@@ -388,10 +400,9 @@ process.stdin.on("keypress", (ch, key) => {
 							text.system.colours.good()
 						}
 					}
-					// state.timeCheck()
-					text.user.check()
-					text.system.print()
-					text.user.print()
+					text.user.check(text.user.current, text.system.array[0])
+					text.system.print(text.system.format)
+					text.user.print(text.user.current)
 				}
 
 				// Typing
