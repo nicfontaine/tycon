@@ -25,7 +25,7 @@ if (process.argv.length > 2) {
 		let ar = args[i]
 		// Number for length
 		if (typeof ar === "number" || !isNaN(ar)) {
-			if (ar > 0 && ar <= 300) {
+			if (ar >= 10 && ar <= 300) {
 				testLength = ar
 			}
 		}
@@ -42,8 +42,8 @@ var step = function step() {
 	state.timeCheck()
 	if (time.remaining > 0) {
 		text.system.print(text.system.format)
-		// Only log every 5 seconds
-		if (time.remaining%5 === 0) {
+		// Only log every other second
+		if (time.remaining%2 === 0) {
 			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
 			text.user.number.log.array.push(avg)
 		}
@@ -87,7 +87,7 @@ var state = {
 
 	// Begin, reset values
 	start: function() {
-		
+
 		state.currentStatus = "waiting"
 
 		// Reset
