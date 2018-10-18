@@ -77,7 +77,7 @@ var state = {
 
 	// Initial launch state, pre-run
 	init: function() {
-		state.currentStatus = "waiting"
+		// state.currentStatus = "waiting"
 		state.clear()
 		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
@@ -87,6 +87,9 @@ var state = {
 
 	// Begin, reset values
 	start: function() {
+		
+		state.currentStatus = "waiting"
+
 		// Reset
 		time.testLen = testLength
 		time.remaining = testLength
@@ -96,6 +99,7 @@ var state = {
 		text.user.number.log.array = []
 		text.user.prevAvg = 0
 		text.system.colours.good()
+
 
 		state.clear()
 		state.stats()
