@@ -2,7 +2,7 @@
 Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts   
 [npmjs.com/package/tycon](https://www.npmjs.com/package/tycon)    
 
-![tycon recording](https://nicfontaine.com/dev/tycon-rec-01.webm)   
+![tycon recording](https://nicfontaine.com/dev/tycon-rec-01.gif)   
 
 # Platforms
 Written in and runs great on Linux. Haven't tried yet on MacOS, but should be similar.  Windows is never going to like the frequency of console clear / writes, so unless there's some great GPU accelerated terminal it runs well on, I wouldn't recommend it.   
