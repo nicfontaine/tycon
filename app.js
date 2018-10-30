@@ -68,7 +68,7 @@ var time = {
 var state = {
 
 	// Keep track of running state. For run on first keypress
-	currentStatus: "stopped",
+	currentStatus: "stopped", // stopped waiting running
 
 	// Clear console
 	clear: function() {
@@ -88,11 +88,18 @@ var state = {
 	// Begin, reset values
 	start: function() {
 
+		// Quit & reset if running
+		if (time.timer != undefined) {
+			time.timer.stop()
+		}
+		time.remaining = 0
+
 		state.currentStatus = "waiting"
 
 		// Reset
 		time.testLen = testLength
 		time.remaining = testLength
+
 		text.user.current = ""
 		text.user.number.correct = 0
 		text.user.number.incorrect = 0
@@ -100,8 +107,6 @@ var state = {
 		text.user.prevAvg = 0
 		text.system.colours.good()
 
-
-		state.clear()
 		state.stats()
 		text.system.newSet()
 		text.system.print(text.system.format)
@@ -140,6 +145,7 @@ var state = {
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
 	stats: function() {
+		state.clear()
 		console.log(chalk.bold("[" +
 			chalk.bold(time.remaining)) +
 			" Avg: " +
@@ -162,6 +168,16 @@ var state = {
 		console.log("")
 		state.shortcuts()
 		console.log("")
+	},
+
+	// Quit app. log exit message, and exit process
+	quit: function() {
+		if (time.timer != undefined) {
+			time.timer.stop()
+		}
+		state.clear()
+		console.log("Bye!")
+		process.exit()
 	},
 
 	// Instructions for Start / Exit shortcuts
@@ -352,19 +368,13 @@ process.stdin.on("keypress", (ch, key) => {
 
 	if (key != undefined) {
 
-		// Ctrl + c to Quit
+		// Quit with CTRL + C
 		if (key.ctrl && key.name == "c") {
-			if (time.timer != undefined) time.timer.stop()
-			state.clear()
-			console.log("Bye!")
-			process.exit()
+			state.quit()
 		}
 
-		// Start / restart
+		// Start / restart with CTRL + R
 		else if (key.ctrl && key.name == "r") {
-			if (time.timer != undefined) time.timer.stop()
-			time.remaining = 0
-			state.currentStatus = "waiting"
 			state.start()
 		}
 
@@ -375,12 +385,11 @@ process.stdin.on("keypress", (ch, key) => {
 			if (time.remaining > 0 && state.currentStatus === "running") {
 
 				// Clear console & Output stats
-				state.clear()
+				// state.clear()
 				state.stats()
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
-					state.clear()
 					// Correct word
 					if (text.user.current === text.system.array[0]) {
 						text.user.clear()
@@ -417,8 +426,7 @@ process.stdin.on("keypress", (ch, key) => {
 
 			// Test is waiting for first keypress to begin
 			else if (state.currentStatus === "waiting") {
-				// Clear console & Output stats
-				state.clear()
+				// Output stats (clears console)
 				state.stats()
 
 				text.user.process(key)
@@ -426,9 +434,9 @@ process.stdin.on("keypress", (ch, key) => {
 				state.run()
 			}
 
-		}
+		} // [End] Alpha input if statement
 
-	}
-
+	} // [End] if(!undefined)
+	
 })
 
