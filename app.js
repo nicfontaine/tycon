@@ -38,14 +38,16 @@ if (process.argv.length > 2) {
 
 // Interval timer
 var step = function step() {
-	state.clear()
 	state.timeCheck()
 	if (time.remaining > 0) {
 		text.system.print(text.system.format)
 		// Only log every other second
 		if (time.remaining%2 === 0) {
 			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
-			text.user.number.log.array.push(avg)
+			// (Note) tryna fix asciichart issue
+			if (avg >= 0) {
+				text.user.number.log.array.push(avg)
+			}
 		}
 		text.user.print(text.user.current)
 	}
@@ -77,7 +79,6 @@ var state = {
 
 	// Initial launch state, pre-run
 	init: function() {
-		// state.currentStatus = "waiting"
 		state.clear()
 		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
 		console.log("")
@@ -135,6 +136,7 @@ var state = {
 
 	// Show typing stats, Time left, and Avg. typed
 	statsTick: function() {
+		state.clear()
 		console.log(chalk.bold("[" +
 			chalk.bold(time.remaining)) +
 			" Avg: " +
@@ -164,6 +166,7 @@ var state = {
 		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
 		console.log("Incorrect: " + text.user.number.incorrect)
 		console.log("")
+		// (Note) sporadic issue here from asciichart complaining about array length.
 		console.log(chart.plot(text.user.number.log.array, { height: 5}))
 		console.log("")
 		state.shortcuts()
@@ -196,6 +199,9 @@ var text = {
 
 	// Prompt word logic from app
 	system: {
+
+		// Key input to ignore when typing
+		reject: ["undefined", "escape", "tab", "left", "right", "up", "down", "pageup", "pagedown", "home", "end"],
 
 		// Good/Bad state for "active" word, and incorrect word entry
 		colours: {
@@ -350,7 +356,6 @@ var text = {
 			// (Note) flash error for a second before cleaning
 			text.user.clear()
 			text.user.number.incorrect++
-			state.clear()
 			state.timeCheck()
 			text.system.colours.bad()
 			text.system.print(text.system.format)
@@ -369,23 +374,25 @@ process.stdin.on("keypress", (ch, key) => {
 	if (key != undefined) {
 
 		// Quit with CTRL + C
-		if (key.ctrl && key.name == "c") {
+		// if (key.ctrl && key.name == "c") {
+		if (key.sequence === "\u0003") {
 			state.quit()
 		}
 
 		// Start / restart with CTRL + R
-		else if (key.ctrl && key.name == "r") {
+		// else if (key.ctrl && key.name == "r") {
+		// Unix or Windows
+		else if (key.sequence === "\u0012") {
 			state.start()
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && key.name !== "escape" && key.name !== "delete") {
+		else if (!/[^a-zA-Z]/.test(key.name) && key.name.indexOf(text.system.reject) < 0) {
 
 			// Don't respond if test is over
 			if (time.remaining > 0 && state.currentStatus === "running") {
 
 				// Clear console & Output stats
-				// state.clear()
 				state.stats()
 
 				// Space
@@ -403,19 +410,60 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 				}
 				// Backspace
-				else if (key.name == "backspace") {
-					if (key.sequence == "\b") {
-						text.user.clear()
-						text.system.colours.good()
-					} else {
+				// Windows shows Backspace as >>  sequence: "\b"
+				// Unix shows Ctrl + Backspace as >>  sequence: "\b", ctrl: false
+				// ...so we have to handle strangely below 
+				else if (key.name === "backspace") {
+
+					let pt = process.platform
+					// Function for regular Backspace
+					function rb() {
 						text.user.current = text.user.current.substring(0, text.user.current.length - 1)
 						if (text.user.current === "") {
 							text.system.colours.good()
 						}
 					}
+					// Function for Ctrl + Backspace
+					function cb() {
+						text.user.clear()
+						text.system.colours.good()
+					}
+
+					// Unix
+					if (pt === "linux" || pt === "darwin") {
+						// Ctrl + Backspace
+						// ..windows shows this sequence on regular Backspace, so we can only check on Unix
+						// ..and Unix doesn't show ctrl: true, so we can only check it this way
+						if (key.sequence === "\b") {
+							cb()
+						}
+						// Backspace
+						else {
+							rb()
+						}
+					}
+					// Windows
+					// ..windows sequence: ▆ sooo.... we
+					else if (pt === "win32") {
+						// Backspace
+						// ..not sure why windows shows this sequence, but oh well
+						if (key.sequence === "\b") {
+							rb()
+						}
+						// Ctrl + Backspace
+						else {
+							cb()
+						}
+					}
+					// Other platform (??)
+					else {
+						rb()
+					}
+
 					text.user.check(text.user.current, text.system.array[0])
 					text.system.print(text.system.format)
 					text.user.print(text.user.current)
+
 				}
 
 				// Typing
