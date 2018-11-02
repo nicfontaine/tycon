@@ -1,16 +1,16 @@
 #! /usr/bin/env node
 (function(){"use strict"})()
 
-const keypress = require("keypress")
-const chalk = require("chalk")
-const chart = require("asciichart")
+const keypress = require("keypress") // Input handling
+const chalk = require("chalk") // Console text styling
 
 // Mod
 const source = require("./mod/source.js") // Source text
 const interval = require("./mod/interval.js") // Step interval
+const out = require("./mod/out.js") // Console clear & messaging object methods
 
 keypress(process.stdin)
-// For Windows
+// Windows doesn't recognize this, so only not on windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Global config variables
@@ -36,58 +36,61 @@ if (process.argv.length > 2) {
 	}
 }
 
-// Interval timer
-var step = function step() {
-	state.timeCheck()
-	if (time.remaining > 0) {
-		text.system.print(text.system.format)
-		// Only log every other second
-		if (time.remaining%2 === 0) {
-			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
-			// (Note) tryna fix asciichart issue
-			if (avg >= 0) {
-				text.user.number.log.array.push(avg)
-			}
-		}
-		text.user.print(text.user.current)
-	}
-	// End
-	else {
-		state.done()
-		time.timer.stop()
-	}
-}
+// Init on run
+out.init(difficulty)
 
 // Keep track of time: test started, remaining, total length
 var time = {
 	begin: Date.now(),  // Stamp start time for calc remaining
 	remaining: 0,      // Countdown number from test length. Helps determine if running, or complete
 	timer: undefined,  // Keep reference of timer
-	testLen: testLength // Length of test
+	testLen: testLength, // Length of test
+
+	// Calculate time differential. Stop interval if non time remaining
+	check: function() {
+		time.remaining = Number(time.testLen - (Math.floor((Date.now() - time.begin)/1000)))
+		if (time.remaining >= 0) {
+			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
+			out.statsTick(time.remaining, avg)
+		} else {
+			time.timer.stop()
+		}
+	},
+
+	// Interval timer
+	step: function() {
+		time.check()
+		if (time.remaining > 0) {
+			text.system.print(text.system.format)
+			// Only log every other second
+			if (time.remaining%2 === 0) {
+				let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
+				// (Note) tryna fix asciichart issue
+				if (avg >= 0) {
+					text.user.number.log.array.push(avg)
+				}
+			}
+			text.user.print(text.user.current)
+		}
+		// End
+		else {
+			state.complete()
+			time.timer.stop()
+		}
+	}
+
 }
+
 
 // App states, with console printout, initialization, variable reset
 var state = {
 
 	// Keep track of running state. For run on first keypress
-	currentStatus: "stopped", // stopped waiting running
-
-	// Clear console
-	clear: function() {
-		process.stdout.write("\033c")
-	},
-
-	// Initial launch state, pre-run
-	init: function() {
-		state.clear()
-		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(difficulty.toUpperCase()))
-		console.log("")
-		state.shortcuts()
-		console.log("")
-	},
+	currentStatus: "stopped", // "stopped" "ready" "running"
 
 	// Begin, reset values
-	start: function() {
+	// (Note) clean this up
+	ready: function() {
 
 		// Quit & reset if running
 		if (time.timer != undefined) {
@@ -95,7 +98,7 @@ var state = {
 		}
 		time.remaining = 0
 
-		state.currentStatus = "waiting"
+		state.currentStatus = "ready"
 
 		// Reset
 		time.testLen = testLength
@@ -108,11 +111,11 @@ var state = {
 		text.user.prevAvg = 0
 		text.system.colours.good()
 
-		state.stats()
+		out.stats(time.remaining, text.user.prevAvg)
 		text.system.newSet()
 		text.system.print(text.system.format)
-		console.log(chalk.gray(" _"))
-		console.log("")
+	
+		out.newline()
 	},
 
 	// Start running test & create interval
@@ -120,57 +123,14 @@ var state = {
 		time.begin = Date.now()
 		state.currentStatus = "running"
 		// Init & start timer
-		time.timer = new interval(step, 1000)
+		time.timer = new interval(time.step, 1000)
 		time.timer.start()
 	},
 
-	// Calculate time differential. Stop interval if non time remaining
-	timeCheck: function() {
-		time.remaining = Number(time.testLen - (Math.floor((Date.now() - time.begin)/1000)))
-		if (time.remaining >= 0) {
-			state.statsTick()
-		} else {
-			time.timer.stop()
-		}
-	},
-
-	// Show typing stats, Time left, and Avg. typed
-	statsTick: function() {
-		state.clear()
-		console.log(chalk.bold("[" +
-			chalk.bold(time.remaining)) +
-			" Avg: " +
-			chalk.bold(text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)) +
-			"]")
-		console.log("")
-	},
-
-	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
-	stats: function() {
-		state.clear()
-		console.log(chalk.bold("[" +
-			chalk.bold(time.remaining)) +
-			" Avg: " +
-			chalk.bold(text.user.prevAvg) +
-			"]")
-		console.log("")
-	},
-
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	done: function() {
+	complete: function() {
 		state.isRunning = "stopped"
-		state.clear()
-		console.log(chalk.bold.green("[Complete] ") + time.testLen + " seconds, " + chalk.bold(difficulty.toUpperCase()))
-		console.log("")
-		console.log("WPM:       " + chalk.bold((text.user.number.correct * 60) / time.testLen))
-		console.log("Correct:   " + (chalk.bold(text.user.number.correct)))
-		console.log("Incorrect: " + text.user.number.incorrect)
-		console.log("")
-		// (Note) sporadic issue here from asciichart complaining about array length.
-		console.log(chart.plot(text.user.number.log.array, { height: 5}))
-		console.log("")
-		state.shortcuts()
-		console.log("")
+		out.complete(time.testLen, difficulty, text.user.number.correct, text.user.number.incorrect, text.user.number.log.array)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -178,21 +138,11 @@ var state = {
 		if (time.timer != undefined) {
 			time.timer.stop()
 		}
-		state.clear()
-		console.log("Bye!")
+		out.quit()
 		process.exit()
-	},
-
-	// Instructions for Start / Exit shortcuts
-	shortcuts: function() {
-		console.log(chalk.inverse("^R") + " Start")
-		console.log(chalk.inverse("^C") + " Exit")
 	}
 
 }
-
-// Init on run
-state.init()
 
 // Logic for text content. From text.system (prompt text) and text.user (input)
 var text = {
@@ -232,10 +182,9 @@ var text = {
 				word = source[difficulty][Math.floor((Math.random() * len))]
 			}
 			text.system.array.push(word)
-			state.stats()
+			out.stats(time.remaining, text.user.prevAvg)
 			text.system.print(text.system.format)
-			console.log(chalk.gray(" _")) // Add line for formatting
-			console.log("")
+			out.newline()
 		},
 
 		// Generate set of words
@@ -356,7 +305,7 @@ var text = {
 			// (Note) flash error for a second before cleaning
 			text.user.clear()
 			text.user.number.incorrect++
-			state.timeCheck()
+			time.check()
 			text.system.colours.bad()
 			text.system.print(text.system.format)
 			text.user.print(text.user.current)
@@ -374,26 +323,23 @@ process.stdin.on("keypress", (ch, key) => {
 	if (key != undefined) {
 
 		// Quit with CTRL + C
-		// if (key.ctrl && key.name == "c") {
 		if (key.sequence === "\u0003") {
 			state.quit()
 		}
 
 		// Start / restart with CTRL + R
-		// else if (key.ctrl && key.name == "r") {
-		// Unix or Windows
 		else if (key.sequence === "\u0012") {
-			state.start()
+			state.ready()
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && key.name.indexOf(text.system.reject) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && text.system.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
 			if (time.remaining > 0 && state.currentStatus === "running") {
 
 				// Clear console & Output stats
-				state.stats()
+				out.stats(time.remaining, text.user.prevAvg)
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
@@ -410,8 +356,8 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 				}
 				// Backspace
-				// Windows shows Backspace as >>  sequence: "\b"
-				// Unix shows Ctrl + Backspace as >>  sequence: "\b", ctrl: false
+				// Windows shows Backspace as { sequence: "\b" }
+				// Unix shows Ctrl + Backspace as { sequence: "\b", ctrl: false }
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
 
@@ -431,35 +377,19 @@ process.stdin.on("keypress", (ch, key) => {
 
 					// Unix
 					if (pt === "linux" || pt === "darwin") {
-						// Ctrl + Backspace
-						// ..windows shows this sequence on regular Backspace, so we can only check on Unix
-						// ..and Unix doesn't show ctrl: true, so we can only check it this way
-						if (key.sequence === "\b") {
-							cb()
-						}
-						// Backspace
-						else {
-							rb()
-						}
+						key.sequence === "\b" ? cb() : rb()
 					}
 					// Windows
-					// ..windows sequence: ▆ sooo.... we
 					else if (pt === "win32") {
-						// Backspace
-						// ..not sure why windows shows this sequence, but oh well
-						if (key.sequence === "\b") {
-							rb()
-						}
-						// Ctrl + Backspace
-						else {
-							cb()
-						}
+						key.sequence === "\b" ? rb() : cb()
 					}
 					// Other platform (??)
 					else {
 						rb()
 					}
 
+					// Check user text, print (format & style) system text, print user text
+					// Don't user text.user.process() b/c  that would print "backspace"
 					text.user.check(text.user.current, text.system.array[0])
 					text.system.print(text.system.format)
 					text.user.print(text.user.current)
@@ -472,10 +402,10 @@ process.stdin.on("keypress", (ch, key) => {
 				}
 			}
 
-			// Test is waiting for first keypress to begin
-			else if (state.currentStatus === "waiting") {
+			// Test is ready for first keypress to begin
+			else if (state.currentStatus === "ready") {
 				// Output stats (clears console)
-				state.stats()
+				out.stats(time.remaining, text.user.prevAvg)
 
 				text.user.process(key)
 				// Begin
