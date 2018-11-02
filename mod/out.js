@@ -1,5 +1,6 @@
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
+const ldz = require("./ldz.js") // Leading zero-ify
 
 var out = {
 
@@ -25,9 +26,9 @@ var out = {
 	statsTick: function(remain, avg) {
 		out.clear()
 		console.log(chalk.bold("[" +
-			chalk.bold(remain)) +
+			ldz(remain)) +
 			" Avg: " +
-			chalk.bold(avg) +
+			chalk.bold(ldz(avg)) +
 			"]")
 		console.log("")
 	},
@@ -36,9 +37,9 @@ var out = {
 	stats: function(remain, prevAvg) {
 		out.clear()
 		console.log(chalk.bold("[" +
-			chalk.bold(remain)) +
+			ldz(remain)) +
 			" Avg: " +
-			chalk.bold(prevAvg) +
+			chalk.bold(ldz(prevAvg)) +
 			"]")
 		console.log("")
 	},

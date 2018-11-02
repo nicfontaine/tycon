@@ -8,6 +8,7 @@ const chalk = require("chalk") // Console text styling
 const source = require("./mod/source.js") // Source text
 const interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
+const ldz = require("./mod/ldz.js") // Leading zero-ify
 
 keypress(process.stdin)
 // Windows doesn't recognize this, so only not on windows
