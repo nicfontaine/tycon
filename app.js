@@ -42,34 +42,30 @@ out.init(difficulty)
 
 // Keep track of time: test started, remaining, total length
 var time = {
+
 	begin: Date.now(),  // Stamp start time for calc remaining
 	remaining: 0,      // Countdown number from test length. Helps determine if running, or complete
 	timer: undefined,  // Keep reference of timer
 	testLen: testLength, // Length of test
 
-	// Calculate time differential. Stop interval if non time remaining
+	// Calculate time remaining & show tick stats
 	check: function() {
 		time.remaining = Number(time.testLen - (Math.floor((Date.now() - time.begin)/1000)))
-		if (time.remaining >= 0) {
-			let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
-			out.statsTick(time.remaining, avg)
-		} else {
-			time.timer.stop()
-		}
+		let avg = text.user.stats.avg(text.user.stats.correct, time.testLen, time.remaining)
+		out.statsTick(time.remaining, avg)
 	},
 
 	// Interval timer
+	// Keeps running time.check() unless time.remaining <= 0
+	// Print system text, log avg, and print user text
 	step: function() {
 		time.check()
 		if (time.remaining > 0) {
 			text.system.print(text.system.format)
 			// Only log every other second
 			if (time.remaining%2 === 0) {
-				let avg = text.user.number.avg(text.user.number.correct, time.testLen, time.remaining)
-				// (Note) tryna fix asciichart issue
-				if (avg >= 0) {
-					text.user.number.log.array.push(avg)
-				}
+				let avg = text.user.stats.avg(text.user.stats.correct, time.testLen, time.remaining)
+				text.user.stats.log.wpmArray.push(avg)
 			}
 			text.user.print(text.user.current)
 		}
@@ -92,6 +88,7 @@ var state = {
 	// Begin, reset values
 	// (Note) clean this up
 	ready: function() {
+		state.currentStatus = "ready"
 
 		// Quit & reset if running
 		if (time.timer != undefined) {
@@ -99,16 +96,14 @@ var state = {
 		}
 		time.remaining = 0
 
-		state.currentStatus = "ready"
-
 		// Reset
 		time.testLen = testLength
 		time.remaining = testLength
 
 		text.user.current = ""
-		text.user.number.correct = 0
-		text.user.number.incorrect = 0
-		text.user.number.log.array = []
+		text.user.stats.correct = 0
+		text.user.stats.incorrect = 0
+		text.user.stats.log.wpmArray = []
 		text.user.prevAvg = 0
 		text.system.colours.good()
 
@@ -121,8 +116,8 @@ var state = {
 
 	// Start running test & create interval
 	run: function() {
-		time.begin = Date.now()
 		state.currentStatus = "running"
+		time.begin = Date.now()
 		// Init & start timer
 		time.timer = new interval(time.step, 1000)
 		time.timer.start()
@@ -131,7 +126,7 @@ var state = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		state.isRunning = "stopped"
-		out.complete(time.testLen, difficulty, text.user.number.correct, text.user.number.incorrect, text.user.number.log.array)
+		out.complete(time.testLen, difficulty, text.user.stats.correct, text.user.stats.incorrect, text.user.stats.log.wpmArray)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -175,7 +170,7 @@ var text = {
 		array: [],
 
 		// rm word when typed correctly, and push one to end
-		shiftWord: function() {
+		next: function() {
 			text.system.array.shift()
 			let len = source[difficulty].length
 			let word = source[difficulty][Math.floor((Math.random() * len))]
@@ -234,19 +229,19 @@ var text = {
 	// User input and logic, calculation
 	user: {
 
-		// Log value of currently typed word
+		// Store value of currently typed word
 		current: "",
 
 		// Keep avg calculated at interval, to display on typing input (b/c avging outside of interval is inaccurate)
 		prevAvg: 0,
 
 		// User typing stats. Correct, incorrect, avgs, averaging
-		number: {
+		stats: {
 			correct: 0,
 			incorrect: 0,
 			// Hold avg wpm at interval
 			log: {
-				array: []
+				wpmArray: []
 			},
 			// Calculate average wpm at any time by taking current time & typed words
 			avg: function(correct, length, remain) {
@@ -305,7 +300,7 @@ var text = {
 		incorrect: function() {
 			// (Note) flash error for a second before cleaning
 			text.user.clear()
-			text.user.number.incorrect++
+			text.user.stats.incorrect++
 			time.check()
 			text.system.colours.bad()
 			text.system.print(text.system.format)
@@ -347,9 +342,9 @@ process.stdin.on("keypress", (ch, key) => {
 					// Correct word
 					if (text.user.current === text.system.array[0]) {
 						text.user.clear()
-						text.user.number.correct++
+						text.user.stats.correct++
 						text.system.colours.good()
-						text.system.shiftWord()
+						text.system.next()
 					}
 					// Wrong word
 					else {
