@@ -10,6 +10,7 @@ const interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
 const userData = require("./mod/user-data.js") // User data info for initializing, and resetting after a test
 const timeData = require("./mod/time-data.js") // User data info for initializing, and resetting after a test
+const textSystem = require("./mod/text-system.js") // 
 
 keypress(process.stdin)
 // Windows doesn't recognize this, so only not on windows
@@ -44,17 +45,13 @@ out.init(difficulty)
 // Keep track of time: test started, remaining, total length
 var Time = {
 
-	data: {
-		begin: undefined,  // Stamp start time for calc remaining
-		remaining: 0,      // Countdown number from test length. Helps determine if running, or complete
-		timer: undefined,  // Keep reference of timer
-		testLen: testLength // Length of test
-	},
+	// Init object with begin, remaining, timer, and testLen. 
+	data: new timeData(testLength),
 
 	// Calculate time remaining & show tick stats
 	check: function() {
 		Time.data.remaining = Number(Time.data.testLen - (Math.floor((Date.now() - Time.data.begin)/1000)))
-		let avg = Text.user.avg(Text.user.data.stats.correct, Time.data.testLen, Time.data.remaining)
+		let avg = TextUser.avg(TextUser.data.stats.correct, Time.data.testLen, Time.data.remaining)
 		out.statsTick(Time.data.remaining, avg)
 	},
 
@@ -64,19 +61,86 @@ var Time = {
 	step: function() {
 		Time.check()
 		if (Time.data.remaining > 0) {
-			out.system.words(Text.system.format)
+			out.system.words(TextSystem.format)
 			// Only log every other second
 			if (Time.data.remaining%2 === 0) {
-				let avg = Text.user.avg(Text.user.data.stats.correct, Time.data.testLen, Time.data.remaining)
-				Text.user.data.stats.log.wpmArray.push(avg)
+				let avg = TextUser.avg(TextUser.data.stats.correct, Time.data.testLen, Time.data.remaining)
+				TextUser.data.stats.log.wpmArray.push(avg)
 			}
-			out.user.current(Text.user.data.current)
+			out.user.current(TextUser.data.current)
 		}
 		// End
 		else {
 			State.complete()
 			Time.data.timer.stop()
 		}
+	}
+
+}
+
+// Logic for Text content. From TextSystem (prompt Text) and TextUser (input)
+
+var TextSystem = textSystem(difficulty, maxWordsPerLine)
+
+var TextUser = {
+
+	data: new userData(),
+
+	// Check if user input so far matches active word
+	check: function(typed, prompted) {
+		// Word fully correct
+		if (typed === prompted) {
+			TextSystem.colours.success()
+		}
+		// Word correct so far
+		else if (typed == prompted.substring(0, typed.length)) {
+			TextSystem.colours.good()
+		}
+		// Word incorrect
+		else {
+			TextSystem.colours.bad()
+		}
+	},
+
+	// Calculate average wpm at any time by taking current time & typed words
+	avg: function(correct, length, remain) {
+		let num = Math.floor((correct * 60) / (length - remain))
+		// NaN on first tick
+		if (isNaN(num) || num === Infinity) { num = 0 }
+		if (remain < 1) { num = 0 }
+		// Save
+		TextUser.data.prevAvg = num
+		return num
+	},
+
+	// Handle key input for output
+	process: function(key) {
+		// Shift to upper
+		if (key.shift) {
+			TextUser.data.current += key.name.toUpperCase()
+		} else {
+			TextUser.data.current += key.name
+		}
+		TextUser.check(TextUser.data.current, TextSystem.array[0])
+		out.system.words(TextSystem.format)
+		// Print word
+		out.user.current(TextUser.data.current)
+	},
+
+	// Clear input log
+	clear: function() {
+		TextUser.data.current = ""
+	},
+
+	// Run when incorrect word is entered
+	incorrect: function() {
+		// (Note) flash error for a second before cleaning
+		TextUser.clear()
+		TextUser.data.stats.incorrect++
+		Time.check()
+		TextSystem.colours.bad()
+		out.system.words(TextSystem.format)
+		out.user.current(TextUser.data.current)
 	}
 
 }
@@ -98,16 +162,17 @@ var State = {
 			Time.data.timer.stop()
 		}
 		// Reset
-		Time.data.remaining = 0
-		Time.data.testLen = testLength
+		Time.data = new timeData(testLength)
+		TextUser.clear()
+		TextUser.data = new userData()
+		TextSystem = textSystem(difficulty, maxWordsPerLine)
+
+		// Set test length
 		Time.data.remaining = testLength
-		Text.user.data = userData
 
-		Text.system.colours.good()
-
-		out.stats(Time.data.remaining, Text.user.data.prevAvg)
-		Text.system.newSet()
-		out.ready(Text.system.format)
+		out.stats(Time.data.remaining, TextUser.data.prevAvg)
+		TextSystem.newSet()
+		out.ready(TextSystem.format)
 		},
 
 	// Start running test & create interval
@@ -121,8 +186,8 @@ var State = {
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
-		State.isRunning = "stopped"
-		out.complete(Time.data.testLen, difficulty, Text.user.data.stats.correct, Text.user.data.stats.incorrect, Text.user.data.stats.log.wpmArray, Text.user.data.stats.backspace)
+		State.now = "stopped"
+		out.complete(Time.data.testLen, difficulty, TextUser.data.stats.correct, TextUser.data.stats.incorrect, TextUser.data.stats.log.wpmArray, TextUser.data.stats.backspace)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -132,151 +197,6 @@ var State = {
 		}
 		out.quit()
 		process.exit()
-	}
-
-}
-
-// Logic for Text content. From Text.system (prompt Text) and Text.user (input)
-var Text = {
-
-	// Prompt word logic from app
-	system: {
-
-		// Key input to ignore when typing
-		reject: ["undefined", "escape", "tab", "left", "right", "up", "down", "pageup", "pagedown", "home", "end"],
-
-		// Good/Bad State for "active" word, and incorrect word entry
-		colours: {
-			good: function() {
-				Text.system.colours.c = chalk.bold.green
-			},
-			success: function() {
-				Text.system.colours.c = chalk.reset.bold.inverse.green
-			},
-			bad: function() {
-				Text.system.colours.c = chalk.bold.red
-			},
-			c: chalk.bold.green
-		},
-
-		// Max for set, and for width of console line
-		max: maxWordsPerLine,
-
-		// Holds words to be typed by user
-		array: [],
-
-		// rm word when typed correctly, and push one to end
-		next: function() {
-			Text.system.array.shift()
-			let len = source[difficulty].length
-			let word = source[difficulty][Math.floor((Math.random() * len))]
-			if (Text.system.array.indexOf(word) > -1) {
-				word = source[difficulty][Math.floor((Math.random() * len))]
-			}
-			Text.system.array.push(word)
-			out.next(Time.data.remaining, Text.user.data.prevAvg, Text.system.format)
-		},
-
-		// Generate set of words
-		// (Note) should randomly first-caps, with scaling frequency for difficulty
-		newSet: function() {
-			Text.system.array = []
-			let numSave = 0
-			for (var i=0; i<Text.system.max; i++) {
-				let num = Math.floor((Math.random() * source[difficulty].length))
-				// Re-randomize if same as last number
-				if (num === numSave) {
-					num = Math.floor((Math.random() * source[difficulty].length))
-				}
-				let word = source[difficulty][num]
-				Text.system.array.push(word)
-				numSave = num
-			}
-		},
-
-		// Format Text.system.array, word array, for string output
-		format: function() {
-			let out = ""
-			for (var i=0; i<Text.system.array.length; i++) {
-				// Style active word
-				if (i === 0) {
-					out += Text.system.colours.c(Text.system.array[i]) + " "
-				}
-				// Fade last word
-				else if (i === Text.system.max - 1) {
-					out += chalk.gray(Text.system.array[i])
-				}
-				else {
-					out += Text.system.array[i] + " "
-				}
-			}
-			return out
-		}
-
-	},
-
-	// User input and logic, calculation
-	user: {
-
-		data: userData,
-
-		// Check if user input so far matches active word
-		check: function(typed, prompted) {
-			// Word fully correct
-			if (typed === prompted) {
-				Text.system.colours.success()
-			}
-			// Word correct so far
-			else if (typed == prompted.substring(0, typed.length)) {
-				Text.system.colours.good()
-			}
-			// Word incorrect
-			else {
-				Text.system.colours.bad()
-			}
-		},
-
-		// Calculate average wpm at any time by taking current time & typed words
-		avg: function(correct, length, remain) {
-			let num = Math.floor((correct * 60) / (length - remain))
-			// NaN on first tick
-			if (isNaN(num) || num === Infinity) { num = 0 }
-			if (remain < 1) { num = 0 }
-			// Save
-			Text.user.data.prevAvg = num
-			return num
-		},
-
-		// Handle key input for output
-		process: function(key) {
-			// Shift to upper
-			if (key.shift) {
-				Text.user.data.current += key.name.toUpperCase()
-			} else {
-				Text.user.data.current += key.name
-			}
-			Text.user.check(Text.user.data.current, Text.system.array[0])
-			out.system.words(Text.system.format)
-			// Print word
-			out.user.current(Text.user.data.current)
-		},
-
-		// Clear input log
-		clear: function() {
-			Text.user.data.current = ""
-		},
-
-		// Run when incorrect word is entered
-		incorrect: function() {
-			// (Note) flash error for a second before cleaning
-			Text.user.clear()
-			Text.user.data.stats.incorrect++
-			Time.check()
-			Text.system.colours.bad()
-			out.system.words(Text.system.format)
-			out.user.current(Text.user.data.current)
-		}
-
 	}
 
 }
@@ -299,26 +219,26 @@ process.stdin.on("keypress", (ch, key) => {
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && Text.system.reject.indexOf(key.name) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && TextSystem.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
 			if (Time.data.remaining > 0 && State.now === "running") {
 
 				// Clear console & Output stats
-				out.stats(Time.data.remaining, Text.user.data.prevAvg)
+				out.stats(Time.data.remaining, TextUser.data.prevAvg)
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
 					// Correct word
-					if (Text.user.data.current === Text.system.array[0]) {
-						Text.user.clear()
-						Text.user.data.stats.correct++
-						Text.system.colours.good()
-						Text.system.next()
+					if (TextUser.data.current === TextSystem.array[0]) {
+						TextUser.clear()
+						TextUser.data.stats.correct++
+						TextSystem.colours.good()
+						TextSystem.next(Time.data.remaining, TextUser.data.prevAvg)
 					}
 					// Wrong word
 					else {
-						Text.user.incorrect()
+						TextUser.incorrect()
 					}
 				}
 				// Backspace
@@ -330,15 +250,15 @@ process.stdin.on("keypress", (ch, key) => {
 					let pt = process.platform
 					// Function for regular Backspace
 					function rb() {
-						Text.user.data.current = Text.user.data.current.substring(0, Text.user.data.current.length - 1)
-						if (Text.user.data.current === "") {
-							Text.system.colours.good()
+						TextUser.data.current = TextUser.data.current.substring(0, TextUser.data.current.length - 1)
+						if (TextUser.data.current === "") {
+							TextSystem.colours.good()
 						}
 					}
 					// Function for Ctrl + Backspace
 					function cb() {
-						Text.user.clear()
-						Text.system.colours.good()
+						TextUser.clear()
+						TextSystem.colours.good()
 					}
 
 					// Unix
@@ -355,30 +275,30 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 
 					// Log backspace
-					Text.user.data.stats.backspace++
+					TextUser.data.stats.backspace++
 
 					// Check user text, print (format & style) system text, print user text
-					// Don't user Text.user.process() b/c  that would print "backspace"
-					Text.user.check(Text.user.data.current, Text.system.array[0])
-					out.system.words(Text.system.format)
-					out.user.current(Text.user.data.current)
+					// Don't user TextUser.process() b/c  that would print "backspace"
+					TextUser.check(TextUser.data.current, TextSystem.array[0])
+					out.system.words(TextSystem.format)
+					out.user.current(TextUser.data.current)
 				}
 
 				// Typing
 				else {
-					Text.user.process(key)
+					TextUser.process(key)
 				}
 			}
 
 			// Test is ready for first keypress to begin
 			else if (State.now === "ready") {
 				// Don't print or respond to SPACE or RETURN
-				// ...Can't use these in Text.system.reject because they're used for word entry
+				// ...Can't use these in TextSystem.reject because they're used for word entry
 				if (key.name != "space" && key.name != "return") {
 					// Output stats (clears console)
-					out.stats(Time.data.remaining, Text.user.data.prevAvg)
+					out.stats(Time.data.remaining, TextUser.data.prevAvg)
 
-					Text.user.process(key)
+					TextUser.process(key)
 					// Begin
 					State.run()
 				}

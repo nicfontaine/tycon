@@ -1,13 +1,13 @@
-var data = {
+function data() {
 
 	// Store value of currently typed word
-	current: "",
+	this.current = ""
 
 	// Keep avg calculated at interval, to display on typing input (b/c avging outside of interval is inaccurate)
-	prevAvg: 0,
+	this.prevAvg =  0
 
 	// User typing stats. Correct, incorrect, avgs, averaging
-	stats: {
+	this.stats = {
 		correct: 0,
 		incorrect: 0,
 		backspace: 0,
