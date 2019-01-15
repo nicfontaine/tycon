@@ -5,146 +5,43 @@ const keypress = require("keypress") // Input handling
 const chalk = require("chalk") // Console Text styling
 
 // Mod
-const source = require("./mod/source.js") // Source text
-const interval = require("./mod/interval.js") // Step interval
+const source = require("./mod/source.js") // Source text words. Easy, Med, and Hard arrays
+var interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
-const userData = require("./mod/user-data.js") // User data info for initializing, and resetting after a test
-const timeData = require("./mod/time-data.js") // User data info for initializing, and resetting after a test
-const textSystem = require("./mod/text-system.js") // 
+const uData = require("./mod/user-data.js") // User data for initializing, & resetting after a test
+var sText = require("./mod/system-text.js") // Create, format, hold system prompt words
+const tData = require("./mod/time-data.js") // Time data for initializing, & resetting after a test
+var createConf = require("./mod/create-conf.js") // Use user arguements to create user instance config
+var uHandler = require("./mod/user-handler.js") // Use user arguements to create user instance config
+var tHandler = require("./mod/time-handler.js") // Use user arguements to create user instance config
 
+// Route input to keypress
 keypress(process.stdin)
+
 // Windows doesn't recognize this, so only not on windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
-// Global config variables
-var maxWordsPerLine = 5 // Test prompt words to display in single line
-var testLength = 60 // In seconds
-var difficulty = "med" // easy med hard
+// Create user specific config from base prototype and arguements
+var UserConf = createConf(process.argv)
 
-// Have extra args
-if (process.argv.length > 2) {
-	let args = process.argv.slice(2)
-	for (var i=0; i<args.length; i++) {
-		let ar = args[i]
-		// Number for length
-		if (typeof ar === "number" || !isNaN(ar)) {
-			if (ar >= 10 && ar <= 300) {
-				testLength = ar
-			}
-		}
-		// String for difficulty
-		else if (ar === "easy" || ar === "med" || ar === "hard") {
-			difficulty = ar
-		}
-	}
-}
+// Init output on run
+out.init(UserConf.test.difficulty)
 
-// Init on run
-out.init(difficulty)
+// (NOTE) Should this be a prototype too?
+// Logic for Text content. From SystemText (prompt Text) and UserHandler (input)
+var SystemText = sText(UserConf.test.difficulty, UserConf.display.maxWordsPerLine)
+
+// Store typed characters & stats
+var UserData = new uData()
+
+// Check, process, log user input text
+var UserHandler = new uHandler()
+
+// Init object with begin, remaining, timer, and testLen. 
+var TimeData = new tData(UserConf.test.period)
 
 // Keep track of time: test started, remaining, total length
-var Time = {
-
-	// Init object with begin, remaining, timer, and testLen. 
-	data: new timeData(testLength),
-
-	// Calculate time remaining & show tick stats
-	check: function() {
-		Time.data.remaining = Number(Time.data.testLen - (Math.floor((Date.now() - Time.data.begin)/1000)))
-		let avg = TextUser.avg(TextUser.data.stats.correct, Time.data.testLen, Time.data.remaining)
-		out.statsTick(Time.data.remaining, avg)
-	},
-
-	// Interval timer
-	// Keeps running Time.check() unless Time.data.remaining <= 0
-	// Print system text, log avg, and print user text
-	step: function() {
-		Time.check()
-		if (Time.data.remaining > 0) {
-			out.system.words(TextSystem.format)
-			// Only log every other second
-			if (Time.data.remaining%2 === 0) {
-				let avg = TextUser.avg(TextUser.data.stats.correct, Time.data.testLen, Time.data.remaining)
-				TextUser.data.stats.log.wpmArray.push(avg)
-			}
-			out.user.current(TextUser.data.current)
-		}
-		// End
-		else {
-			State.complete()
-			Time.data.timer.stop()
-		}
-	}
-
-}
-
-// Logic for Text content. From TextSystem (prompt Text) and TextUser (input)
-
-var TextSystem = textSystem(difficulty, maxWordsPerLine)
-
-var TextUser = {
-
-	data: new userData(),
-
-	// Check if user input so far matches active word
-	check: function(typed, prompted) {
-		// Word fully correct
-		if (typed === prompted) {
-			TextSystem.colours.success()
-		}
-		// Word correct so far
-		else if (typed == prompted.substring(0, typed.length)) {
-			TextSystem.colours.good()
-		}
-		// Word incorrect
-		else {
-			TextSystem.colours.bad()
-		}
-	},
-
-	// Calculate average wpm at any time by taking current time & typed words
-	avg: function(correct, length, remain) {
-		let num = Math.floor((correct * 60) / (length - remain))
-		// NaN on first tick
-		if (isNaN(num) || num === Infinity) { num = 0 }
-		if (remain < 1) { num = 0 }
-		// Save
-		TextUser.data.prevAvg = num
-		return num
-	},
-
-	// Handle key input for output
-	process: function(key) {
-		// Shift to upper
-		if (key.shift) {
-			TextUser.data.current += key.name.toUpperCase()
-		} else {
-			TextUser.data.current += key.name
-		}
-		TextUser.check(TextUser.data.current, TextSystem.array[0])
-		out.system.words(TextSystem.format)
-		// Print word
-		out.user.current(TextUser.data.current)
-	},
-
-	// Clear input log
-	clear: function() {
-		TextUser.data.current = ""
-	},
-
-	// Run when incorrect word is entered
-	incorrect: function() {
-		// (Note) flash error for a second before cleaning
-		TextUser.clear()
-		TextUser.data.stats.incorrect++
-		Time.check()
-		TextSystem.colours.bad()
-		out.system.words(TextSystem.format)
-		out.user.current(TextUser.data.current)
-	}
-
-}
-
+var TimeHandler = new tHandler()
 
 // App states, with console printout, initialization, variable reset
 var State = {
@@ -158,42 +55,46 @@ var State = {
 		State.now = "ready"
 
 		// Quit & reset if running
-		if (Time.data.timer != undefined) {
-			Time.data.timer.stop()
+		if (TimeData.timer != undefined) {
+			TimeData.timer.stop()
 		}
 		// Reset
-		Time.data = new timeData(testLength)
-		TextUser.clear()
-		TextUser.data = new userData()
-		TextSystem = textSystem(difficulty, maxWordsPerLine)
+		TimeData = new tData(UserConf.test.period)
+		UserHandler.clear(UserData)
+		UserData = new uData()
+		SystemText = sText(UserConf.test.difficulty, UserConf.display.maxWordsPerLine)
 
 		// Set test length
-		Time.data.remaining = testLength
+		TimeData.remaining = UserConf.test.period
 
-		out.stats(Time.data.remaining, TextUser.data.prevAvg)
-		TextSystem.newSet()
-		out.ready(TextSystem.format)
+		out.stats(TimeData.remaining, UserData.prevAvg, UserConf.display.showAvg)
+		SystemText.newSet()
+		out.ready(SystemText.format)
 		},
 
 	// Start running test & create interval
 	run: function() {
 		State.now = "running"
-		Time.data.begin = Date.now()
+		TimeData.begin = Date.now()
+		// Wrap step in a closure so interval can run it
+		let work = function() {
+			return TimeHandler.step(TimeData, UserData, UserConf, UserHandler, State.complete, SystemText)
+		}
 		// Init & start timer
-		Time.data.timer = new interval(Time.step, 1000)
-		Time.data.timer.start()
+		TimeData.timer = new interval(work, 1000)
+		TimeData.timer.start()
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(Time.data.testLen, difficulty, TextUser.data.stats.correct, TextUser.data.stats.incorrect, TextUser.data.stats.log.wpmArray, TextUser.data.stats.backspace)
+		out.complete(TimeData.testLen, UserConf.test.difficulty, UserData.stats.correct, UserData.stats.incorrect, UserData.stats.log.wpmArray, UserData.stats.backspace)
 	},
 
 	// Quit app. log exit message, and exit process
 	quit: function() {
-		if (Time.data.timer != undefined) {
-			Time.data.timer.stop()
+		if (TimeData.timer != undefined) {
+			TimeData.timer.stop()
 		}
 		out.quit()
 		process.exit()
@@ -219,26 +120,30 @@ process.stdin.on("keypress", (ch, key) => {
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && TextSystem.reject.indexOf(key.name) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && SystemText.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
-			if (Time.data.remaining > 0 && State.now === "running") {
+			if (TimeData.remaining > 0 && State.now === "running") {
 
 				// Clear console & Output stats
-				out.stats(Time.data.remaining, TextUser.data.prevAvg)
+				out.stats(TimeData.remaining, UserData.prevAvg, UserConf.display.showAvg)
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
 					// Correct word
-					if (TextUser.data.current === TextSystem.array[0]) {
-						TextUser.clear()
-						TextUser.data.stats.correct++
-						TextSystem.colours.good()
-						TextSystem.next(Time.data.remaining, TextUser.data.prevAvg)
+					if (UserData.current === SystemText.array[0]) {
+						UserHandler.clear(UserData)
+						UserData.stats.correct++
+						SystemText.colours.good()
+
+						// Generate next set (which is returned), then output
+						let nextSet = SystemText.next(TimeData.remaining, UserData.prevAvg)
+						out.next(TimeData.remaining, UserData.prevAvg, nextSet, UserConf.display.showAvg)
 					}
 					// Wrong word
 					else {
-						TextUser.incorrect()
+						// (NOTE) maybe add TimeHandler.check() here, so we don't have to do it in UserHandler.incorrect(), and can move that in to module
+						UserHandler.incorrect(SystemText, UserData)
 					}
 				}
 				// Backspace
@@ -250,15 +155,15 @@ process.stdin.on("keypress", (ch, key) => {
 					let pt = process.platform
 					// Function for regular Backspace
 					function rb() {
-						TextUser.data.current = TextUser.data.current.substring(0, TextUser.data.current.length - 1)
-						if (TextUser.data.current === "") {
-							TextSystem.colours.good()
+						UserData.current = UserData.current.substring(0, UserData.current.length - 1)
+						if (UserData.current === "") {
+							SystemText.colours.good()
 						}
 					}
 					// Function for Ctrl + Backspace
 					function cb() {
-						TextUser.clear()
-						TextSystem.colours.good()
+						UserHandler.clear(UserData)
+						SystemText.colours.good()
 					}
 
 					// Unix
@@ -275,30 +180,30 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 
 					// Log backspace
-					TextUser.data.stats.backspace++
+					UserData.stats.backspace++
 
 					// Check user text, print (format & style) system text, print user text
-					// Don't user TextUser.process() b/c  that would print "backspace"
-					TextUser.check(TextUser.data.current, TextSystem.array[0])
-					out.system.words(TextSystem.format)
-					out.user.current(TextUser.data.current)
+					// Don't user UserHandler.process() b/c  that would print "backspace"
+					UserHandler.check(SystemText, UserData.current, SystemText.array[0])
+					out.system.words(SystemText.format)
+					out.user.current(UserData.current)
 				}
 
 				// Typing
 				else {
-					TextUser.process(key)
+					UserHandler.proc(key, SystemText, UserData)
 				}
 			}
 
 			// Test is ready for first keypress to begin
 			else if (State.now === "ready") {
 				// Don't print or respond to SPACE or RETURN
-				// ...Can't use these in TextSystem.reject because they're used for word entry
+				// ...Can't use these in SystemText.reject because they're used for word entry
 				if (key.name != "space" && key.name != "return") {
 					// Output stats (clears console)
-					out.stats(Time.data.remaining, TextUser.data.prevAvg)
+					out.stats(TimeData.remaining, UserData.prevAvg, UserConf.display.showAvg)
 
-					TextUser.process(key)
+					UserHandler.proc(key, SystemText, UserData)
 					// Begin
 					State.run()
 				}

@@ -27,10 +27,10 @@ var out = {
 		out.newline()
 	},
 
-	next: function(remain, avg, format) {
-		out.stats(remain, avg)
+	// (NOTE) This needs the showAvg flag for out.stats
+	next: function(remain, avg, format, showAvg) {
+		out.stats(remain, avg, showAvg)
 		console.log(" " + format())
-		// console.log("")
 		out.newline()
 	},
 
@@ -44,29 +44,30 @@ var out = {
 		current: function(text) {
 			console.log(" " + chalk.bold(text) + chalk.gray("_"))
 			console.log("")
-			// out.newline()
 		}
 	},
 
 	// Show typing stats, Time left, and Avg. typed
-	statsTick: function(remain, avg) {
+	statsTick: function(remain, avg, showAvg) {
 		out.clear()
-		console.log(chalk.bold("[" +
-			zero(remain)) +
-			" Avg: " +
-			chalk.bold(zero(avg)) +
-			"]")
+		let avgTxt = ""
+		if (showAvg) {
+			avgTxt = " Avg: " + chalk.bold(zero(avg))
+		}
+		// Only output Avg WPM if flagged
+		console.log(chalk.bold("[" + zero(remain)) + avgTxt + "]")
 		console.log("")
 	},
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
-	stats: function(remain, prevAvg) {
+	stats: function(remain, prevAvg, showAvg) {
 		out.clear()
-		console.log(chalk.bold("[" +
-			zero(remain)) +
-			" Avg: " +
-			chalk.bold(zero(prevAvg)) +
-			"]")
+		let avgTxt = ""
+		if (showAvg) {
+			avgTxt = " Avg: " + chalk.bold(zero(prevAvg))
+		}
+		// Only output Avg WPM if flagged
+		console.log(chalk.bold("[" + zero(remain)) + avgTxt + "]")
 		console.log("")
 	},
 
@@ -81,7 +82,7 @@ var out = {
 		console.log("Backspace: " + backspace)
 		console.log("")
 		// (Note) sporadic issue here from asciichart complaining about array length.
-		if (log > 0) {
+		if (log.length > 0) {
 			console.log(chart.plot(log, { height: 5}))
 		}
 		console.log("")

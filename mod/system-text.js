@@ -37,7 +37,8 @@ var data = function(difficulty, maxWordsPerLine) {
 				word = source[difficulty][Math.floor((Math.random() * len))]
 			}
 			obj.array.push(word)
-			out.next(remain, prevAvg, obj.format)
+			return obj.format
+			// out.next(remain, prevAvg, )
 		},
 
 		// Generate set of words
