@@ -130,21 +130,27 @@ process.stdin.on("keypress", (ch, key) => {
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
+
 					// Correct word
 					if (UserData.current === SystemText.array[0]) {
-						UserHandler.clear(UserData)
 						UserData.stats.correct++
-						SystemText.colours.good()
-
-						// Generate next set (which is returned), then output
-						let nextSet = SystemText.next(TimeData.remaining, UserData.prevAvg)
-						out.next(TimeData.remaining, UserData.prevAvg, nextSet, UserConf.display.showAvg)
+						UserHandler.next(SystemText, UserData, TimeData.remaining, UserData.prevAvg, UserConf.display.showAvg)
 					}
 					// Wrong word
 					else {
-						// (NOTE) maybe add TimeHandler.check() here, so we don't have to do it in UserHandler.incorrect(), and can move that in to module
-						UserHandler.incorrect(SystemText, UserData)
+						UserData.stats.incorrect++
+
+						// Correct word is required before moving to next word
+						if (UserConf.test.retypeOnFail) {
+							UserHandler.incorrect(SystemText, UserData)
+						}
+						// Correct word not required. Move to next word
+						else {
+							UserHandler.next(SystemText, UserData, TimeData.remaining, UserData.prevAvg, UserConf.display.showAvg)
+						}
+
 					}
+
 				}
 				// Backspace
 				// Windows shows Backspace as { sequence: "\b" }

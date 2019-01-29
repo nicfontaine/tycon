@@ -50,12 +50,18 @@ function handler() {
 		udata.current = ""
 	}
 
+	// Prompt next word for typing
+	this.next = function(systext, udata, remain, prevAvg, showAvg) {
+		parent.clear(udata)
+		let nextSet = systext.next(remain, prevAvg)
+		systext.colours.good()
+		out.next(remain, prevAvg, nextSet, showAvg)
+	}
+
 	// Run when incorrect word is entered
 	this.incorrect = function(systext, udata) {
 		// (Note) flash error for a second before cleaning
 		parent.clear(udata)
-		udata.stats.incorrect++
-		parent.check(systext, udata.current)
 		systext.colours.bad()
 		out.system.words(systext.format)
 		out.user.current(udata.current)

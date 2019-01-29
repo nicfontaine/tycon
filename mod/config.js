@@ -9,6 +9,7 @@ function config() {
 	this.test = {
 		period: 60, // In seconds
 		difficulty: "med", // easy med hard
+		retypeOnFail: true // If true, force correct entry before next word
 	}
 
 }

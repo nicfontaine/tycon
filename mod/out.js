@@ -100,6 +100,12 @@ var out = {
 	shortcuts: function() {
 		console.log(chalk.inverse("^R") + " Start")
 		console.log(chalk.inverse("^C") + " Exit")
+	},
+
+	// Just for testing. Clear & output message
+	test: function(msg) {
+		out.clear()
+		console.log(msg)
 	}
 
 }

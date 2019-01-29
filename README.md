@@ -17,6 +17,7 @@ $ tycon easy            # Weak sauce
 $ tycon med             # Groove time
 $ tycon hard            # Wtf are these words..?
 $ tycon 10            	# 10 seconds
+$ tycon skip            # Skip to next word when typed incorrectly
 $ tycon easy 300        # Test has max of 5 minutes
 ```  
 
