@@ -1,24 +1,31 @@
 const config = require("./config.js") // Global config for display, and test
+const source = require("./source.js")
 
 function proc(argv) {
 
+	// Generate default config
 	let userConf = new config()
 
+	// Ignore "node" and "app.js"
+	let args = argv.slice(2)
+
 	// Has any arguements
-	if (argv.length > 2) {
-		let args = argv.slice(2)
+	if (args.length) {
+
 		for (var i=0; i<args.length; i++) {
+
+			// Each arg
 			let ar = args[i]
 
-			// Number for length
+			// Number for test length
 			if (typeof ar === "number" || !isNaN(ar)) {
 				if (ar >= 10 && ar <= 300) {
 					userConf.test.period = ar
 				}
 			}
 
-			// String for difficulty
-			else if (ar === "easy" || ar === "med" || ar === "hard") {
+			// String for difficulty, from source object
+			else if (ar in source) {
 				userConf.test.difficulty = ar
 			}
 
@@ -28,6 +35,7 @@ function proc(argv) {
 			}
 
 		}
+		
 	}
 
 	return userConf

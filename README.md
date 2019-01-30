@@ -32,6 +32,7 @@ $ ^C        # Quit
 - Randomly (scale with difficulty) first-caps words
 - Menu for length, difficulty, and run states with Inquirer
 - Re-do intervaled avg to average in segments, instead of over the whole test (so chart is relevant)
+- Use custom word list from file (validate format)
 
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  
