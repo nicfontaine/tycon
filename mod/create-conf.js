@@ -34,6 +34,11 @@ function proc(argv) {
 				userConf.test.retypeOnFail = false
 			}
 
+			// Colour Blink mode
+			else if (ar === "cb") {
+				userConf.display.colourBlind = true
+			}
+
 		}
 		
 	}

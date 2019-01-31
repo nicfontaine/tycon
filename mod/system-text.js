@@ -2,7 +2,20 @@ const chalk = require("chalk") // Console text styling
 const source = require("./source.js") // Source text
 const out = require("./out.js") // Console output
 
-var data = function(difficulty, maxWordsPerLine) {
+var data = function(uConf) {
+
+	let difficulty = uConf.test.difficulty
+	let maxWordsPerLine = uConf.display.maxWordsPerLine
+	let colourBlind = uConf.display.colourBlind
+
+	// String value for positive colour. Green or Blue
+	let successColour = ""
+	if (colourBlind) {
+		successColour = "blue"
+	} else {
+		successColour = "green"
+	}
+
 	let obj = {
 		
 		// Key input to ignore when typing
@@ -11,15 +24,15 @@ var data = function(difficulty, maxWordsPerLine) {
 		// Good/Bad State for "active" word, and incorrect word entry
 		colours: {
 			good: function() {
-				obj.colours.c = chalk.bold.green
+				obj.colours.c = chalk.bold[successColour]
 			},
 			success: function() {
-				obj.colours.c = chalk.reset.bold.inverse.green
+				obj.colours.c = chalk.reset.bold.inverse[successColour]
 			},
 			bad: function() {
 				obj.colours.c = chalk.bold.red
 			},
-			c: chalk.bold.green
+			c: chalk.bold[successColour]
 		},
 
 		// Max for set, and for width of console line

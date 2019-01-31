@@ -29,7 +29,7 @@ out.init(UserConf.test.difficulty)
 
 // (NOTE) Should this be a prototype too?
 // Logic for Text content. From SystemText (prompt Text) and UserHandler (input)
-var SystemText = sText(UserConf.test.difficulty, UserConf.display.maxWordsPerLine)
+var SystemText = sText(UserConf)
 
 // Store typed characters & stats
 var UserData = new uData()
@@ -62,7 +62,7 @@ var State = {
 		TimeData = new tData(UserConf.test.period)
 		UserHandler.clear(UserData)
 		UserData = new uData()
-		SystemText = sText(UserConf.test.difficulty, UserConf.display.maxWordsPerLine)
+		SystemText = sText(UserConf)
 
 		// Set test length
 		TimeData.remaining = UserConf.test.period

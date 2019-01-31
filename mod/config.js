@@ -3,7 +3,8 @@ function config() {
 
 	this.display = {
 		maxWordsPerLine: 5, // Test prompt words to display in single line
-		showAvg: true // Flag to show or hide Avg WPM during test
+		showAvg: true, // Flag to show or hide Avg WPM during test
+		colourBlind: false // 
 	}
 
 	this.test = {
