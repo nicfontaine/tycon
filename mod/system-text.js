@@ -9,12 +9,7 @@ var data = function(uConf) {
 	let colourBlind = uConf.display.colourBlind
 
 	// String value for positive colour. Green or Blue
-	let successColour = ""
-	if (colourBlind) {
-		successColour = "blue"
-	} else {
-		successColour = "green"
-	}
+	let successColour = colourBlind ? "blue" : "green"
 
 	let obj = {
 		
