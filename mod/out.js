@@ -14,9 +14,9 @@ var out = {
 		console.log("")
 	},
 
-	init: function(diff) {
+	init: function(diff, colour) {
 		out.clear()
-		console.log(chalk.bold.green("[Tycon]") + " Level: " + chalk.bold(diff.toUpperCase()))
+		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diff.toUpperCase()))
 		console.log("")
 		out.shortcuts()
 		console.log("")
@@ -72,18 +72,18 @@ var out = {
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, diff, correct, incorrect, log, backspace) {
+	complete: function(len, diff, uData, colour) {
 		out.clear()
-		console.log(chalk.bold.green("[Complete] ") + len + " seconds, " + chalk.bold(diff.toUpperCase()))
+		console.log(colour("[Complete] ") + len + " seconds, " + chalk.bold(diff.toUpperCase()))
 		console.log("")
-		console.log("WPM:       " + chalk.bold((correct * 60) / len))
-		console.log("Correct:   " + (chalk.bold(correct)))
-		console.log("Incorrect: " + incorrect)
-		console.log("Backspace: " + backspace)
+		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))
+		console.log("Correct:   " + (chalk.bold(uData.stats.correct)))
+		console.log("Incorrect: " + uData.stats.incorrect)
+		console.log("Backspace: " + uData.stats.backspace)
 		console.log("")
 		// (Note) sporadic issue here from asciichart complaining about array length.
-		if (log.length > 0) {
-			console.log(chart.plot(log, { height: 5}))
+		if (uData.stats.log.wpmArray.length > 0) {
+			console.log(chart.plot(uData.stats.log.wpmArray, { height: 5}))
 		}
 		console.log("")
 		out.shortcuts()

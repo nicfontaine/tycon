@@ -24,12 +24,12 @@ if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 // Create user specific config from base prototype and arguements
 var UserConf = createConf(process.argv)
 
-// Init output on run
-out.init(UserConf.test.difficulty)
-
 // (NOTE) Should this be a prototype too?
 // Logic for Text content. From SystemText (prompt Text) and UserHandler (input)
 var SystemText = sText(UserConf)
+
+// Init output on run
+out.init(UserConf.test.difficulty, SystemText.colours.c)
 
 // Store typed characters & stats
 var UserData = new uData()
@@ -88,7 +88,7 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(TimeData.testLen, UserConf.test.difficulty, UserData.stats.correct, UserData.stats.incorrect, UserData.stats.log.wpmArray, UserData.stats.backspace)
+		out.complete(TimeData.testLen, UserConf.test.difficulty, UserData, SystemText.colours.c)
 	},
 
 	// Quit app. log exit message, and exit process
