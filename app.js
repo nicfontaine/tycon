@@ -88,6 +88,8 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
+		// Reset, in case we finish on incorrect letter
+		SystemText.colours.good()
 		out.complete(TimeData.testLen, UserConf.test.difficulty, UserData, SystemText.colours.c)
 	},
 
