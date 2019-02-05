@@ -72,9 +72,11 @@ var out = {
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, diff, uData, colour) {
+	complete: function(len, diff, uData, systext) {
 		out.clear()
-		console.log(colour("[Complete] ") + len + " seconds, " + chalk.bold(diff.toUpperCase()))
+		// Reset, in case we finish on incorrect letter
+		systext.colours.good()
+		console.log(systext.colours.c("[Complete] ") + len + " seconds, " + chalk.bold(diff.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))
 		console.log("Correct:   " + (chalk.bold(uData.stats.correct)))
