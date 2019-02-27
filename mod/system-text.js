@@ -14,7 +14,7 @@ var data = function(uConf) {
 	let obj = {
 		
 		// Key input to ignore when typing
-		reject: ["undefined", "escape", "tab", "left", "right", "up", "down", "pageup", "pagedown", "home", "end"],
+		reject: ["undefined", "escape", "tab", "left", "right", "up", "down", "pageup", "pagedown", "home", "end", "delete"],
 
 		// Good/Bad State for "active" word, and incorrect word entry
 		colours: {

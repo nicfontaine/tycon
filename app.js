@@ -156,7 +156,7 @@ process.stdin.on("keypress", (ch, key) => {
 						}
 						
 					}
-					// (NOTE) This is kinda stupid. Should instead, just not clear above, at line 129
+					// (NOTE) This is kinda stupid. Should instead, just not clear above with out.stats()
 					else {
 						out.system.words(SystemText.format)
 						out.user.current(DataUser.current)
