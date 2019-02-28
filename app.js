@@ -125,15 +125,14 @@ process.stdin.on("keypress", (ch, key) => {
 			// Don't respond if test is over
 			if (DataTime.remaining > 0 && State.now === "running") {
 
-				// Clear console & Output stats
-				out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
-
 				// Space
 				if (key.name === "space" || key.name === "return") {
 
 					// Contains non-whitespace characters
 					// This is to prevent space or enter from registering as an incorrect word
 					if (/\S/.test(DataUser.current)) {
+
+						out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 
 						// Correct word
 						if (DataUser.current === SystemText.array[0]) {
@@ -156,11 +155,6 @@ process.stdin.on("keypress", (ch, key) => {
 						}
 						
 					}
-					// (NOTE) This is kinda stupid. Should instead, just not clear above with out.stats()
-					else {
-						out.system.words(SystemText.format)
-						out.user.current(DataUser.current)
-					}
 
 				}
 				// Backspace
@@ -168,6 +162,8 @@ process.stdin.on("keypress", (ch, key) => {
 				// Unix shows Ctrl + Backspace as { sequence: "\b", ctrl: false }
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
+
+					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 
 					let pt = process.platform
 					// Function for regular Backspace
@@ -208,6 +204,7 @@ process.stdin.on("keypress", (ch, key) => {
 
 				// Typing
 				else {
+					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 					HandlerUser.proc(key, SystemText, DataUser)
 				}
 			}
