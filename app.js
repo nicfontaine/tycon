@@ -132,23 +132,35 @@ process.stdin.on("keypress", (ch, key) => {
 					// This is to prevent space or enter from registering as an incorrect word
 					if (/\S/.test(DataUser.current)) {
 
-						out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+						// Reference stat output here to keep simpler in cases below
+						let stat = function() {
+							out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+						}
 
 						// Correct word
 						if (DataUser.current === SystemText.array[0]) {
+							stat()
 							DataUser.stats.correct++
 							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 						}
-						// Wrong word
+
+						// Incorrect word
 						else {
+
 							DataUser.stats.incorrect++
 
-							// Correct word is required before moving to next word
+							// Correct word is required before moving to next word.
+							// Stay on current word, and re-print out stats, system set, and user text
 							if (ConfUser.test.retypeOnFail) {
-								HandlerUser.incorrect(SystemText, DataUser)
+								// HandlerUser.incorrect(SystemText, DataUser)
+								stat()
+								out.system.words(SystemText.format)
+								out.user.current(DataUser.current)
 							}
-							// Correct word not required. Move to next word
+
+							// Correct word not required. Log incorrect, and move to next word
 							else {
+								stat()
 								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 							}
 
@@ -157,6 +169,7 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 
 				}
+
 				// Backspace
 				// Windows shows Backspace as { sequence: "\b" }
 				// Unix shows Ctrl + Backspace as { sequence: "\b", ctrl: false }
@@ -179,6 +192,8 @@ process.stdin.on("keypress", (ch, key) => {
 						SystemText.colours.good()
 					}
 
+					// (NOTE) Should check for CTRL+W for the unixers ;v
+
 					// Unix
 					if (pt === "linux" || pt === "darwin") {
 						key.sequence === "\b" ? cb() : rb()
@@ -200,27 +215,35 @@ process.stdin.on("keypress", (ch, key) => {
 					HandlerUser.check(SystemText, DataUser.current, SystemText.array[0])
 					out.system.words(SystemText.format)
 					out.user.current(DataUser.current)
+
 				}
 
-				// Typing
+				// Regular typing
 				else {
+
 					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 					HandlerUser.proc(key, SystemText, DataUser)
+
 				}
+
 			}
 
 			// Test is ready for first keypress to begin
 			else if (State.now === "ready") {
+
 				// Don't print or respond to SPACE or RETURN
 				// ...Can't use these in SystemText.reject because they're used for word entry
 				if (key.name != "space" && key.name != "return") {
+
 					// Output stats (clears console)
 					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
 
 					HandlerUser.proc(key, SystemText, DataUser)
 					// Begin
 					State.run()
+					
 				}
+
 			}
 
 		} // [End] Alpha input if statement

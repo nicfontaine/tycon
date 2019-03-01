@@ -66,6 +66,7 @@ function handler() {
 		out.system.words(systext.format)
 		out.user.current(udata.current)
 	}
+	
 }
 
 module.exports = handler
