@@ -14,9 +14,10 @@ var out = {
 		console.log("")
 	},
 
-	init: function(diff, colour) {
+	init: function(uconf, colour) {
 		out.clear()
-		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diff.toUpperCase()))
+		let diffStr = uconf.test.diffOptions[uconf.test.difficulty]
+		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		out.shortcuts()
 		console.log("")
@@ -28,8 +29,8 @@ var out = {
 	},
 
 	// (NOTE) This needs the showAvg flag for out.stats
-	next: function(remain, avg, format, showAvg) {
-		out.stats(remain, avg, showAvg)
+	next: function(remain, avg, format, uconf) {
+		out.stats(remain, avg, uconf)
 		console.log(" " + format())
 		out.newline()
 	},
@@ -48,35 +49,55 @@ var out = {
 	},
 
 	// Show typing stats, Time left, and Avg. typed
-	statsTick: function(remain, avg, showAvg) {
+	statsTick: function(remain, avg, uconf) {
 		out.clear()
 		let avgTxt = ""
-		if (showAvg) {
-			avgTxt = " Avg: " + chalk.bold(zero(avg))
+		let timeTxt = ""
+		if (uconf.display.show.avg) {
+			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
-		// Only output Avg WPM if flagged
-		console.log(chalk.bold("[" + zero(remain)) + avgTxt + "]")
+		if (uconf.display.show.time) {
+			timeTxt = zero(remain)
+		}
+		if (!uconf.display.show.time && !uconf.display.show.avg) {
+			console.log("[Test Running]")
+		} else if (uconf.display.show.time && uconf.display.show.avg) {
+			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
+		} else {
+			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
+		}
 		console.log("")
 	},
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
-	stats: function(remain, prevAvg, showAvg) {
+	// (NOTE) Should probably fix, and not be redundant
+	stats: function(remain, prevAvg, uconf) {
 		out.clear()
 		let avgTxt = ""
-		if (showAvg) {
-			avgTxt = " Avg: " + chalk.bold(zero(prevAvg))
+		let timeTxt = ""
+		if (uconf.display.show.avg) {
+			avgTxt = "Avg: " + chalk.bold(zero(prevAvg))
 		}
-		// Only output Avg WPM if flagged
-		console.log(chalk.bold("[" + zero(remain)) + avgTxt + "]")
+		if (uconf.display.show.time) {
+			timeTxt = zero(remain)
+		}
+		if (!uconf.display.show.time && !uconf.display.show.avg) {
+			console.log("[Test Running]")
+		} else if (uconf.display.show.time && uconf.display.show.avg) {
+			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
+		} else {
+			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
+		}
 		console.log("")
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, diff, uData, systext) {
+	complete: function(len, uconf, uData, systext) {
 		out.clear()
 		// Reset, in case we finish on incorrect letter
 		systext.colours.good()
-		console.log(systext.colours.c("[Complete] ") + len + " seconds, " + chalk.bold(diff.toUpperCase()))
+		let diffStr = uconf.test.diffOptions[uconf.test.difficulty]
+		console.log(systext.colours.c("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))
 		console.log("Correct:   " + (chalk.bold(uData.stats.correct)))

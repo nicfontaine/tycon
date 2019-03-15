@@ -25,8 +25,8 @@ function proc(argv) {
 			}
 
 			// String for difficulty, from source object
-			else if (ar in source) {
-				userConf.test.difficulty = ar
+			else if (userConf.test.diffOptions.indexOf(ar) > -1) {
+				userConf.test.difficulty = userConf.test.diffOptions.indexOf(ar)
 			}
 
 			// Don't require correct word before moving to next

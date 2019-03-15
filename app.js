@@ -29,7 +29,7 @@ var ConfUser = createConf(process.argv)
 var SystemText = sText(ConfUser)
 
 // Init output on run
-out.init(ConfUser.test.difficulty, SystemText.colours.c)
+out.init(ConfUser, SystemText.colours.c)
 
 // Store typed characters & stats
 var DataUser = new dUser()
@@ -67,8 +67,8 @@ var State = {
 		// Set test length
 		DataTime.remaining = ConfUser.test.period
 
-		out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
-		SystemText.newSet()
+		out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
+		SystemText.newSet(ConfUser)
 		out.ready(SystemText.format)
 		},
 
@@ -88,7 +88,7 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(DataTime.testLen, ConfUser.test.difficulty, DataUser, SystemText)
+		out.complete(DataTime.testLen, ConfUser, DataUser, SystemText)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -134,14 +134,14 @@ process.stdin.on("keypress", (ch, key) => {
 
 						// Reference stat output here to keep simpler in cases below
 						let stat = function() {
-							out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+							out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
 						}
 
 						// Correct word
 						if (DataUser.current === SystemText.array[0]) {
 							stat()
 							DataUser.stats.correct++
-							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser)
 						}
 
 						// Incorrect word
@@ -161,7 +161,7 @@ process.stdin.on("keypress", (ch, key) => {
 							// Correct word not required. Log incorrect, and move to next word
 							else {
 								stat()
-								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser)
 							}
 
 						}
@@ -176,7 +176,7 @@ process.stdin.on("keypress", (ch, key) => {
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
 
 					let pt = process.platform
 					// Function for regular Backspace
@@ -221,7 +221,7 @@ process.stdin.on("keypress", (ch, key) => {
 				// Regular typing
 				else {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
 					HandlerUser.proc(key, SystemText, DataUser)
 
 				}
@@ -236,7 +236,7 @@ process.stdin.on("keypress", (ch, key) => {
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser.display.showAvg)
+					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
 
 					HandlerUser.proc(key, SystemText, DataUser)
 					// Begin

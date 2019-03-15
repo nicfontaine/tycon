@@ -8,7 +8,7 @@ function handler() {
 	this.check = function(tdata, udata, uconf, uhandler) {
 		tdata.remaining = Number(tdata.testLen - (Math.floor((Date.now() - tdata.begin)/1000)))
 		let avg = uhandler.avg(udata, tdata.testLen, tdata.remaining)
-		out.statsTick(tdata.remaining, avg, uconf.display.showAvg)
+		out.statsTick(tdata.remaining, avg, uconf)
 	}
 
 	// Interval timer

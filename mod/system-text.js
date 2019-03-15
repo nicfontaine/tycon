@@ -1,6 +1,8 @@
 const chalk = require("chalk") // Console text styling
 const source = require("./source.js") // Source text
 const out = require("./out.js") // Console output
+const getNextWord = require("./get-next-word.js") // Shift word list, and add 1 more from source
+const getNextSet = require("./get-next-set.js") // Shift word list, and add 1 more from source
 
 var data = function(uConf) {
 
@@ -37,33 +39,20 @@ var data = function(uConf) {
 		array: [],
 
 		// rm word when typed correctly, and push one to end
-		next: function(remain, prevAvg) {
+		next: function(uconf) {
+
 			obj.array.shift()
-			let len = source[difficulty].length
-			let word = source[difficulty][Math.floor((Math.random() * len))]
-			if (obj.array.indexOf(word) > -1) {
-				word = source[difficulty][Math.floor((Math.random() * len))]
-			}
+			let word = getNextWord(obj.array, uconf)
 			obj.array.push(word)
 			return obj.format
-			// out.next(remain, prevAvg, )
+
 		},
 
 		// Generate set of words
 		// (Note) should randomly first-caps, with scaling frequency for difficulty
-		newSet: function() {
-			obj.array = []
-			let numSave = 0
-			for (var i=0; i<obj.max; i++) {
-				let num = Math.floor((Math.random() * source[difficulty].length))
-				// Re-randomize if same as last number
-				if (num === numSave) {
-					num = Math.floor((Math.random() * source[difficulty].length))
-				}
-				let word = source[difficulty][num]
-				obj.array.push(word)
-				numSave = num
-			}
+		newSet: function(uconf) {
+
+			obj.array = getNextSet(uconf, obj.max)
 
 		},
 
