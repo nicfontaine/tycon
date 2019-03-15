@@ -15,7 +15,7 @@ function config() {
 		diffOptions: ["easy", "med", "hard"],
 		difficulty: 1, // easy med hard indices
 		retypeOnFail: true, // If true, force correct entry before next word
-		caps: true // Randomly capitalize first letter. Scales w/ difficulty
+		caps: false // Randomly capitalize first letter. Scales w/ difficulty
 	}
 
 }

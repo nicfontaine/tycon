@@ -39,6 +39,10 @@ function proc(argv) {
 				userConf.display.colourBlind = true
 			}
 
+			else if (ar === "caps") {
+				userConf.test.caps = true
+			}
+
 		}
 		
 	}
