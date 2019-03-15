@@ -1,8 +1,8 @@
 const chalk = require("chalk") // Console text styling
-const source = require("./source.js") // Source text
+const source = require("./words/source.js") // Source text
 const out = require("./out.js") // Console output
-const getNextWord = require("./get-next-word.js") // Shift word list, and add 1 more from source
-const getNextSet = require("./get-next-set.js") // Shift word list, and add 1 more from source
+const getNextWord = require("./words/get-next-word.js") // Shift word list, and add 1 more from source
+const getNextSet = require("./words/get-next-set.js") // Shift word list, and add 1 more from source
 
 var data = function(uConf) {
 

@@ -5,13 +5,13 @@ const keypress = require("keypress") // Input handling
 const chalk = require("chalk") // Console Text styling
 
 // Mod
-const source = require("./mod/source.js") // Source text words. Easy, Med, and Hard arrays
+const source = require("./mod/words/source.js") // Source text words. Easy, Med, and Hard arrays
 var interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
-var createConf = require("./mod/create-conf.js") // Use user arguements to create user instance config
+var createConf = require("./mod/config/create.js") // Use user arguements to create user instance config
 var sText = require("./mod/system-text.js") // Create, format, hold system prompt words
-const dUser = require("./mod/data-user.js") // User data for initializing, & resetting after a test
-const dTime = require("./mod/data-time.js") // Time data for initializing, & resetting after a test
+const dUser = require("./mod/data/data-user.js") // User data for initializing, & resetting after a test
+const dTime = require("./mod/data/data-time.js") // Time data for initializing, & resetting after a test
 var hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
 var hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 

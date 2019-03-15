@@ -5,7 +5,7 @@ function config() {
 		maxWordsPerLine: 5, // Test prompt words to display in single line
 		colourBlind: false, // Flag for blue/red instead of green/red
 		show: {
-			avg: false, // Flag to show or hide Avg WPM during test
+			avg: true, // Flag to show or hide Avg WPM during test
 			time: true // Flag to show or hide current time during test
 		}
 	}

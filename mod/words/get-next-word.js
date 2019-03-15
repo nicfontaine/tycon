@@ -1,5 +1,5 @@
-const source = require("./source.js") // Source text
-const randomCaps = require("./random-caps.js")
+const source = require("./../words/source.js") // Source text
+const randomCaps = require("./../format/random-caps.js")
 
 var next = function(wordArray, uconf) {
 

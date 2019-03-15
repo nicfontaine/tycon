@@ -15,7 +15,9 @@ function handler() {
 	// Keeps running handler.check() unless tdata.remaining <= 0
 	// Print system text, log avg, and print user text
 	this.step = function(tdata, udata, uconf, uhandler, complete, stext) {
+
 		parent.check(tdata, udata, uconf, uhandler)
+		
 		if (tdata.remaining > 0) {
 			out.system.words(stext.format)
 			// Only log every other second
@@ -32,6 +34,7 @@ function handler() {
 		}
 
 		return
+		
 	}
 
 }

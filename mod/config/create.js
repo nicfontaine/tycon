@@ -1,5 +1,5 @@
-const config = require("./config.js") // Global config for display, and test
-const source = require("./source.js")
+const config = require("./config-prototype.js") // Global config for display, and test
+const source = require("./../words/source.js")
 
 function proc(argv) {
 

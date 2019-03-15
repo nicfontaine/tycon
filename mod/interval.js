@@ -1,4 +1,5 @@
 module.exports = function(workFunc, interval) {
+  
   var flag = false
   var that = this
   var expected
@@ -6,17 +7,22 @@ module.exports = function(workFunc, interval) {
   this.interval = interval
 
   this.start = function() {
+
     flag = true
     expected = Date.now() + this.interval;
     timeout = setTimeout(step, this.interval)
+
   }
 
   this.stop = function() {
+
     flag = false
     clearTimeout(timeout)
+
   }
 
   function step() {
+
     if (flag) {
       var drift = Date.now() - expected
       if (drift > that.interval) {
@@ -29,5 +35,7 @@ module.exports = function(workFunc, interval) {
     } else {
       clearTimeout(timeout)
     }
+
   }
+
 }

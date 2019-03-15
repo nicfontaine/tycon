@@ -1,6 +1,6 @@
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
-const zero = require("./zero.js") // Leading zero-ify
+const zero = require("./format/zero.js") // Leading zero-ify
 
 var out = {
 
