@@ -3,9 +3,7 @@
 /******************************************************
 *******************************************************/
 
-const TestConfig = require("./../config/test-config.js")
 const chalk = require("chalk") // Console text styling
-// TestConfig.create(process.argv)
 
 var config = {
 
@@ -42,5 +40,4 @@ var config = {
 
 }
 
-// console.log(config.colour.current("foo"))
 module.exports = config

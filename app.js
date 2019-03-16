@@ -6,16 +6,14 @@ const chalk = require("chalk") // Console Text styling
 
 // Mod
 const source = require("./mod/words/source.js") // Source text words. Easy, Med, and Hard arrays
-var interval = require("./mod/interval.js") // Step interval
+const interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
-var createConf = require("./mod/config/create.js") // Use user arguements to create user instance config
-var sText = require("./mod/system-text.js") // Create, format, hold system prompt words
 const dUser = require("./mod/data/data-user.js") // User data for initializing, & resetting after a test
 const dTime = require("./mod/data/data-time.js") // Time data for initializing, & resetting after a test
-var hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
-var hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
+const hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
+const hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 
-var TestConfig = require("./mod/config/test-config.js")
+const ConfigInfo = require("./mod/test-config/config-info.js")
 const SystemConfig = require("./mod/system/system-config.js")
 const SystemWordHandler = require("./mod/system/word-handler.js")
 
@@ -26,11 +24,7 @@ keypress(process.stdin)
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Create user specific config from base prototype and arguements
-TestConfig.create(process.argv)
-
-// (NOTE) Should this be a prototype too?
-// Logic for Text content. From SystemText (prompt Text) and HandlerUser (input)
-var SystemText = sText()
+ConfigInfo.create(process.argv)
 
 // Init output on run
 out.init()
@@ -42,7 +36,7 @@ var DataUser = new dUser()
 var HandlerUser = new hUser()
 
 // Init object with begin, remaining, timer, and testLen. 
-var DataTime = new dTime(TestConfig.info.test.period)
+var DataTime = new dTime(ConfigInfo.info.test.period)
 
 // Keep track of time: test started, remaining, total length
 var HandlerTime = new hTime()
@@ -63,17 +57,20 @@ var State = {
 			DataTime.timer.stop()
 		}
 		// Reset
-		DataTime = new dTime(TestConfig.info.test.period)
+		DataTime = new dTime(ConfigInfo.info.test.period)
 		HandlerUser.clear(DataUser)
 		DataUser = new dUser()
-		SystemText = sText(TestConfig.info)
+
+		// (NOTE) do we need to reset here?
+		// SystemText = sText(ConfigInfo.info)
+		ConfigInfo.create(process.argv)
 
 		// Set test length
-		DataTime.remaining = TestConfig.info.test.period
+		DataTime.remaining = ConfigInfo.info.test.period
 
 		out.stats(DataTime.remaining, DataUser.prevAvg)
-		SystemText.newSet(TestConfig.info)
-		out.ready(SystemText.format)
+		SystemWordHandler.newSet()
+		out.ready(SystemWordHandler.format)
 		},
 
 	// Start running test & create interval
@@ -82,7 +79,7 @@ var State = {
 		DataTime.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = function() {
-			return HandlerTime.step(DataTime, DataUser, TestConfig.info, HandlerUser, State.complete, SystemText)
+			return HandlerTime.step(DataTime, DataUser, ConfigInfo.info, HandlerUser, State.complete)
 		}
 		// Init & start timer
 		DataTime.timer = new interval(work, 1000)
@@ -92,7 +89,7 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(DataTime.testLen, DataUser, SystemText)
+		out.complete(DataTime.testLen, DataUser)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -124,7 +121,7 @@ process.stdin.on("keypress", (ch, key) => {
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && SystemText.reject.indexOf(key.name) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && SystemConfig.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
 			if (DataTime.remaining > 0 && State.now === "running") {
@@ -142,10 +139,10 @@ process.stdin.on("keypress", (ch, key) => {
 						}
 
 						// Correct word
-						if (DataUser.current === SystemText.array[0]) {
+						if (DataUser.current === SystemConfig.wordSet[0]) {
 							stat()
 							DataUser.stats.correct++
-							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, TestConfig.info)
+							HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg, ConfigInfo.info)
 						}
 
 						// Incorrect word
@@ -154,9 +151,9 @@ process.stdin.on("keypress", (ch, key) => {
 							DataUser.stats.incorrect++
 
 							// Correct word not required. Log incorrect, and move to next word							
-							if (TestConfig.info.test.skip) {
+							if (ConfigInfo.info.test.skip) {
 								stat()
-								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, TestConfig.info)
+								HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg, ConfigInfo.info)
 							}
 
 							// Correct word is required before moving to next word.
@@ -164,7 +161,7 @@ process.stdin.on("keypress", (ch, key) => {
 							else {
 								// HandlerUser.incorrect(SystemText, DataUser)
 								stat()
-								out.system.words(SystemText.format)
+								out.system.words(SystemWordHandler.format)
 								out.user.current(DataUser.current)
 							}
 
@@ -187,13 +184,13 @@ process.stdin.on("keypress", (ch, key) => {
 					function rb() {
 						DataUser.current = DataUser.current.substring(0, DataUser.current.length - 1)
 						if (DataUser.current === "") {
-							SystemText.colours.good()
+							SystemWordHandler.colours.good()
 						}
 					}
 					// Function for Ctrl + Backspace
 					function cb() {
 						HandlerUser.clear(DataUser)
-						SystemText.colours.good()
+						SystemWordHandler.colours.good()
 					}
 
 					// (NOTE) Should check for CTRL+W for the unixers ;v
@@ -216,8 +213,8 @@ process.stdin.on("keypress", (ch, key) => {
 
 					// Check user text, print (format & style) system text, print user text
 					// Don't user HandlerUser.process() b/c  that would print "backspace"
-					HandlerUser.check(SystemText, DataUser.current, SystemText.array[0])
-					out.system.words(SystemText.format)
+					HandlerUser.check(DataUser.current)
+					out.system.words(SystemWordHandler.format)
 					out.user.current(DataUser.current)
 
 				}
@@ -226,7 +223,7 @@ process.stdin.on("keypress", (ch, key) => {
 				else {
 
 					out.stats(DataTime.remaining, DataUser.prevAvg)
-					HandlerUser.proc(key, SystemText, DataUser)
+					HandlerUser.proc(key, DataUser)
 
 				}
 
@@ -242,7 +239,7 @@ process.stdin.on("keypress", (ch, key) => {
 					// Output stats (clears console)
 					out.stats(DataTime.remaining, DataUser.prevAvg)
 
-					HandlerUser.proc(key, SystemText, DataUser)
+					HandlerUser.proc(key, DataUser)
 					// Begin
 					State.run()
 					

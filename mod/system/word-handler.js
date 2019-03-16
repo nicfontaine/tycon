@@ -5,9 +5,9 @@
 *******************************************************/
 
 const chalk = require("chalk") // Console text styling
-const SystemConfig = require("./system-config.js")
 const source = require("./../words/source.js") // Source text
-const TestConfig = require("./../config/test-config.js")
+const SystemConfig = require("./system-config.js")
+const ConfigInfo = require("./../test-config/config-info.js")
 const getNextWord = require("./../words/get-next-word.js")
 const getNextSet = require("./../words/get-next-set.js")
 
@@ -30,7 +30,7 @@ var handler = {
 	next: function() {
 
 		SystemConfig.wordSet.shift()
-		let word = getNextWord(SystemConfig.wordSet, TestConfig.info)
+		let word = getNextWord(SystemConfig.wordSet, ConfigInfo.info)
 		SystemConfig.wordSet.push(word)
 		return handler.format
 
@@ -40,7 +40,7 @@ var handler = {
 	// (Note) should randomly first-caps, with scaling frequency for difficulty
 	newSet: function() {
 
-		SystemConfig.wordSet = getNextSet(TestConfig.info, TestConfig.info.display.maxWordsPerLine)
+		SystemConfig.wordSet = getNextSet(ConfigInfo.info, ConfigInfo.info.display.maxWordsPerLine)
 
 	},
 
@@ -53,7 +53,7 @@ var handler = {
 				out += SystemConfig.colour.current(SystemConfig.wordSet[i]) + " "
 			}
 			// Fade last word
-			else if (i === TestConfig.info.display.maxWordsPerLine - 1) {
+			else if (i === ConfigInfo.info.display.maxWordsPerLine - 1) {
 				out += chalk.gray(SystemConfig.wordSet[i])
 			}
 			else {

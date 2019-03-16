@@ -24,7 +24,22 @@ function config() {
 		diffOptions: ["easy", "med", "hard"],
 		difficulty: 1, // easy med hard indices
 		skip: false, // If true, force correct entry before next word
-		caps: false // Randomly capitalize first letter. Scales w/ difficulty
+		caps: false, // Randomly capitalize first letter. Scales w/ difficulty
+		// Key input to ignore when typing
+		reject: [
+			"undefined",
+			"escape",
+			"tab",
+			"left",
+			"right",
+			"up",
+			"down",
+			"pageup",
+			"pagedown",
+			"home",
+			"end",
+			"delete"
+		]
 	}
 
 }

@@ -1,22 +1,24 @@
 const out = require("./out.js") // Console output
+const SystemConfig = require("./system/system-config.js")
+const SystemWordHandler = require("./system/word-handler.js")
 
 function handler() {
 
 	let parent = this
 
 	// Check if user input so far matches active word
-	this.check = function(systext, typed) {
+	this.check = function(typed) {
 		// Word fully correct
-		if (typed === systext.array[0]) {
-			systext.colours.success()
+		if (typed === SystemConfig.wordSet[0]) {
+			SystemWordHandler.colours.success()
 		}
 		// Word correct so far
-		else if (typed == systext.array[0].substring(0, typed.length)) {
-			systext.colours.good()
+		else if (typed == SystemConfig.wordSet[0].substring(0, typed.length)) {
+			SystemWordHandler.colours.good()
 		}
 		// Word incorrect
 		else {
-			systext.colours.bad()
+			SystemWordHandler.colours.bad()
 		}
 	}
 
@@ -32,15 +34,15 @@ function handler() {
 	}
 
 	// Handle key input for output
-	this.proc = function(key, systext, udata) {
+	this.proc = function(key, udata) {
 		// Shift to upper
 		if (key.shift) {
 			udata.current += key.name.toUpperCase()
 		} else {
 			udata.current += key.name
 		}
-		parent.check(systext, udata.current)
-		out.system.words(systext.format)
+		parent.check(udata.current)
+		out.system.words(SystemWordHandler.format)
 		// Print word
 		out.user.current(udata.current)
 	}
@@ -51,19 +53,19 @@ function handler() {
 	}
 
 	// Prompt next word for typing
-	this.next = function(systext, udata, remain, prevAvg, uconf) {
+	this.next = function(udata, remain, prevAvg, uconf) {
 		parent.clear(udata)
-		let nextSet = systext.next(uconf)
-		systext.colours.good()
+		let nextSet = SystemWordHandler.next(uconf)
+		SystemWordHandler.colours.good()
 		out.next(remain, prevAvg, nextSet, uconf)
 	}
 
 	// Run when incorrect word is entered
-	this.incorrect = function(systext, udata) {
+	this.incorrect = function(udata) {
 		// (Note) flash error for a second before cleaning
 		parent.clear(udata)
-		systext.colours.bad()
-		out.system.words(systext.format)
+		SystemWordHandler.colours.bad()
+		out.system.words(SystemWordHandler.format)
 		out.user.current(udata.current)
 	}
 	

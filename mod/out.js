@@ -3,9 +3,9 @@
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
-const TestConfig = require("./config/test-config.js")
-var SystemConfig = require("./system/system-config.js")
-const SystemText = require("./system-text.js")
+const ConfigInfo = require("./test-config/config-info.js")
+const SystemConfig = require("./system/system-config.js")
+const SystemWordHandler = require("./system/word-handler.js")
 
 var out = {
 
@@ -20,9 +20,9 @@ var out = {
 	},
 
 	init: function() {
-		let colour = SystemText().colours.c
+		let colour = SystemConfig.colour.current
 		out.clear()
-		let diffStr = TestConfig.info.test.diffOptions[TestConfig.info.test.difficulty]
+		let diffStr = ConfigInfo.info.test.diffOptions[ConfigInfo.info.test.difficulty]
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		out.shortcuts()
@@ -36,7 +36,7 @@ var out = {
 
 	// (NOTE) This needs the showAvg flag for out.stats
 	next: function(remain, avg, format) {
-		out.stats(remain, avg, TestConfig.info)
+		out.stats(remain, avg, ConfigInfo.info)
 		console.log(" " + format())
 		out.newline()
 	},
@@ -59,15 +59,15 @@ var out = {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (TestConfig.info.display.show.avg) {
+		if (ConfigInfo.info.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
-		if (TestConfig.info.display.show.time) {
+		if (ConfigInfo.info.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!TestConfig.info.display.show.time && !TestConfig.info.display.show.avg) {
+		if (!ConfigInfo.info.display.show.time && !ConfigInfo.info.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (TestConfig.info.display.show.time && TestConfig.info.display.show.avg) {
+		} else if (ConfigInfo.info.display.show.time && ConfigInfo.info.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -81,15 +81,15 @@ var out = {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (TestConfig.info.display.show.avg) {
+		if (ConfigInfo.info.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(prevAvg))
 		}
-		if (TestConfig.info.display.show.time) {
+		if (ConfigInfo.info.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!TestConfig.info.display.show.time && !TestConfig.info.display.show.avg) {
+		if (!ConfigInfo.info.display.show.time && !ConfigInfo.info.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (TestConfig.info.display.show.time && TestConfig.info.display.show.avg) {
+		} else if (ConfigInfo.info.display.show.time && ConfigInfo.info.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -98,12 +98,12 @@ var out = {
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, uData, systext) {
+	complete: function(len, uData) {
 		out.clear()
 		// Reset, in case we finish on incorrect letter
-		systext.colours.good()
-		let diffStr = TestConfig.info.test.diffOptions[TestConfig.info.test.difficulty]
-		console.log(systext.colours.c("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
+		SystemWordHandler.colours.good()
+		let diffStr = ConfigInfo.info.test.diffOptions[ConfigInfo.info.test.difficulty]
+		console.log(SystemConfig.colour.current("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))
 		console.log("Correct:   " + (chalk.bold(uData.stats.correct)))
@@ -111,6 +111,7 @@ var out = {
 		console.log("Backspace: " + uData.stats.backspace)
 		console.log("")
 		// (Note) sporadic issue here from asciichart complaining about array length.
+		// (NOTE) also not working if no correct words
 		if (uData.stats.log.wpmArray.length > 0) {
 			console.log(chart.plot(uData.stats.log.wpmArray, { height: 5}))
 		}
