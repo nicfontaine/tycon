@@ -16,6 +16,8 @@ var hUser = require("./mod/handler-user.js") // Use user arguements to create us
 var hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 
 var TestConfig = require("./mod/config/test-config.js")
+const SystemConfig = require("./mod/system/system-config.js")
+const SystemWordHandler = require("./mod/system/word-handler.js")
 
 // Route input to keypress
 keypress(process.stdin)
@@ -31,7 +33,7 @@ TestConfig.create(process.argv)
 var SystemText = sText()
 
 // Init output on run
-out.init(SystemText.colours.c)
+out.init()
 
 // Store typed characters & stats
 var DataUser = new dUser()

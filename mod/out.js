@@ -4,6 +4,8 @@ const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
 const TestConfig = require("./config/test-config.js")
+var SystemConfig = require("./system/system-config.js")
+const SystemText = require("./system-text.js")
 
 var out = {
 
@@ -17,7 +19,8 @@ var out = {
 		console.log("")
 	},
 
-	init: function(colour) {
+	init: function() {
+		let colour = SystemText().colours.c
 		out.clear()
 		let diffStr = TestConfig.info.test.diffOptions[TestConfig.info.test.difficulty]
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))

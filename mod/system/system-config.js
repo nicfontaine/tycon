@@ -3,19 +3,23 @@
 /******************************************************
 *******************************************************/
 
-const TestConfig = require("./config/test-config.js")
+const TestConfig = require("./../config/test-config.js")
+const chalk = require("chalk") // Console text styling
+// TestConfig.create(process.argv)
 
 var config = {
 
 	colour: {
-		// String value for positive colour. Green or Blue
-		success: TestConfig.info.display.colourBlind ? "blue" : "green",
-		// Hold the currently used colour
-		current: config.colour.success
-	},
 
-	// Maximum for set of words, and for width of console line
-	max: TestConfig.info.display.maxWordsPerLine,
+		// String value for positive colour. Green or Blue
+		// (NOTE) replace with colour based on colour blind arg
+		success: "green",
+
+		// Hold the currently used colour
+		// (NOTE) replace with colour from success
+		current: chalk.bold["green"]
+
+	},
 
 	// Key input to ignore when typing
 	reject: [
@@ -34,8 +38,9 @@ var config = {
 	],
 
 	// Holds words generated, to be typed by user
-	wordSet: [],
+	wordSet: []
 
 }
 
+// console.log(config.colour.current("foo"))
 module.exports = config
