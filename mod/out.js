@@ -3,7 +3,7 @@
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
-const ConfigInfo = require("./test-config/config-info.js")
+const TestConfig = require("./test-config/config.js")
 const SystemConfig = require("./system/system-config.js")
 const SystemWordHandler = require("./system/word-handler.js")
 
@@ -22,7 +22,7 @@ var out = {
 	init: function() {
 		let colour = SystemConfig.colour.current
 		out.clear()
-		let diffStr = ConfigInfo.info.test.diffOptions[ConfigInfo.info.test.difficulty]
+		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		out.shortcuts()
@@ -36,7 +36,7 @@ var out = {
 
 	// (NOTE) This needs the showAvg flag for out.stats
 	next: function(remain, avg, format) {
-		out.stats(remain, avg, ConfigInfo.info)
+		out.stats(remain, avg, TestConfig.store)
 		console.log(" " + format())
 		out.newline()
 	},
@@ -59,15 +59,15 @@ var out = {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (ConfigInfo.info.display.show.avg) {
+		if (TestConfig.store.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
-		if (ConfigInfo.info.display.show.time) {
+		if (TestConfig.store.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!ConfigInfo.info.display.show.time && !ConfigInfo.info.display.show.avg) {
+		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (ConfigInfo.info.display.show.time && ConfigInfo.info.display.show.avg) {
+		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -81,15 +81,15 @@ var out = {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (ConfigInfo.info.display.show.avg) {
+		if (TestConfig.store.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(prevAvg))
 		}
-		if (ConfigInfo.info.display.show.time) {
+		if (TestConfig.store.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!ConfigInfo.info.display.show.time && !ConfigInfo.info.display.show.avg) {
+		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (ConfigInfo.info.display.show.time && ConfigInfo.info.display.show.avg) {
+		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -102,7 +102,7 @@ var out = {
 		out.clear()
 		// Reset, in case we finish on incorrect letter
 		SystemWordHandler.colours.good()
-		let diffStr = ConfigInfo.info.test.diffOptions[ConfigInfo.info.test.difficulty]
+		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 		console.log(SystemConfig.colour.current("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))

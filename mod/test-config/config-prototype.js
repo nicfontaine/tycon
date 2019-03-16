@@ -2,6 +2,7 @@
 
 /******************************************************
 Basic session config prototype
+All data is set before a test, and remains unchanged during
 
 .display    Display settings: colourblind mode, stats on/off, word line length
 .test       Test settings: length, difficulty, skip, caps
@@ -16,6 +17,11 @@ function config() {
 		show: {
 			avg: true, // Flag to show or hide Avg WPM during test
 			time: true // Flag to show or hide current time during test
+		},
+		colours: {
+			good: "green", // Will be changed to "blue" if colourBlind === true
+			bad: "red",
+			cb: "blue" // Holder for colour-blind colour
 		}
 	}
 
@@ -40,6 +46,7 @@ function config() {
 			"end",
 			"delete"
 		]
+		
 	}
 
 }

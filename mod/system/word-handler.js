@@ -7,7 +7,7 @@
 const chalk = require("chalk") // Console text styling
 const source = require("./../words/source.js") // Source text
 const SystemConfig = require("./system-config.js")
-const ConfigInfo = require("./../test-config/config-info.js")
+const TestConfig = require("./../test-config/config.js")
 const getNextWord = require("./../words/get-next-word.js")
 const getNextSet = require("./../words/get-next-set.js")
 
@@ -16,13 +16,13 @@ var handler = {
 	// Good/Bad State for "active" word, and incorrect word entry
 	colours: {
 		good: function() {
-			SystemConfig.colour.current = chalk.bold[SystemConfig.colour.success]
+			SystemConfig.colour.current = chalk.bold[TestConfig.store.display.colours.good]
 		},
 		success: function() {
-			SystemConfig.colour.current = chalk.reset.bold.inverse[SystemConfig.colour.success]
+			SystemConfig.colour.current = chalk.reset.bold.inverse[TestConfig.store.display.colours.good]
 		},
 		bad: function() {
-			SystemConfig.colour.current = chalk.bold.red
+			SystemConfig.colour.current = chalk.bold[TestConfig.store.display.colours.bad]
 		}
 	},
 
@@ -30,7 +30,7 @@ var handler = {
 	next: function() {
 
 		SystemConfig.wordSet.shift()
-		let word = getNextWord(SystemConfig.wordSet, ConfigInfo.info)
+		let word = getNextWord(SystemConfig.wordSet, TestConfig.store)
 		SystemConfig.wordSet.push(word)
 		return handler.format
 
@@ -40,7 +40,7 @@ var handler = {
 	// (Note) should randomly first-caps, with scaling frequency for difficulty
 	newSet: function() {
 
-		SystemConfig.wordSet = getNextSet(ConfigInfo.info, ConfigInfo.info.display.maxWordsPerLine)
+		SystemConfig.wordSet = getNextSet(TestConfig.store, TestConfig.store.display.maxWordsPerLine)
 
 	},
 
@@ -53,7 +53,7 @@ var handler = {
 				out += SystemConfig.colour.current(SystemConfig.wordSet[i]) + " "
 			}
 			// Fade last word
-			else if (i === ConfigInfo.info.display.maxWordsPerLine - 1) {
+			else if (i === TestConfig.store.display.maxWordsPerLine - 1) {
 				out += chalk.gray(SystemConfig.wordSet[i])
 			}
 			else {

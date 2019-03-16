@@ -19,22 +19,6 @@ var config = {
 
 	},
 
-	// Key input to ignore when typing
-	reject: [
-		"undefined",
-		"escape",
-		"tab",
-		"left",
-		"right",
-		"up",
-		"down",
-		"pageup",
-		"pagedown",
-		"home",
-		"end",
-		"delete"
-	],
-
 	// Holds words generated, to be typed by user
 	wordSet: []
 

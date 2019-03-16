@@ -1,6 +1,8 @@
 #! /usr/bin/env node
 (function(){"use strict"})()
 
+// Bug: if type incorrect, and restart test, colour stays red
+
 const keypress = require("keypress") // Input handling
 const chalk = require("chalk") // Console Text styling
 
@@ -13,9 +15,11 @@ const dTime = require("./mod/data/data-time.js") // Time data for initializing, 
 const hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
 const hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 
-const ConfigInfo = require("./mod/test-config/config-info.js")
+const TestConfig = require("./mod/test-config/config.js")
 const SystemConfig = require("./mod/system/system-config.js")
 const SystemWordHandler = require("./mod/system/word-handler.js")
+
+const TestData = require("./mod/test-data/data.js")
 
 // Route input to keypress
 keypress(process.stdin)
@@ -23,8 +27,11 @@ keypress(process.stdin)
 // Windows doesn't recognize this, so only not on windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
-// Create user specific config from base prototype and arguements
-ConfigInfo.create(process.argv)
+// Create test-session specific config from base prototype and arguements
+TestConfig.create(process.argv)
+
+// Initialize test-session specific data from base prototype
+TestData.create()
 
 // Init output on run
 out.init()
@@ -36,7 +43,7 @@ var DataUser = new dUser()
 var HandlerUser = new hUser()
 
 // Init object with begin, remaining, timer, and testLen. 
-var DataTime = new dTime(ConfigInfo.info.test.period)
+var DataTime = new dTime(TestConfig.store.test.period)
 
 // Keep track of time: test started, remaining, total length
 var HandlerTime = new hTime()
@@ -57,16 +64,18 @@ var State = {
 			DataTime.timer.stop()
 		}
 		// Reset
-		DataTime = new dTime(ConfigInfo.info.test.period)
+		DataTime = new dTime(TestConfig.store.test.period)
 		HandlerUser.clear(DataUser)
 		DataUser = new dUser()
+		// (NOTE) to replace above
+		TestData.create()
 
 		// (NOTE) do we need to reset here?
-		// SystemText = sText(ConfigInfo.info)
-		ConfigInfo.create(process.argv)
+		// SystemText = sText(TestConfig.store)
+		TestConfig.create(process.argv)
 
 		// Set test length
-		DataTime.remaining = ConfigInfo.info.test.period
+		DataTime.remaining = TestConfig.store.test.period
 
 		out.stats(DataTime.remaining, DataUser.prevAvg)
 		SystemWordHandler.newSet()
@@ -79,7 +88,7 @@ var State = {
 		DataTime.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = function() {
-			return HandlerTime.step(DataTime, DataUser, ConfigInfo.info, HandlerUser, State.complete)
+			return HandlerTime.step(DataTime, DataUser, TestConfig.store, HandlerUser, State.complete)
 		}
 		// Init & start timer
 		DataTime.timer = new interval(work, 1000)
@@ -121,7 +130,7 @@ process.stdin.on("keypress", (ch, key) => {
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && SystemConfig.reject.indexOf(key.name) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && TestConfig.store.test.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
 			if (DataTime.remaining > 0 && State.now === "running") {
@@ -142,7 +151,7 @@ process.stdin.on("keypress", (ch, key) => {
 						if (DataUser.current === SystemConfig.wordSet[0]) {
 							stat()
 							DataUser.stats.correct++
-							HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg, ConfigInfo.info)
+							HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg)
 						}
 
 						// Incorrect word
@@ -151,9 +160,9 @@ process.stdin.on("keypress", (ch, key) => {
 							DataUser.stats.incorrect++
 
 							// Correct word not required. Log incorrect, and move to next word							
-							if (ConfigInfo.info.test.skip) {
+							if (TestConfig.store.test.skip) {
 								stat()
-								HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg, ConfigInfo.info)
+								HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg)
 							}
 
 							// Correct word is required before moving to next word.
@@ -233,7 +242,7 @@ process.stdin.on("keypress", (ch, key) => {
 			else if (State.now === "ready") {
 
 				// Don't print or respond to SPACE or RETURN
-				// ...Can't use these in SystemText.reject because they're used for word entry
+				// ...Can't use these in TestConfig.store.test.reject because they're used for word entry
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)

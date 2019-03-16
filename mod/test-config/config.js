@@ -3,7 +3,7 @@
 /******************************************************
 Create & store unique test config
 
-.info       Stored test config
+.store       Stored test config
 .create()   Create test config on app run with process.argv
 *******************************************************/
 
@@ -16,7 +16,7 @@ var test = {
 	
 	// Generate test config from args, and store in info{}
 	create: function(args) {
-		test.info = createConfig(args)
+		test.store = createConfig(args)
 	}
 
 }

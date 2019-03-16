@@ -6,7 +6,7 @@ const source = require("./../words/source.js")
 function create(argv) {
 
 	// Generate default config
-	let userConf = new config()
+	let testConf = new config()
 
 	// Ignore "node" and "app.js"
 	let args = argv.slice(2)
@@ -22,34 +22,36 @@ function create(argv) {
 			// Number for test length
 			if (typeof ar === "number" || !isNaN(ar)) {
 				if (ar >= 10 && ar <= 300) {
-					userConf.test.period = ar
+					testConf.test.period = ar
 				}
 			}
 
 			// String for difficulty, from source object
-			else if (userConf.test.diffOptions.indexOf(ar) > -1) {
-				userConf.test.difficulty = userConf.test.diffOptions.indexOf(ar)
+			else if (testConf.test.diffOptions.indexOf(ar) > -1) {
+				testConf.test.difficulty = testConf.test.diffOptions.indexOf(ar)
 			}
 
-			// Don't require correct word before moving to next
+			// Don't require correct word entry before moving to next
 			else if (ar === "skip") {
-				userConf.test.skip = true
+				testConf.test.skip = true
 			}
 
 			// Colour Blink mode
 			else if (ar === "cb") {
-				userConf.display.colourBlind = true
+				testConf.display.colourBlind = true
+				testConf.display.colours.good = testConf.display.colours.cb
 			}
 
+			// Random first-caps mode
 			else if (ar === "caps") {
-				userConf.test.caps = true
+				testConf.test.caps = true
 			}
 
 		}
 		
 	}
 
-	return userConf
+	return testConf
 
 }
 

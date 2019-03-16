@@ -53,11 +53,11 @@ function handler() {
 	}
 
 	// Prompt next word for typing
-	this.next = function(udata, remain, prevAvg, uconf) {
+	this.next = function(udata, remain, prevAvg) {
 		parent.clear(udata)
-		let nextSet = SystemWordHandler.next(uconf)
+		let nextSet = SystemWordHandler.next()
 		SystemWordHandler.colours.good()
-		out.next(remain, prevAvg, nextSet, uconf)
+		out.next(remain, prevAvg, nextSet)
 	}
 
 	// Run when incorrect word is entered
