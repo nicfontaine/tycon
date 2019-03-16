@@ -3,12 +3,13 @@ const source = require("./words/source.js") // Source text
 const out = require("./out.js") // Console output
 const getNextWord = require("./words/get-next-word.js") // Shift word list, and add 1 more from source
 const getNextSet = require("./words/get-next-set.js") // Shift word list, and add 1 more from source
+const TestConfig = require("./config/test-config.js")
 
-var data = function(uConf) {
+var data = function() {
 
-	let difficulty = uConf.test.difficulty
-	let maxWordsPerLine = uConf.display.maxWordsPerLine
-	let colourBlind = uConf.display.colourBlind
+	let difficulty = TestConfig.info.test.difficulty
+	let maxWordsPerLine = TestConfig.info.display.maxWordsPerLine
+	let colourBlind = TestConfig.info.display.colourBlind
 
 	// String value for positive colour. Green or Blue
 	let successColour = colourBlind ? "blue" : "green"
@@ -39,10 +40,10 @@ var data = function(uConf) {
 		array: [],
 
 		// rm word when typed correctly, and push one to end
-		next: function(uconf) {
+		next: function() {
 
 			obj.array.shift()
-			let word = getNextWord(obj.array, uconf)
+			let word = getNextWord(obj.array, TestConfig.info)
 			obj.array.push(word)
 			return obj.format
 
@@ -50,9 +51,9 @@ var data = function(uConf) {
 
 		// Generate set of words
 		// (Note) should randomly first-caps, with scaling frequency for difficulty
-		newSet: function(uconf) {
+		newSet: function() {
 
-			obj.array = getNextSet(uconf, obj.max)
+			obj.array = getNextSet(TestConfig.info, obj.max)
 
 		},
 

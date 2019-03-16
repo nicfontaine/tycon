@@ -1,6 +1,9 @@
+(function(){"use strict"})()
+
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
+const TestConfig = require("./config/test-config.js")
 
 var out = {
 
@@ -14,9 +17,9 @@ var out = {
 		console.log("")
 	},
 
-	init: function(uconf, colour) {
+	init: function(colour) {
 		out.clear()
-		let diffStr = uconf.test.diffOptions[uconf.test.difficulty]
+		let diffStr = TestConfig.info.test.diffOptions[TestConfig.info.test.difficulty]
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		out.shortcuts()
@@ -29,8 +32,8 @@ var out = {
 	},
 
 	// (NOTE) This needs the showAvg flag for out.stats
-	next: function(remain, avg, format, uconf) {
-		out.stats(remain, avg, uconf)
+	next: function(remain, avg, format) {
+		out.stats(remain, avg, TestConfig.info)
 		console.log(" " + format())
 		out.newline()
 	},
@@ -49,19 +52,19 @@ var out = {
 	},
 
 	// Show typing stats, Time left, and Avg. typed
-	statsTick: function(remain, avg, uconf) {
+	statsTick: function(remain, avg) {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (uconf.display.show.avg) {
+		if (TestConfig.info.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
-		if (uconf.display.show.time) {
+		if (TestConfig.info.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!uconf.display.show.time && !uconf.display.show.avg) {
+		if (!TestConfig.info.display.show.time && !TestConfig.info.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (uconf.display.show.time && uconf.display.show.avg) {
+		} else if (TestConfig.info.display.show.time && TestConfig.info.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -71,19 +74,19 @@ var out = {
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
 	// (NOTE) Should probably fix, and not be redundant
-	stats: function(remain, prevAvg, uconf) {
+	stats: function(remain, prevAvg) {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
-		if (uconf.display.show.avg) {
+		if (TestConfig.info.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(prevAvg))
 		}
-		if (uconf.display.show.time) {
+		if (TestConfig.info.display.show.time) {
 			timeTxt = zero(remain)
 		}
-		if (!uconf.display.show.time && !uconf.display.show.avg) {
+		if (!TestConfig.info.display.show.time && !TestConfig.info.display.show.avg) {
 			console.log("[Test Running]")
-		} else if (uconf.display.show.time && uconf.display.show.avg) {
+		} else if (TestConfig.info.display.show.time && TestConfig.info.display.show.avg) {
 			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
 		} else {
 			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
@@ -92,11 +95,11 @@ var out = {
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, uconf, uData, systext) {
+	complete: function(len, uData, systext) {
 		out.clear()
 		// Reset, in case we finish on incorrect letter
 		systext.colours.good()
-		let diffStr = uconf.test.diffOptions[uconf.test.difficulty]
+		let diffStr = TestConfig.info.test.diffOptions[TestConfig.info.test.difficulty]
 		console.log(systext.colours.c("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))

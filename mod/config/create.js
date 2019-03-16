@@ -1,7 +1,9 @@
+(function(){"use strict"})()
+
 const config = require("./config-prototype.js") // Global config for display, and test
 const source = require("./../words/source.js")
 
-function proc(argv) {
+function create(argv) {
 
 	// Generate default config
 	let userConf = new config()
@@ -31,7 +33,7 @@ function proc(argv) {
 
 			// Don't require correct word before moving to next
 			else if (ar === "skip") {
-				userConf.test.retypeOnFail = false
+				userConf.test.skip = true
 			}
 
 			// Colour Blink mode
@@ -51,4 +53,4 @@ function proc(argv) {
 
 }
 
-module.exports = proc
+module.exports = create

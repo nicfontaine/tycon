@@ -15,6 +15,8 @@ const dTime = require("./mod/data/data-time.js") // Time data for initializing, 
 var hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
 var hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 
+var TestConfig = require("./mod/config/test-config.js")
+
 // Route input to keypress
 keypress(process.stdin)
 
@@ -22,14 +24,14 @@ keypress(process.stdin)
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Create user specific config from base prototype and arguements
-var ConfUser = createConf(process.argv)
+TestConfig.create(process.argv)
 
 // (NOTE) Should this be a prototype too?
 // Logic for Text content. From SystemText (prompt Text) and HandlerUser (input)
-var SystemText = sText(ConfUser)
+var SystemText = sText()
 
 // Init output on run
-out.init(ConfUser, SystemText.colours.c)
+out.init(SystemText.colours.c)
 
 // Store typed characters & stats
 var DataUser = new dUser()
@@ -38,7 +40,7 @@ var DataUser = new dUser()
 var HandlerUser = new hUser()
 
 // Init object with begin, remaining, timer, and testLen. 
-var DataTime = new dTime(ConfUser.test.period)
+var DataTime = new dTime(TestConfig.info.test.period)
 
 // Keep track of time: test started, remaining, total length
 var HandlerTime = new hTime()
@@ -59,16 +61,16 @@ var State = {
 			DataTime.timer.stop()
 		}
 		// Reset
-		DataTime = new dTime(ConfUser.test.period)
+		DataTime = new dTime(TestConfig.info.test.period)
 		HandlerUser.clear(DataUser)
 		DataUser = new dUser()
-		SystemText = sText(ConfUser)
+		SystemText = sText(TestConfig.info)
 
 		// Set test length
-		DataTime.remaining = ConfUser.test.period
+		DataTime.remaining = TestConfig.info.test.period
 
-		out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
-		SystemText.newSet(ConfUser)
+		out.stats(DataTime.remaining, DataUser.prevAvg)
+		SystemText.newSet(TestConfig.info)
 		out.ready(SystemText.format)
 		},
 
@@ -78,7 +80,7 @@ var State = {
 		DataTime.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = function() {
-			return HandlerTime.step(DataTime, DataUser, ConfUser, HandlerUser, State.complete, SystemText)
+			return HandlerTime.step(DataTime, DataUser, TestConfig.info, HandlerUser, State.complete, SystemText)
 		}
 		// Init & start timer
 		DataTime.timer = new interval(work, 1000)
@@ -88,7 +90,7 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(DataTime.testLen, ConfUser, DataUser, SystemText)
+		out.complete(DataTime.testLen, DataUser, SystemText)
 	},
 
 	// Quit app. log exit message, and exit process
@@ -134,14 +136,14 @@ process.stdin.on("keypress", (ch, key) => {
 
 						// Reference stat output here to keep simpler in cases below
 						let stat = function() {
-							out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
+							out.stats(DataTime.remaining, DataUser.prevAvg)
 						}
 
 						// Correct word
 						if (DataUser.current === SystemText.array[0]) {
 							stat()
 							DataUser.stats.correct++
-							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser)
+							HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, TestConfig.info)
 						}
 
 						// Incorrect word
@@ -149,19 +151,19 @@ process.stdin.on("keypress", (ch, key) => {
 
 							DataUser.stats.incorrect++
 
+							// Correct word not required. Log incorrect, and move to next word							
+							if (TestConfig.info.test.skip) {
+								stat()
+								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, TestConfig.info)
+							}
+
 							// Correct word is required before moving to next word.
 							// Stay on current word, and re-print out stats, system set, and user text
-							if (ConfUser.test.retypeOnFail) {
+							else {
 								// HandlerUser.incorrect(SystemText, DataUser)
 								stat()
 								out.system.words(SystemText.format)
 								out.user.current(DataUser.current)
-							}
-
-							// Correct word not required. Log incorrect, and move to next word
-							else {
-								stat()
-								HandlerUser.next(SystemText, DataUser, DataTime.remaining, DataUser.prevAvg, ConfUser)
 							}
 
 						}
@@ -176,7 +178,7 @@ process.stdin.on("keypress", (ch, key) => {
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
+					out.stats(DataTime.remaining, DataUser.prevAvg)
 
 					let pt = process.platform
 					// Function for regular Backspace
@@ -221,7 +223,7 @@ process.stdin.on("keypress", (ch, key) => {
 				// Regular typing
 				else {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
+					out.stats(DataTime.remaining, DataUser.prevAvg)
 					HandlerUser.proc(key, SystemText, DataUser)
 
 				}
@@ -236,7 +238,7 @@ process.stdin.on("keypress", (ch, key) => {
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)
-					out.stats(DataTime.remaining, DataUser.prevAvg, ConfUser)
+					out.stats(DataTime.remaining, DataUser.prevAvg)
 
 					HandlerUser.proc(key, SystemText, DataUser)
 					// Begin

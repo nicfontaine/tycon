@@ -1,3 +1,12 @@
+(function(){"use strict"})()
+
+/******************************************************
+Basic session config prototype
+
+.display    Display settings: colourblind mode, stats on/off, word line length
+.test       Test settings: length, difficulty, skip, caps
+*******************************************************/
+
 // Global config variables
 function config() {
 
@@ -14,7 +23,7 @@ function config() {
 		period: 60, // In seconds
 		diffOptions: ["easy", "med", "hard"],
 		difficulty: 1, // easy med hard indices
-		retypeOnFail: true, // If true, force correct entry before next word
+		skip: false, // If true, force correct entry before next word
 		caps: false // Randomly capitalize first letter. Scales w/ difficulty
 	}
 
