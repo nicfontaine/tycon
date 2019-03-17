@@ -1,8 +1,10 @@
-var ran = function(uconf, word) {
+const TestConfig = require("./../test-config/config.js")
 
-	let difficulty = uconf.test.difficulty
+var ran = function(word) {
 
-	let randomMax = uconf.test.diffOptions.length*3 + 1
+	let difficulty = TestConfig.store.test.difficulty
+
+	let randomMax = TestConfig.store.test.diffOptions.length*3 + 1
 	let diffRandom = Math.floor((Math.random() * randomMax))
 	if (diffRandom < difficulty+1) {
 		word = word[0].toUpperCase() + word.slice(1)

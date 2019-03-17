@@ -7,18 +7,18 @@ Create & store unique test config
 .create()   Create test config on app run with process.argv
 *******************************************************/
 
-const createConfig = require("./config-create.js")
+const createHandler = require("./handler-create.js")
 
-var test = {
+var handler = {
 
 	// Unique test config will be stored here
-	store: {},
+	f: {},
 	
-	// Generate test config from args, and store in store{}
-	create: function(args) {
-		test.store = createConfig(args)
+	// Generate test config from args, and store in info{}
+	create: function() {
+		handler.f = createHandler()
 	}
 
 }
 
-module.exports = test
+module.exports = handler

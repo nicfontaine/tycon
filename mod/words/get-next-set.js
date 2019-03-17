@@ -1,13 +1,15 @@
 const source = require("./../words/source.js") // Source text
 const randomCaps = require("./../format/random-caps.js")
+const TestConfig = require("./../test-config/config.js")
 
-var next = function(uconf, max) {
+var next = function() {
 
-	let difficulty = uconf.test.difficulty
+	let difficulty = TestConfig.store.test.difficulty
 
 	let set = []
 
 	let numSave = 0
+	let max = TestConfig.store.display.maxWordsPerLine
 
 	for (var i=0; i<max; i++) {
 
@@ -21,8 +23,8 @@ var next = function(uconf, max) {
 		let word = source[difficulty][num]
 
 		// Caps flag is on. First-caps random words, scale randomness w/ difficulty
-		if (uconf.test.caps) {
-			word = randomCaps(uconf, word)
+		if (TestConfig.store.test.caps) {
+			word = randomCaps(word)
 		}
 
 		set.push(word)

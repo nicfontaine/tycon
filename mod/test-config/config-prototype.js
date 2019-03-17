@@ -18,7 +18,7 @@ function config() {
 			avg: true, // Flag to show or hide Avg WPM during test
 			time: true // Flag to show or hide current time during test
 		},
-		colours: {
+		colour: {
 			good: "green", // Will be changed to "blue" if colourBlind === true
 			bad: "red",
 			cb: "blue" // Holder for colour-blind colour

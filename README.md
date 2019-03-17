@@ -40,3 +40,99 @@ twitter: [@ngpfontaine](https://twitter.com/ngpfontaine)
 
 ### License
 Buy it, use it, break it, fix it, trash it, change it, mail, upgrade it. ;v
+
+
+```TestData = {
+	store: {
+		system: {
+			wordSet: [],
+			colour: {
+				current: 
+			},
+			time: {
+				begin: undefined,
+				remaining: 0,
+				timer: undefined
+			}
+		},
+		user: {
+			current: "",
+			prevAvg: 0,
+			stats: {
+				correct: 0,
+				correct: 0,
+				correct: 0,
+				avgs: []
+			}
+		}
+	}
+}
+
+TestConfig = {
+	store: {
+		display: {
+			maxWordsPerLine: 5,
+			colourBlind: false,
+			show: {
+				avg: true,
+				time: true
+			},
+			colour: {
+				good: "green",
+				bad: "red",
+				cb: "blue"
+			}
+		},
+		test: {
+			period: 60,
+			diffOptions: [],
+			difficulty: 1,
+			skip: false,
+			caps: false,
+			reject: []
+		}
+	}
+}
+
+InputHandler: {
+	f: {
+		colours: {
+			good: function() {
+
+			},
+			success: function() {
+
+			},
+			bad: function() {
+
+			},
+		},
+		check: function() {
+
+		},
+		avg: function() {
+		
+		},
+		proc: function() {
+		
+		},
+		clear: function() {
+		
+		},
+		incorrect: function() {
+		
+		}
+	}
+}
+
+SourceHandler: {
+	next: function() {
+
+	},
+	newSet: function() {
+
+	},
+	format: function() {
+
+	}
+}```

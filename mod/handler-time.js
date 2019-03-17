@@ -1,37 +1,47 @@
 const out = require("./out.js") // Console output
 const SystemWordHandler = require("./system/word-handler.js")
+const TestData = require("./test-data/data.js")
+const TestConfig = require("./test-config/config.js")
+const InputHandler = require("./input-handler/handler.js")
 
 function handler() {
 
 	let parent = this
 	
 	// Calculate time remaining & show tick stats
-	this.check = function(tdata, udata, uconf, uhandler) {
-		tdata.remaining = Number(tdata.testLen - (Math.floor((Date.now() - tdata.begin)/1000)))
-		let avg = uhandler.avg(udata, tdata.testLen, tdata.remaining)
-		out.statsTick(tdata.remaining, avg, uconf)
+	this.check = function() {
+
+		let begin = TestData.store.system.time.begin
+		let period = TestConfig.store.test.period
+		let remain = Number(period - (Math.floor((Date.now() - begin)/1000)))
+
+		TestData.store.system.time.remaining = remain
+		let avg = InputHandler.f.avg()
+		out.statsTick(avg)
 	}
 
 	// Interval timer
 	// Keeps running handler.check() unless tdata.remaining <= 0
 	// Print system text, log avg, and print user text
-	this.step = function(tdata, udata, uconf, uhandler, complete) {
+	this.step = function(complete) {
 
-		parent.check(tdata, udata, uconf, uhandler)
+		let remain = TestData.store.system.time.remaining
+
+		parent.check()
 		
-		if (tdata.remaining > 0) {
-			out.system.words(SystemWordHandler.format)
+		if (remain > 0) {
+			out.system.words()
 			// Only log every other second
-			if (tdata.remaining%2 === 0) {
-				let avg = uhandler.avg(udata, tdata.testLen, tdata.remaining)
-				udata.stats.log.wpmArray.push(avg)
+			if (remain%2 === 0) {
+				let avg = InputHandler.f.avg()
+				TestData.store.user.stats.avgs.push(avg)
 			}
-			out.user.current(udata.current)
+			out.user.current()
 		}
 		// End
 		else {
 			complete()
-			tdata.timer.stop()
+			TestData.store.system.time.timer.stop()
 		}
 
 		return

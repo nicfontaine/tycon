@@ -4,8 +4,8 @@ const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
 const TestConfig = require("./test-config/config.js")
-const SystemConfig = require("./system/system-config.js")
 const SystemWordHandler = require("./system/word-handler.js")
+const TestData = require("./test-data/data.js")
 
 var out = {
 
@@ -20,7 +20,7 @@ var out = {
 	},
 
 	init: function() {
-		let colour = SystemConfig.colour.current
+		let colour = TestData.store.system.colour.current
 		out.clear()
 		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
@@ -29,33 +29,34 @@ var out = {
 		console.log("")
 	},
 
-	ready: function(format) {
-		console.log(" " + format())
+	ready: function() {
+		SystemWordHandler.colours.good()
+		console.log(" " + SystemWordHandler.format())
 		out.newline()
 	},
 
 	// (NOTE) This needs the showAvg flag for out.stats
-	next: function(remain, avg, format) {
-		out.stats(remain, avg, TestConfig.store)
-		console.log(" " + format())
+	next: function() {
+		out.stats()
+		console.log(" " + SystemWordHandler.format())
 		out.newline()
 	},
 
 	system: {
-		words: function(format) {
-			console.log(" " + format())
+		words: function() {
+			console.log(" " + SystemWordHandler.format())
 		}
 	},
 
 	user: {
-		current: function(text) {
-			console.log(" " + chalk.bold(text) + chalk.gray("_"))
+		current: function() {
+			console.log(" " + chalk.bold(TestData.store.user.current) + chalk.gray("_"))
 			console.log("")
 		}
 	},
 
 	// Show typing stats, Time left, and Avg. typed
-	statsTick: function(remain, avg) {
+	statsTick: function(avg) {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
@@ -63,7 +64,7 @@ var out = {
 			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
 		if (TestConfig.store.display.show.time) {
-			timeTxt = zero(remain)
+			timeTxt = zero(TestData.store.system.time.remaining)
 		}
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			console.log("[Test Running]")
@@ -77,15 +78,15 @@ var out = {
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
 	// (NOTE) Should probably fix, and not be redundant
-	stats: function(remain, prevAvg) {
+	stats: function() {
 		out.clear()
 		let avgTxt = ""
 		let timeTxt = ""
 		if (TestConfig.store.display.show.avg) {
-			avgTxt = "Avg: " + chalk.bold(zero(prevAvg))
+			avgTxt = "Avg: " + chalk.bold(zero(TestData.store.user.prevAvg))
 		}
 		if (TestConfig.store.display.show.time) {
-			timeTxt = zero(remain)
+			timeTxt = zero(TestData.store.system.time.remaining)
 		}
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			console.log("[Test Running]")
@@ -98,22 +99,22 @@ var out = {
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function(len, uData) {
+	complete: function() {
 		out.clear()
 		// Reset, in case we finish on incorrect letter
 		SystemWordHandler.colours.good()
 		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
-		console.log(SystemConfig.colour.current("[Complete] ") + len + " seconds, " + chalk.bold(diffStr.toUpperCase()))
+		console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
-		console.log("WPM:       " + chalk.bold((uData.stats.correct * 60) / len))
-		console.log("Correct:   " + (chalk.bold(uData.stats.correct)))
-		console.log("Incorrect: " + uData.stats.incorrect)
-		console.log("Backspace: " + uData.stats.backspace)
+		console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
+		console.log("Correct:   " + (chalk.bold(TestData.store.user.stats.correct)))
+		console.log("Incorrect: " + TestData.store.user.stats.incorrect)
+		console.log("Backspace: " + TestData.store.user.stats.backspace)
 		console.log("")
 		// (Note) sporadic issue here from asciichart complaining about array length.
 		// (NOTE) also not working if no correct words
-		if (uData.stats.log.wpmArray.length > 0) {
-			console.log(chart.plot(uData.stats.log.wpmArray, { height: 5}))
+		if (TestData.store.user.stats.avgs.length > 0) {
+			console.log(chart.plot(TestData.store.user.stats.avgs, { height: 5}))
 		}
 		console.log("")
 		out.shortcuts()

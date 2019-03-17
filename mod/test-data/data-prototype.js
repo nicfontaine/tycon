@@ -1,20 +1,26 @@
 (function(){"use strict"})()
 
 /******************************************************
+Basic test data prototype
+Data will be initialized, then updated during test run
 
+.system     Hold set of words, time info
+.user       Hold current word, stats including avgs, correct, etc
 *******************************************************/
 
 // Global config variables
-function data() {
+function store() {
 
 	this.system = {
 		// Holds words generated, to be typed by user
 		wordSet: [],
+		colour: {
+			current: undefined // Store currently used chalk value
+		},
 		time: {
-			begin: undefined // Stamp start time for calc remaining
+			begin: undefined, // Stamp start time for calc remaining
 			remaining: 0, // Countdown number from test length. Helps determine if running, or complete
-			timer: undefined, // Keep reference of timer
-			duration: undefined // Length of test
+			timer: undefined // Keep reference of timer
 		}
 	}
 
@@ -35,4 +41,4 @@ function data() {
 
 }
 
-module.exports = data
+module.exports = store

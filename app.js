@@ -10,14 +10,12 @@ const chalk = require("chalk") // Console Text styling
 const source = require("./mod/words/source.js") // Source text words. Easy, Med, and Hard arrays
 const interval = require("./mod/interval.js") // Step interval
 const out = require("./mod/out.js") // Console clear & messaging object methods
-const dUser = require("./mod/data/data-user.js") // User data for initializing, & resetting after a test
-const dTime = require("./mod/data/data-time.js") // Time data for initializing, & resetting after a test
-const hUser = require("./mod/handler-user.js") // Use user arguements to create user instance config
 const hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
 
 const TestConfig = require("./mod/test-config/config.js")
-const SystemConfig = require("./mod/system/system-config.js")
 const SystemWordHandler = require("./mod/system/word-handler.js")
+
+const InputHandler = require("./mod/input-handler/handler.js")
 
 const TestData = require("./mod/test-data/data.js")
 
@@ -33,17 +31,13 @@ TestConfig.create(process.argv)
 // Initialize test-session specific data from base prototype
 TestData.create()
 
+// Initialize InputHandler
+InputHandler.create()
+
+// (NOTE) move.
+SystemWordHandler.colours.good()
 // Init output on run
 out.init()
-
-// Store typed characters & stats
-var DataUser = new dUser()
-
-// Check, process, log user input text
-var HandlerUser = new hUser()
-
-// Init object with begin, remaining, timer, and testLen. 
-var DataTime = new dTime(TestConfig.store.test.period)
 
 // Keep track of time: test started, remaining, total length
 var HandlerTime = new hTime()
@@ -59,15 +53,15 @@ var State = {
 	ready: function() {
 		State.now = "ready"
 
+		// (NOTE) move.
+		SystemWordHandler.colours.good()
+
 		// Quit & reset if running
-		if (DataTime.timer != undefined) {
-			DataTime.timer.stop()
+		if (TestData.store.system.time.timer != undefined) {
+			TestData.store.system.time.timer.stop()
 		}
 		// Reset
-		DataTime = new dTime(TestConfig.store.test.period)
-		HandlerUser.clear(DataUser)
-		DataUser = new dUser()
-		// (NOTE) to replace above
+		InputHandler.f.clear()
 		TestData.create()
 
 		// (NOTE) do we need to reset here?
@@ -75,36 +69,36 @@ var State = {
 		TestConfig.create(process.argv)
 
 		// Set test length
-		DataTime.remaining = TestConfig.store.test.period
+		TestData.store.system.time.remaining = TestConfig.store.test.period
 
-		out.stats(DataTime.remaining, DataUser.prevAvg)
+		out.stats()
 		SystemWordHandler.newSet()
-		out.ready(SystemWordHandler.format)
+		out.ready()
 		},
 
 	// Start running test & create interval
 	run: function() {
 		State.now = "running"
-		DataTime.begin = Date.now()
+		TestData.store.system.time.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = function() {
-			return HandlerTime.step(DataTime, DataUser, TestConfig.store, HandlerUser, State.complete)
+			return HandlerTime.step(State.complete)
 		}
 		// Init & start timer
-		DataTime.timer = new interval(work, 1000)
-		DataTime.timer.start()
+		TestData.store.system.time.timer = new interval(work, 1000)
+		TestData.store.system.time.timer.start()
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete(DataTime.testLen, DataUser)
+		out.complete()
 	},
 
 	// Quit app. log exit message, and exit process
 	quit: function() {
-		if (DataTime.timer != undefined) {
-			DataTime.timer.stop()
+		if (TestData.store.system.time.timer != undefined) {
+			TestData.store.system.time.timer.stop()
 		}
 		out.quit()
 		process.exit()
@@ -133,45 +127,44 @@ process.stdin.on("keypress", (ch, key) => {
 		else if (!/[^a-zA-Z]/.test(key.name) && TestConfig.store.test.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
-			if (DataTime.remaining > 0 && State.now === "running") {
+			if (TestData.store.system.time.remaining > 0 && State.now === "running") {
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
 
 					// Contains non-whitespace characters
 					// This is to prevent space or enter from registering as an incorrect word
-					if (/\S/.test(DataUser.current)) {
+					if (/\S/.test(TestData.store.user.current)) {
 
 						// Reference stat output here to keep simpler in cases below
 						let stat = function() {
-							out.stats(DataTime.remaining, DataUser.prevAvg)
+							out.stats()
 						}
 
 						// Correct word
-						if (DataUser.current === SystemConfig.wordSet[0]) {
+						if (TestData.store.user.current === TestData.store.system.wordSet[0]) {
 							stat()
-							DataUser.stats.correct++
-							HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg)
+							TestData.store.user.stats.correct++
+							InputHandler.f.next()
 						}
 
 						// Incorrect word
 						else {
 
-							DataUser.stats.incorrect++
+							TestData.store.user.stats.incorrect++
 
 							// Correct word not required. Log incorrect, and move to next word							
 							if (TestConfig.store.test.skip) {
 								stat()
-								HandlerUser.next(DataUser, DataTime.remaining, DataUser.prevAvg)
+								InputHandler.f.next()
 							}
 
 							// Correct word is required before moving to next word.
 							// Stay on current word, and re-print out stats, system set, and user text
 							else {
-								// HandlerUser.incorrect(SystemText, DataUser)
 								stat()
-								out.system.words(SystemWordHandler.format)
-								out.user.current(DataUser.current)
+								out.system.words()
+								out.user.current()
 							}
 
 						}
@@ -186,19 +179,19 @@ process.stdin.on("keypress", (ch, key) => {
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg)
+					out.stats()
 
 					let pt = process.platform
 					// Function for regular Backspace
 					function rb() {
-						DataUser.current = DataUser.current.substring(0, DataUser.current.length - 1)
-						if (DataUser.current === "") {
+						TestData.store.user.current = TestData.store.user.current.substring(0, TestData.store.user.current.length - 1)
+						if (TestData.store.user.current === "") {
 							SystemWordHandler.colours.good()
 						}
 					}
 					// Function for Ctrl + Backspace
 					function cb() {
-						HandlerUser.clear(DataUser)
+						InputHandler.f.clear()
 						SystemWordHandler.colours.good()
 					}
 
@@ -218,21 +211,21 @@ process.stdin.on("keypress", (ch, key) => {
 					}
 
 					// Log backspace
-					DataUser.stats.backspace++
+					TestData.store.user.stats.backspace++
 
 					// Check user text, print (format & style) system text, print user text
-					// Don't user HandlerUser.process() b/c  that would print "backspace"
-					HandlerUser.check(DataUser.current)
-					out.system.words(SystemWordHandler.format)
-					out.user.current(DataUser.current)
+					// Don't user InputHandler.f.process() b/c  that would print "backspace"
+					InputHandler.f.check()
+					out.system.words()
+					out.user.current()
 
 				}
 
 				// Regular typing
 				else {
 
-					out.stats(DataTime.remaining, DataUser.prevAvg)
-					HandlerUser.proc(key, DataUser)
+					out.stats()
+					InputHandler.f.proc(key)
 
 				}
 
@@ -246,9 +239,9 @@ process.stdin.on("keypress", (ch, key) => {
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)
-					out.stats(DataTime.remaining, DataUser.prevAvg)
+					out.stats()
 
-					HandlerUser.proc(key, DataUser)
+					InputHandler.f.proc(key)
 					// Begin
 					State.run()
 					

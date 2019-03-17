@@ -6,58 +6,61 @@
 
 const chalk = require("chalk") // Console text styling
 const source = require("./../words/source.js") // Source text
-const SystemConfig = require("./system-config.js")
 const TestConfig = require("./../test-config/config.js")
 const getNextWord = require("./../words/get-next-word.js")
 const getNextSet = require("./../words/get-next-set.js")
+const TestData = require("./../test-data/data.js")
 
 var handler = {
 
 	// Good/Bad State for "active" word, and incorrect word entry
 	colours: {
 		good: function() {
-			SystemConfig.colour.current = chalk.bold[TestConfig.store.display.colours.good]
+			TestData.store.system.colour.current = chalk.bold[TestConfig.store.display.colour.good]
 		},
 		success: function() {
-			SystemConfig.colour.current = chalk.reset.bold.inverse[TestConfig.store.display.colours.good]
+			TestData.store.system.colour.current = chalk.reset.bold.inverse[TestConfig.store.display.colour.good]
 		},
 		bad: function() {
-			SystemConfig.colour.current = chalk.bold[TestConfig.store.display.colours.bad]
+			TestData.store.system.colour.current = chalk.bold[TestConfig.store.display.colour.bad]
 		}
 	},
 
 	// rm word when typed correctly, and push one to end
 	next: function() {
 
-		SystemConfig.wordSet.shift()
-		let word = getNextWord(SystemConfig.wordSet, TestConfig.store)
-		SystemConfig.wordSet.push(word)
+		TestData.store.system.wordSet.shift()
+
+		let word = getNextWord()
+		TestData.store.system.wordSet.push(word)
 		return handler.format
 
 	},
 
 	// Generate set of words
-	// (Note) should randomly first-caps, with scaling frequency for difficulty
 	newSet: function() {
 
-		SystemConfig.wordSet = getNextSet(TestConfig.store, TestConfig.store.display.maxWordsPerLine)
+		TestData.store.system.wordSet = getNextSet(TestConfig.store)
 
 	},
 
-	// Format SystemConfig.wordSet, word array, for string output
+	// Format TestData.store.system.wordSet, word array, for string output
 	format: function() {
 		let out = ""
-		for (var i=0; i<SystemConfig.wordSet.length; i++) {
+		// console.log(TestData.store.system.colour.current)
+		let colour = TestData.store.system.colour.current
+		for (var i=0; i<TestData.store.system.wordSet.length; i++) {
 			// Style active word
 			if (i === 0) {
-				out += SystemConfig.colour.current(SystemConfig.wordSet[i]) + " "
+				// (NOTE) should be using TestData.store.system.colour.current but not working
+				out += colour(TestData.store.system.wordSet[i]) + " "
 			}
 			// Fade last word
 			else if (i === TestConfig.store.display.maxWordsPerLine - 1) {
-				out += chalk.gray(SystemConfig.wordSet[i])
+				out += chalk.gray(TestData.store.system.wordSet[i])
 			}
 			else {
-				out += SystemConfig.wordSet[i] + " "
+				out += TestData.store.system.wordSet[i] + " "
 			}
 		}
 		return out
