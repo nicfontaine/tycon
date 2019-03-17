@@ -25,9 +25,8 @@ function handler() {
 	// Print system text, log avg, and print user text
 	this.step = function(complete) {
 
-		let remain = TestData.store.system.time.remaining
-
 		parent.check()
+		let remain = TestData.store.system.time.remaining
 		
 		if (remain > 0) {
 			out.system.words()

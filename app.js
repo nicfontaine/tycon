@@ -1,8 +1,6 @@
 #! /usr/bin/env node
 (function(){"use strict"})()
 
-// Bug: if type incorrect, and restart test, colour stays red
-
 const keypress = require("keypress") // Input handling
 const chalk = require("chalk") // Console Text styling
 
