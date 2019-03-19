@@ -32,8 +32,6 @@ TestData.create()
 // Initialize InputHandler
 InputHandler.create()
 
-// (NOTE) move.
-SystemWordHandler.colours.good()
 // Init output on run
 out.init()
 

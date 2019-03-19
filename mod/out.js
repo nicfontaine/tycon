@@ -20,6 +20,7 @@ var out = {
 	},
 
 	init: function() {
+		SystemWordHandler.colours.good()
 		let colour = TestData.store.system.colour.current
 		out.clear()
 		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]

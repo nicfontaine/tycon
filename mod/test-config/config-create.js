@@ -39,7 +39,7 @@ function create(argv) {
 			// Colour Blink mode
 			else if (ar === "cb") {
 				testConf.display.colourBlind = true
-				testConf.display.colours.good = testConf.display.colours.cb
+				testConf.display.colour.good = testConf.display.colour.cb
 			}
 
 			// Random first-caps mode
