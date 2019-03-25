@@ -11,31 +11,11 @@ const log1 = require("single-line-log").stdout
 const log2 = require("single-line-log").stdout
 const log3 = require("single-line-log").stdout
 
-// Hold reference for each test line
-var Lines = {
-	test: {
-		stats: function(input) {  // time, average, info 
-			log1(input)
-		},
-		words: function(input) {  // set of words to type
-			log2(input)
-		},
-		user: function(input) {   // user ouptut
-			log3(input)
-		}
-	}
-}
-
 var out = {
 
 	// Clear console
 	clear: function() {
 		process.stdout.write("\033c")
-	},
-
-	newline: function() {
-		console.log(chalk.gray(" _"))
-		console.log("")
 	},
 
 	init: function() {
