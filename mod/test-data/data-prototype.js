@@ -39,6 +39,14 @@ function store() {
 
 	}
 
+	this.lines = {
+		test: {
+			stats: 0,
+			words: 2,
+			user: 3
+		}
+	}
+
 }
 
 module.exports = store

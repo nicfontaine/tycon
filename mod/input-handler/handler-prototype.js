@@ -46,7 +46,7 @@ function handler() {
 		parent.check()
 		out.system.words()
 		// Print word
-		out.user.current()
+		out.user.rewrite()
 	}
 
 	// Clear input log
@@ -59,7 +59,7 @@ function handler() {
 		parent.clear()
 		let nextSet = SystemWordHandler.next()
 		SystemWordHandler.colours.good()
-		out.next()
+		out.system.words()
 	}
 
 	// Run when incorrect word is entered
@@ -68,7 +68,7 @@ function handler() {
 		parent.clear()
 		SystemWordHandler.colours.bad()
 		out.system.words()
-		out.user.current()
+		out.user.rewrite()
 	}
 	
 }

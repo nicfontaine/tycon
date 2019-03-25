@@ -35,7 +35,7 @@ function handler() {
 				let avg = InputHandler.f.avg()
 				TestData.store.user.stats.avgs.push(avg)
 			}
-			out.user.current()
+			out.user.rewrite()
 		}
 		// End
 		else {

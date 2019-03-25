@@ -141,6 +141,7 @@ process.stdin.on("keypress", (ch, key) => {
 						if (TestData.store.user.current === TestData.store.system.wordSet[0]) {
 							stat()
 							TestData.store.user.stats.correct++
+							out.user.clear()
 							InputHandler.f.next()
 						}
 
@@ -152,6 +153,7 @@ process.stdin.on("keypress", (ch, key) => {
 							// Correct word not required. Log incorrect, and move to next word							
 							if (TestConfig.store.test.skip) {
 								stat()
+								out.user.clear()
 								InputHandler.f.next()
 							}
 
@@ -160,7 +162,7 @@ process.stdin.on("keypress", (ch, key) => {
 							else {
 								stat()
 								out.system.words()
-								out.user.current()
+								out.user.rewrite()
 							}
 
 						}
@@ -213,7 +215,7 @@ process.stdin.on("keypress", (ch, key) => {
 					// Don't user InputHandler.f.process() b/c  that would print "backspace"
 					InputHandler.f.check()
 					out.system.words()
-					out.user.current()
+					out.user.rewrite()
 
 				}
 
@@ -235,6 +237,7 @@ process.stdin.on("keypress", (ch, key) => {
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)
+					out.clear()
 					out.stats()
 
 					InputHandler.f.proc(key)

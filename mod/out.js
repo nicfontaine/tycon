@@ -6,6 +6,25 @@ const zero = require("./format/zero.js") // Leading zero-ify
 const TestConfig = require("./test-config/config.js")
 const SystemWordHandler = require("./system/word-handler.js")
 const TestData = require("./test-data/data.js")
+const log = require("single-line-log").stdout
+const log1 = require("single-line-log").stdout
+const log2 = require("single-line-log").stdout
+const log3 = require("single-line-log").stdout
+
+// Hold reference for each test line
+var Lines = {
+	test: {
+		stats: function(input) {  // time, average, info 
+			log1(input)
+		},
+		words: function(input) {  // set of words to type
+			log2(input)
+		},
+		user: function(input) {   // user ouptut
+			log3(input)
+		}
+	}
+}
 
 var out = {
 
@@ -20,10 +39,11 @@ var out = {
 	},
 
 	init: function() {
+		out.clear()
 		SystemWordHandler.colours.good()
 		let colour = TestData.store.system.colour.current
-		out.clear()
 		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
+
 		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 		console.log("")
 		out.shortcuts()
@@ -31,34 +51,51 @@ var out = {
 	},
 
 	ready: function() {
-		SystemWordHandler.colours.good()
-		console.log(" " + SystemWordHandler.format())
-		out.newline()
-	},
-
-	// (NOTE) This needs the showAvg flag for out.stats
-	next: function() {
+		out.clear()
 		out.stats()
-		console.log(" " + SystemWordHandler.format())
-		out.newline()
+		SystemWordHandler.colours.good()
+		console.log(SystemWordHandler.format())
 	},
 
 	system: {
 		words: function() {
-			console.log(" " + SystemWordHandler.format())
+			out.stats()
+			let y = TestData.store.lines.test.words
+			process.stdout.cursorTo(0, y)
+			process.stdout.clearLine()
+			process.stdout.write(SystemWordHandler.format() + "\n")
 		}
 	},
 
 	user: {
-		current: function() {
-			console.log(" " + chalk.bold(TestData.store.user.current) + chalk.gray("_"))
-			console.log("")
+		// Regular typing, just update end letter
+		letter: function() {
+			let current = TestData.store.user.current
+			let x = current.length-1
+			let y = TestData.store.lines.test.user
+			process.stdout.cursorTo(x, y)
+			process.stdout.write(current.charAt(x))
+		},
+		rewrite: function() {
+			out.user.clear()
+			let y = TestData.store.lines.test.user
+			process.stdout.cursorTo(0,y)
+			process.stdout.write(TestData.store.user.current)
+		},
+		clear: function() {
+			let y = TestData.store.lines.test.user
+			process.stdout.cursorTo(0, y)
+			process.stdout.clearLine()
 		}
 	},
 
-	// Show typing stats, Time left, and Avg. typed
+	//  Show typing stats, Time left, and Avg. typed
 	statsTick: function(avg) {
-		out.clear()
+		let y = TestData.store.lines.test.stats
+
+		process.stdout.cursorTo(0, y)
+		// process.stdout.clearLine()
+
 		let avgTxt = ""
 		let timeTxt = ""
 		if (TestConfig.store.display.show.avg) {
@@ -68,19 +105,27 @@ var out = {
 			timeTxt = zero(TestData.store.system.time.remaining)
 		}
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			console.log("[Test Running]")
+			process.stdout.write("[Test Running]" + "\n")
+			// console.log("[Test Running]")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
+			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "\n")
 		} else {
-			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
+			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "\n")
 		}
-		console.log("")
+
+		process.stdout.write("\n")
+		process.stdout.cursorTo(0, y+1)
+		process.stdout.write("\n")
 	},
 
 	// Same as statsTick(), but use last avg value instead of incorrectly calculating it
 	// (NOTE) Should probably fix, and not be redundant
 	stats: function() {
-		out.clear()
+		let y = TestData.store.lines.test.stats
+
+		process.stdout.cursorTo(0, y)
+		// process.stdout.clearLine()
+
 		let avgTxt = ""
 		let timeTxt = ""
 		if (TestConfig.store.display.show.avg) {
@@ -90,13 +135,16 @@ var out = {
 			timeTxt = zero(TestData.store.system.time.remaining)
 		}
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			console.log("[Test Running]")
+			process.stdout.write("[Test Running]" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			console.log(chalk.bold("[" + timeTxt + " " + avgTxt + "]"))
+			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "\n")
 		} else {
-			console.log(chalk.bold("[" + timeTxt +  avgTxt + "]"))
+			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "\n")
 		}
-		console.log("")
+
+		process.stdout.write("\n")
+		process.stdout.cursorTo(0, y+1)
+		process.stdout.write("\n")
 	},
 
 	// Complete state, show Correct, Incorrect, and Hotkeys
