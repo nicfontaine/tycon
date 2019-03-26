@@ -15,7 +15,7 @@ var out = {
 
 	// Clear console
 	clear: function() {
-		process.stdout.write("\033c")
+		process.stdout.write("\u001b[2J\u001b[0;0H")
 	},
 
 	state: {
