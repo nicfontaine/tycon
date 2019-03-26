@@ -18,32 +18,63 @@ var out = {
 		process.stdout.write("\033c")
 	},
 
-	init: function() {
-		out.clear()
-		SystemWordHandler.colours.good()
-		let colour = TestData.store.system.colour.current
-		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
+	state: {
 
-		console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
-		console.log("")
-		out.shortcuts()
-		console.log("")
-	},
+		init: function() {
+			out.clear()
+			SystemWordHandler.colours.good()
+			let colour = TestData.store.system.colour.current
+			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 
-	ready: function() {
-		out.clear()
-		out.stats()
-		SystemWordHandler.colours.good()
-		console.log(SystemWordHandler.format())
+			console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
+			console.log("")
+			out.shortcuts()
+			console.log("")
+			process.stdout.write("\x1B[?25l")
+			// process.stdout.write(chalk.gray("_"))
+		},
+
+		// Complete state, show Correct, Incorrect, and Hotkeys
+		complete: function() {
+			out.clear()
+			// Reset, in case we finish on incorrect letter
+			SystemWordHandler.colours.good()
+			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
+			console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
+			console.log("")
+			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
+			console.log("Correct:   " + (chalk.bold(TestData.store.user.stats.correct)))
+			console.log("Incorrect: " + TestData.store.user.stats.incorrect)
+			console.log("Backspace: " + TestData.store.user.stats.backspace)
+			console.log("")
+			// (Note) sporadic issue here from asciichart complaining about array length.
+			// (NOTE) also not working if no correct words
+			if (TestData.store.user.stats.avgs.length > 0) {
+				console.log(chart.plot(TestData.store.user.stats.avgs, { height: 5}))
+			}
+			console.log("")
+			out.shortcuts()
+			console.log("")
+		},
+
+		// Quit app. log exit message, and exit process
+		quit: function() {
+			out.clear()
+			console.log("Tycon says \"Bye!\"")
+		}
+
 	},
 
 	system: {
 		words: function() {
 			out.stats()
 			let y = TestData.store.lines.test.words
-			process.stdout.cursorTo(0, y)
+			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
 			process.stdout.write(SystemWordHandler.format() + "\n")
+
+			// Indent
+			process.stdout.cursorTo(1, TestData.store.lines.test.user)
 		}
 	},
 
@@ -53,19 +84,28 @@ var out = {
 			let current = TestData.store.user.current
 			let x = current.length-1
 			let y = TestData.store.lines.test.user
-			process.stdout.cursorTo(x, y)
+			process.stdout.cursorTo(x+1, y)
 			process.stdout.write(current.charAt(x))
 		},
 		rewrite: function() {
 			out.user.clear()
 			let y = TestData.store.lines.test.user
-			process.stdout.cursorTo(0,y)
-			process.stdout.write(TestData.store.user.current)
+			process.stdout.cursorTo(1, y)
+			process.stdout.write(TestData.store.user.current + chalk.gray("_"))
 		},
 		clear: function() {
 			let y = TestData.store.lines.test.user
-			process.stdout.cursorTo(0, y)
+			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
+			process.stdout.write("\x1B[?25l")
+			process.stdout.write(chalk.gray("_"))
+		},
+		focus: function() {
+			let current = TestData.store.user.current
+			let x = current.length
+			let y = TestData.store.lines.test.user
+			process.stdout.cursorTo(x+1, y)
+			process.stdout.write(chalk.gray("_"))
 		}
 	},
 
@@ -125,35 +165,6 @@ var out = {
 		process.stdout.write("\n")
 		process.stdout.cursorTo(0, y+1)
 		process.stdout.write("\n")
-	},
-
-	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function() {
-		out.clear()
-		// Reset, in case we finish on incorrect letter
-		SystemWordHandler.colours.good()
-		let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
-		console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
-		console.log("")
-		console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
-		console.log("Correct:   " + (chalk.bold(TestData.store.user.stats.correct)))
-		console.log("Incorrect: " + TestData.store.user.stats.incorrect)
-		console.log("Backspace: " + TestData.store.user.stats.backspace)
-		console.log("")
-		// (Note) sporadic issue here from asciichart complaining about array length.
-		// (NOTE) also not working if no correct words
-		if (TestData.store.user.stats.avgs.length > 0) {
-			console.log(chart.plot(TestData.store.user.stats.avgs, { height: 5}))
-		}
-		console.log("")
-		out.shortcuts()
-		console.log("")
-	},
-
-	// Quit app. log exit message, and exit process
-	quit: function() {
-		out.clear()
-		console.log("Tycon says \"Bye!\"")
 	},
 
 	// Instructions for Start / Exit shortcuts

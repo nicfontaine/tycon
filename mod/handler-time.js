@@ -29,13 +29,14 @@ function handler() {
 		let remain = TestData.store.system.time.remaining
 		
 		if (remain > 0) {
-			out.system.words()
+			// out.system.words()
 			// Only log every other second
 			if (remain%2 === 0) {
 				let avg = InputHandler.f.avg()
 				TestData.store.user.stats.avgs.push(avg)
 			}
-			out.user.rewrite()
+			// out.user.rewrite()
+			out.user.focus()
 		}
 		// End
 		else {

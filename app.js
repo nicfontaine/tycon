@@ -2,7 +2,6 @@
 (function(){"use strict"})()
 
 const keypress = require("keypress") // Input handling
-const chalk = require("chalk") // Console Text styling
 
 // Mod
 const source = require("./mod/words/source.js") // Source text words. Easy, Med, and Hard arrays
@@ -33,7 +32,7 @@ TestData.create()
 InputHandler.create()
 
 // Init output on run
-out.init()
+out.state.init()
 
 // Keep track of time: test started, remaining, total length
 var HandlerTime = new hTime()
@@ -48,9 +47,6 @@ var State = {
 	// (Note) clean this up
 	ready: function() {
 		State.now = "ready"
-
-		// (NOTE) move.
-		SystemWordHandler.colours.good()
 
 		// Quit & reset if running
 		if (TestData.store.system.time.timer != undefined) {
@@ -67,9 +63,15 @@ var State = {
 		// Set test length
 		TestData.store.system.time.remaining = TestConfig.store.test.period
 
-		out.stats()
+		SystemWordHandler.colours.good()
+
 		SystemWordHandler.newSet()
-		out.ready()
+
+		out.clear()
+		out.stats()
+		out.system.words()
+		out.user.clear()
+
 		},
 
 	// Start running test & create interval
@@ -88,7 +90,7 @@ var State = {
 	// Complete state, show Correct, Incorrect, and Hotkeys
 	complete: function() {
 		State.now = "stopped"
-		out.complete()
+		out.state.complete()
 	},
 
 	// Quit app. log exit message, and exit process
@@ -96,7 +98,7 @@ var State = {
 		if (TestData.store.system.time.timer != undefined) {
 			TestData.store.system.time.timer.stop()
 		}
-		out.quit()
+		out.state.quit()
 		process.exit()
 	}
 
