@@ -61,6 +61,8 @@ var out = {
 		quit: function() {
 			out.clear()
 			console.log("Tycon says \"Bye!\"")
+			// Reset terminal cursor
+			process.stderr.write("\x1B[?25h")
 		}
 
 	},
