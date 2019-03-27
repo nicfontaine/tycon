@@ -146,7 +146,6 @@ var out = {
 		}
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			process.stdout.write("[Test Running]" + "\n")
-			// console.log("[Test Running]")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
 			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "\n")
 		} else {
