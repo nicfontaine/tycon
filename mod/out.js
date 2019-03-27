@@ -1,20 +1,23 @@
 (function(){"use strict"})()
 
+/******************************************************
+Output info and modify console
+! Does not change any system values
+*******************************************************/
+
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
 const zero = require("./format/zero.js") // Leading zero-ify
-const TestConfig = require("./test-config/config.js")
-const SystemWordHandler = require("./system/word-handler.js")
-const TestData = require("./test-data/data.js")
-const log = require("single-line-log").stdout
-const log1 = require("single-line-log").stdout
-const log2 = require("single-line-log").stdout
-const log3 = require("single-line-log").stdout
+const TestConfig = require("./test-config.js")
+const SystemWordHandler = require("./system-word-handler.js")
+const TestData = require("./test-data.js")
+const ColourManager = require("./colour-manager.js")
 
 var out = {
 
 	// Clear console
 	clear: function() {
+		// (NOTE) This ANSI sequence may not work on all terminals, need to check
 		process.stdout.write("\u001b[2J\u001b[0;0H")
 	},
 
@@ -22,7 +25,7 @@ var out = {
 
 		init: function() {
 			out.clear()
-			SystemWordHandler.colours.good()
+			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
 			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 
@@ -38,7 +41,7 @@ var out = {
 		complete: function() {
 			out.clear()
 			// Reset, in case we finish on incorrect letter
-			SystemWordHandler.colours.good()
+			ColourManager.f.good()
 			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
 			console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
@@ -62,22 +65,36 @@ var out = {
 			out.clear()
 			console.log("Tycon says \"Bye!\"")
 			// Reset terminal cursor
+			// (NOTE) This ANSI sequence may not work on all terminals, need to check
 			process.stderr.write("\x1B[?25h")
 		}
 
 	},
 
 	system: {
+
+		// Clear line, Output whole set of test words
 		words: function() {
-			out.stats()
 			let y = TestData.store.lines.test.words
+			let words = SystemWordHandler.wordSet()
 			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
-			process.stdout.write(SystemWordHandler.format() + "\n")
+			process.stdout.write(words + "\n")
 
 			// Indent
 			process.stdout.cursorTo(1, TestData.store.lines.test.user)
+		},
+
+		// Output current word. For updating when typing word
+		// Will colour format based on correctedness
+		current: function() {
+			let y = TestData.store.lines.test.words
+			let word = SystemWordHandler.current()
+			process.stdout.cursorTo(1, y)
+			// (NOTE) finish..
+			process.stdout.write(word + "\n")
 		}
+
 	},
 
 	user: {
@@ -87,13 +104,14 @@ var out = {
 			let x = current.length-1
 			let y = TestData.store.lines.test.user
 			process.stdout.cursorTo(x+1, y)
-			process.stdout.write(current.charAt(x))
+			process.stdout.write(current.charAt(x) + chalk.gray("_"))
 		},
 		rewrite: function() {
 			out.user.clear()
 			let y = TestData.store.lines.test.user
+			let current = TestData.store.user.current
 			process.stdout.cursorTo(1, y)
-			process.stdout.write(TestData.store.user.current + chalk.gray("_"))
+			process.stdout.write(current + chalk.gray("_"))
 		},
 		clear: function() {
 			let y = TestData.store.lines.test.user
@@ -115,8 +133,8 @@ var out = {
 	statsTick: function(avg) {
 		let y = TestData.store.lines.test.stats
 
+    // Just overwrite, instead of clearing line. Because this always stays the same length
 		process.stdout.cursorTo(0, y)
-		// process.stdout.clearLine()
 
 		let avgTxt = ""
 		let timeTxt = ""

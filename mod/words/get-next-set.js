@@ -1,6 +1,6 @@
 const source = require("./../words/source.js") // Source text
 const randomCaps = require("./../format/random-caps.js")
-const TestConfig = require("./../test-config/config.js")
+const TestConfig = require("./../test-config.js")
 
 var next = function() {
 

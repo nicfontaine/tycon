@@ -4,17 +4,13 @@
 const keypress = require("keypress") // Input handling
 
 // Mod
-const source = require("./mod/words/source.js") // Source text words. Easy, Med, and Hard arrays
-const interval = require("./mod/interval.js") // Step interval
-const out = require("./mod/out.js") // Console clear & messaging object methods
-const hTime = require("./mod/handler-time.js") // Use user arguements to create user instance config
-
-const TestConfig = require("./mod/test-config/config.js")
-const SystemWordHandler = require("./mod/system/word-handler.js")
-
-const InputHandler = require("./mod/input-handler/handler.js")
-
-const TestData = require("./mod/test-data/data.js")
+const TestConfig = require("./mod/test-config.js")
+const InputHandler = require("./mod/input-handler.js")
+const TestData = require("./mod/test-data.js")
+const ColourManager = require("./mod/colour-manager.js")
+const SystemWordHandler = require("./mod/system-word-handler.js")
+const State = require("./mod/state-manager.js")
+const Out = require("./mod/out.js") // Console clear & messaging object methods
 
 // Route input to keypress
 keypress(process.stdin)
@@ -22,87 +18,8 @@ keypress(process.stdin)
 // Windows doesn't recognize this, so only not on windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
-// Create test-session specific config from base prototype and arguements
-TestConfig.create(process.argv)
-
-// Initialize test-session specific data from base prototype
-TestData.create()
-
-// Initialize InputHandler
-InputHandler.create()
-
 // Init output on run
-out.state.init()
-
-// Keep track of time: test started, remaining, total length
-var HandlerTime = new hTime()
-
-// App states, with console printout, initialization, variable reset
-var State = {
-
-	// Keep track of running state. For run on first keypress
-	now: "stopped", // "stopped" "ready" "running"
-
-	// Begin, reset values
-	// (Note) clean this up
-	ready: function() {
-		State.now = "ready"
-
-		// Quit & reset if running
-		if (TestData.store.system.time.timer != undefined) {
-			TestData.store.system.time.timer.stop()
-		}
-		// Reset
-		InputHandler.f.clear()
-		TestData.create()
-
-		// (NOTE) do we need to reset here?
-		// SystemText = sText(TestConfig.store)
-		TestConfig.create(process.argv)
-
-		// Set test length
-		TestData.store.system.time.remaining = TestConfig.store.test.period
-
-		SystemWordHandler.colours.good()
-
-		SystemWordHandler.newSet()
-
-		out.clear()
-		out.stats()
-		out.system.words()
-		out.user.clear()
-
-		},
-
-	// Start running test & create interval
-	run: function() {
-		State.now = "running"
-		TestData.store.system.time.begin = Date.now()
-		// Wrap step in a closure so interval can run it
-		let work = function() {
-			return HandlerTime.step(State.complete)
-		}
-		// Init & start timer
-		TestData.store.system.time.timer = new interval(work, 1000)
-		TestData.store.system.time.timer.start()
-	},
-
-	// Complete state, show Correct, Incorrect, and Hotkeys
-	complete: function() {
-		State.now = "stopped"
-		out.state.complete()
-	},
-
-	// Quit app. log exit message, and exit process
-	quit: function() {
-		if (TestData.store.system.time.timer != undefined) {
-			TestData.store.system.time.timer.stop()
-		}
-		out.state.quit()
-		process.exit()
-	}
-
-}
+State.f.init()
 
 //
 // Handle console input
@@ -113,19 +30,19 @@ process.stdin.on("keypress", (ch, key) => {
 
 		// Quit with CTRL + C
 		if (key.sequence === "\u0003") {
-			State.quit()
+			State.f.quit()
 		}
 
 		// Start / restart with CTRL + R
 		else if (key.sequence === "\u0012") {
-			State.ready()
+			State.f.ready()
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
 		else if (!/[^a-zA-Z]/.test(key.name) && TestConfig.store.test.reject.indexOf(key.name) < 0) {
 
 			// Don't respond if test is over
-			if (TestData.store.system.time.remaining > 0 && State.now === "running") {
+			if (State.now === "running" && TestData.store.system.time.remaining > 0) {
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
@@ -136,15 +53,18 @@ process.stdin.on("keypress", (ch, key) => {
 
 						// Reference stat output here to keep simpler in cases below
 						let stat = function() {
-							out.stats()
+							Out.stats()
 						}
 
-						// Correct word
+						// Correct word. Move to next
 						if (TestData.store.user.current === TestData.store.system.wordSet[0]) {
 							stat()
 							TestData.store.user.stats.correct++
-							out.user.clear()
-							InputHandler.f.next()
+							Out.user.clear()
+							InputHandler.f.clear()
+							SystemWordHandler.f.next()
+							ColourManager.f.good()
+							Out.system.words()
 						}
 
 						// Incorrect word
@@ -155,16 +75,19 @@ process.stdin.on("keypress", (ch, key) => {
 							// Correct word not required. Log incorrect, and move to next word							
 							if (TestConfig.store.test.skip) {
 								stat()
-								out.user.clear()
-								InputHandler.f.next()
+								Out.user.clear()
+								InputHandler.f.clear()
+								SystemWordHandler.f.next()
+								ColourManager.f.good()
+								Out.system.words()
 							}
 
 							// Correct word is required before moving to next word.
 							// Stay on current word, and re-print out stats, system set, and user text
 							else {
 								stat()
-								out.system.words()
-								out.user.rewrite()
+								Out.system.current()
+								Out.user.rewrite()
 							}
 
 						}
@@ -173,26 +96,28 @@ process.stdin.on("keypress", (ch, key) => {
 
 				}
 
+				// (NOTE) windows solution not working in git shellz
 				// Backspace
 				// Windows shows Backspace as { sequence: "\b" }
 				// Unix shows Ctrl + Backspace as { sequence: "\b", ctrl: false }
 				// ...so we have to handle strangely below 
 				else if (key.name === "backspace") {
 
-					out.stats()
+					Out.stats()
 
 					let pt = process.platform
 					// Function for regular Backspace
 					function rb() {
-						TestData.store.user.current = TestData.store.user.current.substring(0, TestData.store.user.current.length - 1)
-						if (TestData.store.user.current === "") {
-							SystemWordHandler.colours.good()
-						}
+						let current = TestData.store.user.current
+						TestData.store.user.current = current.substring(0, current.length - 1)
+						// InputHandler.f.check()
+						// if (TestData.store.user.current === "") {
+						// 	ColourManager.f.good()
+						// }
 					}
 					// Function for Ctrl + Backspace
 					function cb() {
 						InputHandler.f.clear()
-						SystemWordHandler.colours.good()
 					}
 
 					// (NOTE) Should check for CTRL+W for the unixers ;v
@@ -216,22 +141,24 @@ process.stdin.on("keypress", (ch, key) => {
 					// Check user text, print (format & style) system text, print user text
 					// Don't user InputHandler.f.process() b/c  that would print "backspace"
 					InputHandler.f.check()
-					out.system.words()
-					out.user.rewrite()
+					Out.system.current()
+					Out.user.rewrite()
 
 				}
 
 				// Regular typing
 				else {
 
-					out.stats()
+					Out.stats()
 					InputHandler.f.proc(key)
+					Out.system.current()
+					Out.user.letter()
 
 				}
 
 			}
 
-			// Test is ready for first keypress to begin
+			// Test is ready & waiting for first keypress to begin, when timer is started
 			else if (State.now === "ready") {
 
 				// Don't print or respond to SPACE or RETURN
@@ -239,12 +166,15 @@ process.stdin.on("keypress", (ch, key) => {
 				if (key.name != "space" && key.name != "return") {
 
 					// Output stats (clears console)
-					out.clear()
-					out.stats()
+					Out.clear()
+					Out.stats()
+
+					// Begin
+					State.f.run()
 
 					InputHandler.f.proc(key)
-					// Begin
-					State.run()
+					Out.system.words()
+					Out.user.letter()
 					
 				}
 

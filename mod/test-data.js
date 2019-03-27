@@ -1,5 +1,26 @@
 (function(){"use strict"})()
 
+const TestConfig = require("./test-config.js")
+
+/******************************************************
+Create & store unique test data
+
+.store       Stored test data
+.create()    Create test data
+*******************************************************/
+
+var Test = {
+
+	// Unique test config will be stored here
+	store: {},
+	
+	// Generate test config from args, and store in store{}
+	create: function() {
+		Test.store = new proto()
+	}
+
+}
+
 /******************************************************
 Basic test data prototype
 Data will be initialized, then updated during test run
@@ -8,14 +29,14 @@ Data will be initialized, then updated during test run
 .user       Hold current word, stats including avgs, correct, etc
 *******************************************************/
 
-// Global config variables
-function store() {
+function proto() {
 
 	this.system = {
 		// Holds words generated, to be typed by user
 		wordSet: [],
 		colour: {
-			current: undefined // Store currently used chalk value
+			current: undefined, // Store currently used chalk value
+			good: TestConfig.store.display.colour.good // Colour to be used as good (dependent on colour mode)
 		},
 		time: {
 			begin: undefined, // Stamp start time for calc remaining
@@ -49,4 +70,4 @@ function store() {
 
 }
 
-module.exports = store
+module.exports = Test

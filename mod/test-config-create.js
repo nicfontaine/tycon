@@ -1,9 +1,8 @@
 (function(){"use strict"})()
 
-const config = require("./config-prototype.js") // Global config for display, and test
-const source = require("./../words/source.js")
+const source = require("./words/source.js")
 
-function create(argv) {
+function create(argv, config) {
 
 	// Generate default config
 	let testConf = new config()

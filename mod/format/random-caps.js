@@ -1,4 +1,4 @@
-const TestConfig = require("./../test-config/config.js")
+const TestConfig = require("./../test-config.js")
 
 var ran = function(word) {
 

@@ -1,10 +1,20 @@
 const out = require("./out.js") // Console output
-const SystemWordHandler = require("./system/word-handler.js")
-const TestData = require("./test-data/data.js")
-const TestConfig = require("./test-config/config.js")
-const InputHandler = require("./input-handler/handler.js")
+const SystemWordHandler = require("./system-word-handler.js")
+const TestData = require("./test-data.js")
+const TestConfig = require("./test-config.js")
+const InputHandler = require("./input-handler.js")
 
-function handler() {
+var Handler = {
+
+	f: {},
+
+	create: function() {
+		Handler.f = new proto()
+	}
+
+}
+
+function proto() {
 
 	let parent = this
 	
@@ -29,13 +39,11 @@ function handler() {
 		let remain = TestData.store.system.time.remaining
 		
 		if (remain > 0) {
-			// out.system.words()
 			// Only log every other second
 			if (remain%2 === 0) {
 				let avg = InputHandler.f.avg()
 				TestData.store.user.stats.avgs.push(avg)
 			}
-			// out.user.rewrite()
 			out.user.focus()
 		}
 		// End
@@ -50,4 +58,4 @@ function handler() {
 
 }
 
-module.exports = handler
+module.exports = Handler

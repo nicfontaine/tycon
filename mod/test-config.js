@@ -1,15 +1,37 @@
 (function(){"use strict"})()
 
 /******************************************************
+Create & store unique test config
+
+.store       Stored test config
+.create()   Create test config on app run with process.argv
+*******************************************************/
+
+const createConfig = require("./test-config-create.js")
+
+var Test = {
+
+	// Unique test config will be stored here
+	store: {},
+	
+	// Generate test config from args
+	// Pass prototype
+	// Store in store{}
+	create: function(args) {
+		Test.store = createConfig(args, proto)
+	}
+
+}
+
+/*
 Basic session config prototype
 All data is set before a test, and remains unchanged during
 
 .display    Display settings: colourblind mode, stats on/off, word line length
 .test       Test settings: length, difficulty, skip, caps
-*******************************************************/
+*/
 
-// Global config variables
-function config() {
+function proto() {
 
 	this.display = {
 		maxWordsPerLine: 5, // Test prompt words to display in single line
@@ -51,4 +73,4 @@ function config() {
 
 }
 
-module.exports = config
+module.exports = Test
