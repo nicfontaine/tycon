@@ -13,18 +13,18 @@ const State = require("./mod/state-manager.js")
 const Out = require("./mod/out.js") // Console clear & messaging object methods
 
 // Route input to keypress
-keypress(process.stdin)
+// keypress(process.stdin)
 
 // Windows doesn't recognize this, so only not on windows
 if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 
 // Init output on run
-State.f.init()
+State.f.menu()
 
 //
 // Handle console input
 //
-process.stdin.on("keypress", (ch, key) => {
+/*process.stdin.on("keypress", (ch, key) => {
 
 	if (key != undefined) {
 
@@ -73,7 +73,7 @@ process.stdin.on("keypress", (ch, key) => {
 							TestData.store.user.stats.incorrect++
 
 							// Correct word not required. Log incorrect, and move to next word							
-							if (TestConfig.store.test.skip) {
+							if (!TestConfig.store.test.requireCorrect) {
 								stat()
 								Out.user.clear()
 								InputHandler.f.clear()
@@ -186,3 +186,4 @@ process.stdin.on("keypress", (ch, key) => {
 	
 })
 
+*/
