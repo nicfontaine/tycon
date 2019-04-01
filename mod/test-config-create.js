@@ -31,8 +31,8 @@ function create(argv, config) {
 			}
 
 			// Don't require correct word entry before moving to next
-			else if (ar === "skip") {
-				testConf.test.skip = true
+			else if (ar === "correct") {
+				testConf.test.requireCorrect = true
 			}
 
 			// Colour Blink mode
