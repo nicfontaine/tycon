@@ -33,6 +33,7 @@
   "dependencies": {
     "asciichart": "^1.5.7",
     "chalk": "^2.4.1",
+    "inquirer": "^6.2.2",
     "keypress": "^0.2.1"
   }
 }
