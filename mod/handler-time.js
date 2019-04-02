@@ -1,8 +1,14 @@
-const out = require("./out.js") // Console output
+(function(){"use strict"})()
+
+/******************************************************
+
+*******************************************************/
+
+const Out = require("./out.js") // Console output
 const SystemWordHandler = require("./system-word-handler.js")
 const TestData = require("./test-data.js")
 const TestConfig = require("./test-config.js")
-const InputHandler = require("./input-handler.js")
+const EntryHandler = require("./entry-handler.js")
 
 var Handler = {
 
@@ -26,8 +32,8 @@ function proto() {
 		let remain = Number(period - (Math.floor((Date.now() - begin)/1000)))
 
 		TestData.store.system.time.remaining = remain
-		let avg = InputHandler.f.avg()
-		out.statsTick(avg)
+		let avg = EntryHandler.f.avg()
+		Out.statsTick(avg)
 	}
 
 	// Interval timer
@@ -41,10 +47,10 @@ function proto() {
 		if (remain > 0) {
 			// Only log every other second
 			if (remain%2 === 0) {
-				let avg = InputHandler.f.avg()
+				let avg = EntryHandler.f.avg()
 				TestData.store.user.stats.avgs.push(avg)
 			}
-			out.user.focus()
+			Out.user.focus()
 		}
 		// End
 		else {

@@ -7,7 +7,7 @@ Create & store unique test config
 .create()   Create test config on app run with process.argv
 *******************************************************/
 
-const createConfig = require("./test-config-create.js")
+// const createConfig = require("./test-config-create.js")
 
 var Test = {
 
@@ -17,8 +17,17 @@ var Test = {
 	// Generate test config from args
 	// Pass prototype
 	// Store in store{}
-	create: function(args) {
-		Test.store = createConfig(args, proto)
+	create: function(answers) {
+		// Test.store = createConfig(args, proto)
+		let testConf = new proto()
+
+		testConf.test.period = Number(answers.period)
+		testConf.test.difficulty = testConf.test.diffOptions.indexOf(answers.difficulty)
+		testConf.test.colourBlind = answers.colourBlind
+		testConf.test.requireCorrect = answers.requireCorrect
+		testConf.test.caps = answers.caps
+
+		Test.store = testConf
 	}
 
 }

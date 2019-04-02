@@ -17,21 +17,15 @@ module.exports = [
 	  name: "period",
 	  message: "Test Length (seconds)",
 	  choices: ["10", "30", "60", "120", "180"],
-	  default: "60",
-		filter: function(val) {
-      return Number(val)
-    }
+	  default: "60"
 	},
 
 	{
     type: "list",
-    name: "source",
+    name: "difficulty",
     message: "Word Source",
-    choices: ["Easy", "Med", "Hard", "Custom"],
-    default: "Med",
-    filter: function(val) {
-      return val.toLowerCase();
-    }
+    choices: ["easy", "med", "hard"],
+    default: "med"
 	},
 
   {
@@ -51,8 +45,8 @@ module.exports = [
 	{
     type: "confirm",
     name: "caps",
-    message: "Randomly Capitalize First Letter (scales with difficulty)",
+    message: "First-Caps Mode (scales with difficulty)",
     default: false
-	},
+	}
 
 ]

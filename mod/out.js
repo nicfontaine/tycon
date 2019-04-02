@@ -12,6 +12,7 @@ const TestConfig = require("./test-config.js")
 const SystemWordHandler = require("./system-word-handler.js")
 const TestData = require("./test-data.js")
 const ColourManager = require("./colour-manager.js")
+const AppConfig = require("./app-config.js")
 
 var out = {
 
@@ -23,12 +24,18 @@ var out = {
 
 	state: {
 
+		menu: function() {
+			out.clear()
+			let colour = AppConfig.display.colour.good
+			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Config Menu")
+			console.log("")
+		},
+
 		init: function() {
 			out.clear()
 			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
 			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
-
 			console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
 			out.shortcuts()
@@ -147,9 +154,9 @@ var out = {
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			process.stdout.write("[Test Running]" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "   " + "\n")
 		} else {
-			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
 		}
 
 		process.stdout.write("\n")
@@ -176,9 +183,9 @@ var out = {
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			process.stdout.write("[Test Running]" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "   " + "\n")
 		} else {
-			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
 		}
 
 		process.stdout.write("\n")
@@ -188,8 +195,9 @@ var out = {
 
 	// Instructions for Start / Exit shortcuts
 	shortcuts: function() {
-		console.log(chalk.inverse("^R") + " Start")
-		console.log(chalk.inverse("^C") + " Exit")
+		console.log(" " + chalk.inverse("^R") + "  Run Test")
+		console.log(" " + chalk.inverse("^A") + "  Config Menu")
+		console.log(" " + chalk.inverse("^C") + "  Exit App")
 	},
 
 	// Just for testing. Clear & output message

@@ -10,68 +10,68 @@ const TestConfig = require("./test-config.js")
 const getNextWord = require("./words/get-next-word.js")
 const getNextSet = require("./words/get-next-set.js")
 const TestData = require("./test-data.js")
-const InputHandler = require("./input-handler.js")
 const ColourManager = require("./colour-manager.js")
 
-var Handler = {
+var Handler = {}
 
-	f: {
+module.exports = Handler
 
-		// Remove first word when typed correctly
-		// Push new one to end
-		next: function() {
 
-			let word = getNextWord()
-			TestData.store.system.wordSet.shift()
-			TestData.store.system.wordSet.push(word)
+const InputHandler = require("./input-handler.js")
 
-		},
+Handler.f = {
 
-		// Generate set of words
-		newSet: function() {
+	// Remove first word when typed correctly
+	// Push new one to end
+	next: function() {
 
-			TestData.store.system.wordSet = getNextSet(TestConfig.store)
-
-		}
+		let word = getNextWord()
+		TestData.store.system.wordSet.shift()
+		TestData.store.system.wordSet.push(word)
 
 	},
 
-	// Return formatted word set from TestData.store.system.wordSet
-	wordSet: function() {
+	// Generate set of words
+	newSet: function() {
 
-		let words = ""
-		let colour = TestData.store.system.colour.current
-
-		for (var i=0; i<TestData.store.system.wordSet.length; i++) {
-			// Style active word
-			if (i === 0) {
-				words += colour(TestData.store.system.wordSet[i]) + " "
-			}
-			// Fade last word
-			else if (i === TestConfig.store.display.maxWordsPerLine - 1) {
-				words += chalk.gray(TestData.store.system.wordSet[i])
-			}
-			else {
-				words += TestData.store.system.wordSet[i] + " "
-			}
-		}
-
-		return words
-
-	},
-
-	// Return current word, formatted based on correctedness with currently typed
-	current: function() {
-
-		// (NOTE) to-do..
-		let word = ""
-		let colour = TestData.store.system.colour.current
-		word += colour(TestData.store.system.wordSet[0])
-		
-		return word
+		TestData.store.system.wordSet = getNextSet(TestConfig.store)
 
 	}
 
 }
 
-module.exports = Handler
+// Return formatted word set from TestData.store.system.wordSet
+Handler.wordSet = function() {
+
+	let words = ""
+	let colour = TestData.store.system.colour.current
+
+	for (var i=0; i<TestData.store.system.wordSet.length; i++) {
+		// Style active word
+		if (i === 0) {
+			words += colour(TestData.store.system.wordSet[i]) + " "
+		}
+		// Fade last word
+		else if (i === TestConfig.store.display.maxWordsPerLine - 1) {
+			words += chalk.gray(TestData.store.system.wordSet[i])
+		}
+		else {
+			words += TestData.store.system.wordSet[i] + " "
+		}
+	}
+
+	return words
+
+}
+
+// Return current word, formatted based on correctedness with currently typed
+Handler.current = function() {
+
+	// (NOTE) to-do..
+	let word = ""
+	let colour = TestData.store.system.colour.current
+	word += colour(TestData.store.system.wordSet[0])
+	
+	return word
+
+}
