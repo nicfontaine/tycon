@@ -27,7 +27,7 @@ var out = {
 		menu: function() {
 			out.clear()
 			let colour = AppConfig.display.colour.good
-			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Config Menu")
+			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Settings")
 			console.log("")
 		},
 
@@ -36,7 +36,7 @@ var out = {
 			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
 			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
-			console.log(colour("[Tycon]") + " Level: " + chalk.bold(diffStr.toUpperCase()))
+			console.log(colour("[" + AppConfig.name + "]") + " Test Level: " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
 			out.shortcuts()
 			console.log("")
@@ -70,7 +70,8 @@ var out = {
 		// Quit app. log exit message, and exit process
 		quit: function() {
 			out.clear()
-			console.log("Tycon says \"Bye!\"")
+			let colour = AppConfig.display.colour.good
+			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " says \"Bye!\"")
 			// Reset terminal cursor
 			// (NOTE) This ANSI sequence may not work on all terminals, need to check
 			process.stderr.write("\x1B[?25h")
@@ -196,7 +197,7 @@ var out = {
 	// Instructions for Start / Exit shortcuts
 	shortcuts: function() {
 		console.log(" " + chalk.inverse("^R") + "  Run Test")
-		console.log(" " + chalk.inverse("^A") + "  Config Menu")
+		console.log(" " + chalk.inverse("^A") + "  Settings")
 		console.log(" " + chalk.inverse("^C") + "  Exit App")
 	},
 

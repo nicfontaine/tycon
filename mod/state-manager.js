@@ -30,14 +30,29 @@ const InputHandler = require("./input-handler.js")
 State.now = "stopped" // "stopped" "init" "waiting" "running"
 State.f = {
 
+	launch: function() {
+		// Route input to keypress
+		keypress(process.stdin)
+		// Handle console input
+		process.stdin.addListener("keypress", InputHandler)
+		// Windows doesn't recognize this, so only not on windows
+		if (process.stdin.setRawMode) process.stdin.setRawMode(true)
+		process.stdin.resume()
+
+		State.f.init()
+	},
+
 	menu: function() {
 		State.now = "menu"
+
+		// process.stdin.removeListener("keypress", InputHandler)
+
+		State.f.reset()
 
 		Out.state.menu()
 
 		inquirer.prompt(Menu).then(answers => {
 				TestConfig.create(answers)
-				// TestConfig.create(process.argv)
 				State.f.init()
 			}, err => {
 				console.log(err)
@@ -49,6 +64,14 @@ State.f = {
 	init: function() {
 		State.now = "init"
 
+		// Route input to keypress
+		keypress(process.stdin)
+		// Handle console input
+		process.stdin.addListener("keypress", InputHandler)
+		// Windows doesn't recognize this, so only not on windows
+		if (process.stdin.setRawMode) process.stdin.setRawMode(true)
+		process.stdin.resume()
+
 		// Quit & reset if running
 		if (TestData.store.system != undefined) {
 			if (TestData.store.system.time.timer != undefined) {
@@ -56,13 +79,9 @@ State.f = {
 			}
 		}
 
-		// Route input to keypress
-		keypress(process.stdin)
-		// Windows doesn't recognize this, so only not on windows
-		if (process.stdin.setRawMode) process.stdin.setRawMode(true)
-		// Handle console input
-		process.stdin.on("keypress", InputHandler)
-		process.stdin.resume()
+		// process.stdin.resume()
+
+		TestConfig.create()
 
 		// Initialize test-session specific data from base prototype
 		TestData.create()
@@ -77,8 +96,8 @@ State.f = {
 	reset: function() {
 		State.now = "reset"
 
-		process.stdin.pause()
 		process.stdin.removeListener("keypress", InputHandler)
+		// process.stdin.pause()
 
 		// Quit & reset if running
 		if (TestData.store.system != undefined) {

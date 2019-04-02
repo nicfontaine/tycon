@@ -21,7 +21,6 @@ module.exports = function(ch, key) {
 
 		// CTRL + A    Menu
 		else if (key.sequence === "\u0001") {
-			StateMgr.f.reset()
 			StateMgr.f.menu()
 		}
 
