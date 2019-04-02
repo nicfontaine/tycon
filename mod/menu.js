@@ -5,8 +5,8 @@ const inquirer = require("inquirer")
 /*
 period             5-300 seconds
 source             easy, med, hard, custom
-colour-blind       true false
 require correct    true false
+colour-blind       true false
 caps               true false
 */
 
@@ -23,16 +23,9 @@ module.exports = [
 	{
     type: "list",
     name: "difficulty",
-    message: "Word Source",
+    message: "Word Difficulty",
     choices: ["easy", "med", "hard"],
     default: "med"
-	},
-
-  {
-    type: "confirm",
-    name: "colourBlind",
-    message: "Colour Blind Mode",
-    default: false
 	},
 
 	{
@@ -41,6 +34,13 @@ module.exports = [
     message: "Require Correct Word",
     default: false
 	},
+
+  {
+    type: "confirm",
+    name: "colourBlind",
+    message: "Colourblind Mode",
+    default: false
+  },
 
 	{
     type: "confirm",
