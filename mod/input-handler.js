@@ -27,8 +27,30 @@ module.exports = function(ch, key) {
 		// Alpha key input for typing, space/return entry, and backspace
 		else if (!/[^a-zA-Z]/.test(key.name) && TestConfig.store.test.reject.indexOf(key.name) < 0) {
 
+			// Test is waiting for first keypress to begin, when timer is started
+			if (StateMgr.now === "waiting") {
+
+				// Don't print or respond to SPACE or RETURN
+				// ...Can't use these in TestConfig.store.test.reject because they're used for word entry
+				if (key.name != "space" && key.name != "return" && key.name != "backspace") {
+
+					// Output stats (clears console)
+					Out.clear()
+					Out.stats()
+
+					// Begin
+					StateMgr.f.run()
+
+					EntryHandler.f.proc(key)
+					Out.system.words()
+					Out.user.letter()
+					
+				}
+
+			}
+
 			// Don't respond if test is over
-			if (StateMgr.now === "running" && TestData.store.system.time.remaining > 0) {
+			else if (StateMgr.now === "running" && TestData.store.system.time.remaining > 0) {
 
 				// Space
 				if (key.name === "space" || key.name === "return") {
@@ -136,28 +158,6 @@ module.exports = function(ch, key) {
 					Out.system.current()
 					Out.user.letter()
 
-				}
-
-			}
-
-			// Test is waiting for first keypress to begin, when timer is started
-			else if (StateMgr.now === "waiting") {
-
-				// Don't print or respond to SPACE or RETURN
-				// ...Can't use these in TestConfig.store.test.reject because they're used for word entry
-				if (key.name != "space" && key.name != "return") {
-
-					// Output stats (clears console)
-					Out.clear()
-					Out.stats()
-
-					// Begin
-					StateMgr.f.run()
-
-					EntryHandler.f.proc(key)
-					Out.system.words()
-					Out.user.letter()
-					
 				}
 
 			}

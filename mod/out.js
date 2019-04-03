@@ -26,8 +26,27 @@ var out = {
 
 		menu: function() {
 			out.clear()
-			let colour = AppConfig.display.colour.good
+			let colour = ""
+			// In case we've already been through the menu, and set colour blind mode
+			if (TestConfig.store.display != undefined) {
+				colour = TestConfig.store.display.colour.good
+			} else {
+				colour = AppConfig.display.colour.good
+			}
 			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Settings")
+			console.log("")
+		},
+
+		flags: function() {
+			out.clear()
+			let colour = ""
+			// (NOTE) shouldn't duplicate from above. Move externally?
+			if (TestConfig.store.display != undefined) {
+				colour = TestConfig.store.display.colour.good
+			} else {
+				colour = AppConfig.display.colour.good
+			}
+			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Additional Settings")
 			console.log("")
 		},
 

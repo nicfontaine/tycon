@@ -52,13 +52,35 @@ State.f = {
 		Out.state.menu()
 
 		// Prompt settings questions
-		inquirer.prompt(Menu).then(answers => {
+		inquirer.prompt(Menu.main).then(answers => {
+
+			// Second prompt set when editing additional settings
+			if (answers.flags) {
+
+				Out.state.flags()
+				inquirer.prompt(Menu.flags).then(flags => {
+
+						Object.assign(answers, flags)
+						TestConfig.create(answers)
+						State.f.init()
+
+					}, err => {
+						throw(err)
+					}).catch(err => {
+						throw(err)
+					})
+
+			}
+			// Bypass additional settings
+			else {
 				TestConfig.create(answers)
 				State.f.init()
+			}
+
 			}, err => {
-				console.log(err)
+				throw(err)
 			}).catch(err => {
-				console.log(err)
+				throw(err)
 			})
 
 	},

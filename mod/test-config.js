@@ -20,11 +20,22 @@ var Test = {
 
 		// In case we aren't setting new values from menu, just use default (works fine)
 		if (answers) {
+
 			testConf.test.period = Number(answers.period)
 			testConf.test.difficulty = testConf.test.diffOptions.indexOf(answers.difficulty)
-			testConf.test.colourBlind = answers.colourBlind
-			testConf.test.requireCorrect = answers.requireCorrect
-			testConf.test.caps = answers.caps
+
+			// Flags
+			if (answers.flags) {
+				testConf.display.colourBlind = answers.colourBlind
+				if (answers.colourBlind) {
+					testConf.display.colour.good = testConf.display.colour.cb
+				}
+				testConf.test.requireCorrect = answers.requireCorrect
+				testConf.test.caps = answers.caps
+				testConf.display.show.avg = answers.showAvg
+				testConf.display.show.time = answers.showTime
+			}
+
 		}
 
 		Test.store = testConf
