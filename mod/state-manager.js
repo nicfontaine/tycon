@@ -30,27 +30,28 @@ const InputHandler = require("./input-handler.js")
 State.now = "stopped" // "stopped" "init" "waiting" "running"
 State.f = {
 
-	launch: function() {
-		// Route input to keypress
-		keypress(process.stdin)
-		// Handle console input
-		process.stdin.addListener("keypress", InputHandler)
-		// Windows doesn't recognize this, so only not on windows
-		if (process.stdin.setRawMode) process.stdin.setRawMode(true)
-		process.stdin.resume()
+	// launch: function() {
+	// 	// Route input to keypress
+	// 	keypress(process.stdin)
+	// 	// Handle console input
+	// 	process.stdin.addListener("keypress", InputHandler)
+	// 	// Windows doesn't recognize this, so only not on windows
+	// 	if (process.stdin.setRawMode) process.stdin.setRawMode(true)
+	// 	process.stdin.resume()
 
-		State.f.init()
-	},
+	// 	TestConfig.create()
+
+	// 	State.f.init()
+	// },
 
 	menu: function() {
 		State.now = "menu"
-
-		// process.stdin.removeListener("keypress", InputHandler)
 
 		State.f.reset()
 
 		Out.state.menu()
 
+		// Prompt settings questions
 		inquirer.prompt(Menu).then(answers => {
 				TestConfig.create(answers)
 				State.f.init()
@@ -59,6 +60,7 @@ State.f = {
 			}).catch(err => {
 				console.log(err)
 			})
+
 	},
 
 	init: function() {
@@ -79,9 +81,8 @@ State.f = {
 			}
 		}
 
-		// process.stdin.resume()
-
-		TestConfig.create()
+		// Would create a blank config here, if we ran the app from here
+		// TestConfig.create()
 
 		// Initialize test-session specific data from base prototype
 		TestData.create()
@@ -96,6 +97,9 @@ State.f = {
 	reset: function() {
 		State.now = "reset"
 
+		Out.clear()
+
+		// (NOTE) This is working. otherwise we'd get double input when going back and forth to menu
 		process.stdin.removeListener("keypress", InputHandler)
 		// process.stdin.pause()
 
@@ -106,7 +110,6 @@ State.f = {
 			}
 		}
 
-		Out.clear()
 	},
 
 	// Begin, reset values
@@ -124,8 +127,9 @@ State.f = {
 		TestData.create()
 
 		ColourManager.f.good()
-		// Set test length
-		TestData.store.system.time.remaining = TestConfig.store.test.period
+		
+		// Set/reset test length
+		HandlerTime.f.reset()
 
 		SystemWordHandler.f.newSet()
 

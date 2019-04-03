@@ -96,10 +96,6 @@ module.exports = function(ch, key) {
 					function rb() {
 						let current = TestData.store.user.current
 						TestData.store.user.current = current.substring(0, current.length - 1)
-						// EntryHandler.f.check()
-						// if (TestData.store.user.current === "") {
-						// 	ColourManager.f.good()
-						// }
 					}
 					// Function for Ctrl + Backspace
 					function cb() {

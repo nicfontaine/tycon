@@ -4,5 +4,5 @@
 // Mod
 const State = require("./mod/state-manager.js")
 
-// Initialize test config, data, handlers, trigger output
+// Run inquirer for settings
 State.f.menu()

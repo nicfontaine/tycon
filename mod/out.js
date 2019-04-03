@@ -41,7 +41,6 @@ var out = {
 			out.shortcuts()
 			console.log("")
 			process.stdout.write("\x1B[?25l")
-			// process.stdout.write(chalk.gray("_"))
 		},
 
 		// Complete state, show Correct, Incorrect, and Hotkeys
@@ -84,6 +83,7 @@ var out = {
 		// Clear line, Output whole set of test words
 		words: function() {
 			let y = TestData.store.lines.test.words
+			// Grab formatted word set. test-data.js just has array
 			let words = SystemWordHandler.wordSet()
 			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()

@@ -1,6 +1,6 @@
 (function(){"use strict"})()
 
-const TestConfig = require("./test-config.js")
+const AppConfig = require("./app-config.js")
 
 /******************************************************
 Create & store unique test data
@@ -36,7 +36,7 @@ function proto() {
 		wordSet: [],
 		colour: {
 			current: undefined, // Store currently used chalk value
-			good: TestConfig.store.display.colour.good // Colour to be used as good (dependent on colour mode)
+			good: AppConfig.display.colour.good // Colour to be used as good (dependent on colour mode)
 		},
 		time: {
 			begin: undefined, // Stamp start time for calc remaining

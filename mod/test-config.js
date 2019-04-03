@@ -7,8 +7,6 @@ Create & store unique test config
 .create()   Create test config on app run with process.argv
 *******************************************************/
 
-// const createConfig = require("./test-config-create.js")
-
 var Test = {
 
 	// Unique test config will be stored here
@@ -18,9 +16,9 @@ var Test = {
 	// Pass prototype
 	// Store in store{}
 	create: function(answers) {
-		// Test.store = createConfig(args, proto)
 		let testConf = new proto()
 
+		// In case we aren't setting new values from menu, just use default (works fine)
 		if (answers) {
 			testConf.test.period = Number(answers.period)
 			testConf.test.difficulty = testConf.test.diffOptions.indexOf(answers.difficulty)
@@ -47,6 +45,7 @@ function proto() {
 	this.display = {
 		maxWordsPerLine: 5, // Test prompt words to display in single line
 		colourBlind: false, // Flag for blue/red instead of green/red
+		// (NOTE) Currently unused, but option is supported in code
 		show: {
 			avg: true, // Flag to show or hide Avg WPM during test
 			time: true // Flag to show or hide current time during test

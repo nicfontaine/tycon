@@ -23,6 +23,11 @@ var Handler = {
 function proto() {
 
 	let parent = this
+
+	// Reset time remaining in test-data.js, from test-config.js value
+	this.reset = function() {
+		TestData.store.system.time.remaining = TestConfig.store.test.period
+	}
 	
 	// Calculate time remaining & show tick stats
 	this.check = function() {
