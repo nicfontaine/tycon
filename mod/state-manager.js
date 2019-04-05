@@ -21,7 +21,7 @@ const SystemWordHandler = require("./system-word-handler.js")
 const ColourManager = require("./colour-manager.js")
 const Out = require("./out.js") // Console clear & messaging object methods
 const Interval = require("./interval.js") // Step interval
-const HandlerTime = require("./handler-time.js")
+const TimeHandler = require("./time-handler.js")
 const Menu = require("./menu.js")
 // We require input-handler.js at the bottom, after export b/c of circular dependency issue
 
@@ -111,7 +111,7 @@ State.f = {
 		// Initialize EntryHandler
 		EntryHandler.create()
 		// Keep track of time: test started, remaining, total length
-		HandlerTime.create()
+		TimeHandler.create()
 
 		Out.state.init()
 	},
@@ -151,7 +151,7 @@ State.f = {
 		ColourManager.f.good()
 		
 		// Set/reset test length
-		HandlerTime.f.reset()
+		TimeHandler.f.reset()
 
 		SystemWordHandler.f.newSet()
 
@@ -168,7 +168,7 @@ State.f = {
 		TestData.store.system.time.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = function() {
-			return HandlerTime.f.step(State.f.complete)
+			return TimeHandler.f.step(State.f.complete)
 		}
 		// Init & start timer
 		TestData.store.system.time.timer = new Interval(work, 1000)

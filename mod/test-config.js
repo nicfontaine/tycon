@@ -1,5 +1,7 @@
 (function(){"use strict"})()
 
+const AppConfig = require("./app-config.js")
+
 /******************************************************
 Create & store unique test config
 
@@ -12,17 +14,17 @@ var Test = {
 	// Unique test config will be stored here
 	store: {},
 	
-	// Generate test config from args
-	// Pass prototype
-	// Store in store{}
+	// Generate test config from args and prototype
+	// Store in Test.store
 	create: function(answers) {
+
 		let testConf = new proto()
 
 		// In case we aren't setting new values from menu, just use default (works fine)
 		if (answers) {
 
 			testConf.test.period = Number(answers.period)
-			testConf.test.difficulty = testConf.test.diffOptions.indexOf(answers.difficulty)
+			testConf.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
 
 			// Flags
 			if (answers.flags) {
@@ -36,9 +38,13 @@ var Test = {
 				testConf.display.show.time = answers.showTime
 			}
 
+			// (NOTE) Should look to see if additional settings have been set previously during session
+			// ..to not overwrite if not set 2nd + time around
+
 		}
 
 		Test.store = testConf
+
 	}
 
 }
@@ -70,26 +76,9 @@ function proto() {
 
 	this.test = {
 		period: 60, // In seconds
-		diffOptions: ["easy", "med", "hard"],
 		difficulty: 1, // easy med hard indices
 		requireCorrect: false, // If true, force correct entry before next word
-		caps: false, // Randomly capitalize first letter. Scales w/ difficulty
-		// Key input to ignore when typing
-		reject: [
-			"undefined",
-			"escape",
-			"tab",
-			"left",
-			"right",
-			"up",
-			"down",
-			"pageup",
-			"pagedown",
-			"home",
-			"end",
-			"delete"
-		]
-		
+		caps: false // Randomly capitalize first letter. Scales w/ difficultyo
 	}
 
 }

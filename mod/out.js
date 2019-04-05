@@ -7,12 +7,13 @@ Output info and modify console
 
 const chalk = require("chalk") // Console text styling
 const chart = require("asciichart") // Chart results
+
+const AppConfig = require("./app-config.js")
 const zero = require("./format/zero.js") // Leading zero-ify
 const TestConfig = require("./test-config.js")
 const SystemWordHandler = require("./system-word-handler.js")
 const TestData = require("./test-data.js")
 const ColourManager = require("./colour-manager.js")
-const AppConfig = require("./app-config.js")
 
 var out = {
 
@@ -54,7 +55,7 @@ var out = {
 			out.clear()
 			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
-			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
+			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
 			console.log(colour("[" + AppConfig.name + "]") + " Test Level: " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
 			out.shortcuts()
@@ -67,7 +68,7 @@ var out = {
 			out.clear()
 			// Reset, in case we finish on incorrect letter
 			ColourManager.f.good()
-			let diffStr = TestConfig.store.test.diffOptions[TestConfig.store.test.difficulty]
+			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
 			console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
 			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))

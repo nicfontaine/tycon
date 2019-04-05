@@ -1,3 +1,6 @@
+(function(){"use strict"})()
+
+const AppConfig = require("./app-config.js")
 const TestConfig = require("./test-config.js")
 const TestData = require("./test-data.js")
 const EntryHandler = require("./entry-handler.js")
@@ -25,13 +28,13 @@ module.exports = function(ch, key) {
 		}
 
 		// Alpha key input for typing, space/return entry, and backspace
-		else if (!/[^a-zA-Z]/.test(key.name) && TestConfig.store.test.reject.indexOf(key.name) < 0) {
+		else if (!/[^a-zA-Z]/.test(key.name) && AppConfig.test.reject.indexOf(key.name) < 0) {
 
 			// Test is waiting for first keypress to begin, when timer is started
 			if (StateMgr.now === "waiting") {
 
 				// Don't print or respond to SPACE or RETURN
-				// ...Can't use these in TestConfig.store.test.reject because they're used for word entry
+				// ...Can't use these in AppConfig.test.reject because they're used for word entry
 				if (key.name != "space" && key.name != "return" && key.name != "backspace") {
 
 					// Output stats (clears console)

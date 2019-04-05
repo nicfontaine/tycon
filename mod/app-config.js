@@ -9,6 +9,25 @@ module.exports = {
 			good: "green",
 			bad: "red"
 		}
+	},
+
+	test: {
+		diffOptions: ["easy", "med", "hard"],
+		// Key input to ignore when typing
+		reject: [
+			"undefined",
+			"escape",
+			"tab",
+			"left",
+			"right",
+			"up",
+			"down",
+			"pageup",
+			"pagedown",
+			"home",
+			"end",
+			"delete"
+		]
 	}
 
 }

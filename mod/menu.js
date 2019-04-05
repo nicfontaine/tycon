@@ -58,7 +58,7 @@ const Menu = {
 		{
 	    type: "confirm",
 	    name: "caps",
-	    message: "First-Caps Mode (scales with difficulty)",
+	    message: "Random First Caps",
 	    default: false
 		},
 
