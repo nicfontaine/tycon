@@ -30,19 +30,14 @@ const InputHandler = require("./input-handler.js")
 State.now = "stopped" // "stopped" "init" "waiting" "running"
 State.f = {
 
-	// launch: function() {
-	// 	// Route input to keypress
-	// 	keypress(process.stdin)
-	// 	// Handle console input
-	// 	process.stdin.addListener("keypress", InputHandler)
-	// 	// Windows doesn't recognize this, so only not on windows
-	// 	if (process.stdin.setRawMode) process.stdin.setRawMode(true)
-	// 	process.stdin.resume()
+	launch: function() {
 
-	// 	TestConfig.create()
+		// Initialize with default settings. Menu will update
+		TestConfig.create()
 
-	// 	State.f.init()
-	// },
+		State.f.menu()
+
+	},
 
 	menu: function() {
 		State.now = "menu"
@@ -53,7 +48,6 @@ State.f = {
 
 		// Prompt settings questions
 		inquirer.prompt(Menu.main).then(answers => {
-
 			// Second prompt set when editing additional settings
 			if (answers.flags) {
 
@@ -61,7 +55,7 @@ State.f = {
 				inquirer.prompt(Menu.flags).then(flags => {
 
 						Object.assign(answers, flags)
-						TestConfig.create(answers)
+						TestConfig.update(answers)
 						State.f.init()
 
 					}, err => {
@@ -73,7 +67,7 @@ State.f = {
 			}
 			// Bypass additional settings
 			else {
-				TestConfig.create(answers)
+				TestConfig.update(answers)
 				State.f.init()
 			}
 
@@ -122,8 +116,9 @@ State.f = {
 		Out.clear()
 
 		// (NOTE) This is working. otherwise we'd get double input when going back and forth to menu
+		process.stdin.pause()
 		process.stdin.removeListener("keypress", InputHandler)
-		// process.stdin.pause()
+		// process.stdin.removeAllListeners()
 
 		// Quit & reset if running
 		if (TestData.store.system != undefined) {

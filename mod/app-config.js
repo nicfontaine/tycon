@@ -7,7 +7,8 @@ module.exports = {
 	display: {
 		colour: {
 			good: "green",
-			bad: "red"
+			bad: "red",
+			goodCB: "blue"
 		}
 	},
 

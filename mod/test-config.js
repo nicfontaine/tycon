@@ -13,37 +13,47 @@ var Test = {
 
 	// Unique test config will be stored here
 	store: {},
+
+	create: function() {
+
+		Test.store = new proto()
+
+	},
 	
 	// Generate test config from args and prototype
 	// Store in Test.store
-	create: function(answers) {
+	update: function(answers) {
 
-		let testConf = new proto()
+		if (Test.store.test != undefined) {
 
-		// In case we aren't setting new values from menu, just use default (works fine)
-		if (answers) {
+			// In case we aren't setting new values from menu, just use default (works fine)
+			if (answers) {
 
-			testConf.test.period = Number(answers.period)
-			testConf.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
+				Test.store.test.period = Number(answers.period)
+				Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
 
-			// Flags
-			if (answers.flags) {
-				testConf.display.colourBlind = answers.colourBlind
-				if (answers.colourBlind) {
-					testConf.display.colour.good = testConf.display.colour.cb
+				// Flags
+				if (answers.flags) {
+					Test.store.display.colourBlind = answers.colourBlind
+					if (answers.colourBlind) {
+						Test.store.display.colour.good = AppConfig.display.colour.goodCB
+					}
+					// Need to reset if changing from previous settings options
+					else {
+						Test.store.display.colour.good = AppConfig.display.colour.good
+					}
+					Test.store.test.requireCorrect = answers.requireCorrect
+					Test.store.test.caps = answers.caps
+					Test.store.display.show.avg = answers.showAvg
+					Test.store.display.show.time = answers.showTime
 				}
-				testConf.test.requireCorrect = answers.requireCorrect
-				testConf.test.caps = answers.caps
-				testConf.display.show.avg = answers.showAvg
-				testConf.display.show.time = answers.showTime
+
 			}
 
-			// (NOTE) Should look to see if additional settings have been set previously during session
-			// ..to not overwrite if not set 2nd + time around
-
 		}
-
-		Test.store = testConf
+		else {
+			throw("TestConfig.store has not been created yet. Cannot update")
+		}
 
 	}
 
@@ -68,9 +78,8 @@ function proto() {
 			time: true // Flag to show or hide current time during test
 		},
 		colour: {
-			good: "green", // Will be changed to "blue" if colourBlind === true
-			bad: "red",
-			cb: "blue" // Holder for colour-blind colour
+			good: AppConfig.display.colour.good, // Green or blue, depending on colour blind status flag
+			bad: AppConfig.display.colour.bad,
 		}
 	}
 

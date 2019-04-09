@@ -72,7 +72,9 @@ var out = {
 			console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
 			console.log("")
 			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
-			console.log("Correct:   " + (chalk.bold(TestData.store.user.stats.correct)))
+			if (TestConfig.store.test.period !== 60) {
+				console.log("Correct:   " + (chalk.bold(TestData.store.user.stats.correct)))
+			}
 			console.log("Incorrect: " + TestData.store.user.stats.incorrect)
 			console.log("Backspace: " + TestData.store.user.stats.backspace)
 			console.log("")

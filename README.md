@@ -14,27 +14,28 @@ Windows is in alpha. Performance may vary, and there are probably some ANSI code
 ```bash
 $ sudo npm i tycon -g   # Install
 
-$ tycon                 # Default: 60 seconds on Medium
-$ tycon easy            # Weak sauce
-$ tycon med             # Groove time
-$ tycon hard            # Wtf are these words..?
-$ tycon 10            	# 10 seconds
-$ tycon skip            # Skip to next word when typed incorrectly
-$ tycon cb              # Colour-blind mode
-$ tycon caps            # Randomly (scales with difficulty) capitalize first letter
-$ tycon easy 300        # Test has max of 5 minutes
+$ tycon
 ```  
 
-## Shortcuts
+## Menu Options
 
-```bash
-$ ^R        # Start / Restart
-$ ^C        # Quit
-```  
+- Test Length (seconds): `10`, `30`, `60`, `120`, `180`
+- Difficulty: `easy`, `med`, `hard`   
+
+**Additional Test Settings..** `y/N`
+- Require Correct Word Entry: `y/N`
+- Colourblind Mode (blue/green): `y/N`
+- Randomly Capitalize First Letter (scales with difficulty): `y/N`
+- Display Time During Test: `Y/n`
+- Display Average During Test: `Y/n`   
+
+## Features
+- `^R` Is used to start/re-start a test, and can also be used while a test is running.
+- **Additional Options** in the Settings Menu are saved (not overwritten) if `Additional Test Settings...` is answered `N`.
+- `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
 
 ### To-Do
-- Menu for length, difficulty, and run states with Inquirer
-- Re-do intervaled avg to average in segments, instead of over the whole test (so chart is relevant)
+- Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Use custom word list from file (validate format)
 - Lifetime stats
 
