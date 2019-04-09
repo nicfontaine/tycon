@@ -4,16 +4,10 @@ Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortc
 
 ![tycon recording](https://nicfontaine.com/dev/tycon-rec-04.gif)   
 
-# Platforms
-Written in and runs great on Linux. Haven't tried yet on MacOS, but should be similar.   
-
-Windows is in alpha. Performance may vary, and there are probably some ANSI code issues, particulary with key combinations (ctrl + `key` for menu, ctrl + backspace) between different terminals. Feel free to give feedback.   
-
 # Run
 
 ```bash
 $ sudo npm i tycon -g   # Install
-
 $ tycon
 ```  
 
@@ -29,15 +23,19 @@ $ tycon
 - Display Time During Test: `Y/n`
 - Display Average During Test: `Y/n`   
 
+# Platforms
+Written in and runs great on Linux. Haven't tried yet on MacOS, but should be similar.   
+
+Windows is in alpha. Performance may vary, and there are probably some ANSI code issues, particulary with key combinations (ctrl + `key` for menu, ctrl + backspace) between different terminals. Feel free to give feedback.   
+
 ## Features
-- `^R` Is used to start/re-start a test, and can also be used while a test is running.
-- **Additional Options** in the Settings Menu are saved (not overwritten) if `Additional Test Settings...` is answered `N`.
-- `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
+- **Restarting Test**: `^R` Is used to start/re-start a test, and can also be used while a test is running.
+- **Word Deletion**: `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
 
 ### To-Do
 - Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
-- Use custom word list from file (validate format)
-- Lifetime stats
+- Support custom word lists from file (validate format)
+- Record local lifetime stats
 
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  
