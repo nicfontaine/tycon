@@ -43,7 +43,6 @@ function proto() {
 
 	// Interval timer
 	// Keeps running handler.check() unless tdata.remaining <= 0
-	// Print system text, log avg, and print user text
 	this.step = function(complete) {
 
 		parent.check()

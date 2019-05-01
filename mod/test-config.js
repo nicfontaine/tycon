@@ -30,10 +30,10 @@ var Test = {
 			if (answers) {
 
 				Test.store.test.period = Number(answers.period)
-				Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
 
 				// Flags
 				if (answers.flags) {
+					Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
 					Test.store.display.colourBlind = answers.colourBlind
 					if (answers.colourBlind) {
 						Test.store.display.colour.good = AppConfig.display.colour.goodCB

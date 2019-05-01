@@ -23,23 +23,23 @@ const Menu = {
 		},
 
 		{
-	    type: "list",
-	    name: "difficulty",
-	    message: "Word Difficulty",
-	    choices: ["easy", "med", "hard"],
-	    default: "med"
-		},
-
-		{
 	    type: "confirm",
 	    name: "flags",
-	    message: "Additional Test Settings...",
+	    message: "Edit Additional Settings...",
 	    default: false
 		}		
 
 	],
 
 	flags: [
+
+		{
+	    type: "list",
+	    name: "difficulty",
+	    message: "Word Difficulty",
+	    choices: ["easy", "med", "hard"],
+	    default: "med"
+		},
 
 		{
 	    type: "confirm",

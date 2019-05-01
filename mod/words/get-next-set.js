@@ -15,9 +15,9 @@ var next = function() {
 
 		let num = Math.floor((Math.random() * source[difficulty].length))
 
-		// Re-randomize if same as last number
+		// Adjust randomization if same as last number
 		if (num === numSave) {
-			num = Math.floor((Math.random() * source[difficulty].length))
+			num < source[difficulty].length-1 ? num++ : num--
 		}
 		
 		let word = source[difficulty][num]

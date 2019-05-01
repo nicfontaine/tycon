@@ -56,7 +56,7 @@ var out = {
 			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
-			console.log(colour("[" + AppConfig.name + "]") + " Test Level: " + chalk.bold(diffStr.toUpperCase()))
+			console.log(colour("[" + AppConfig.name + "] ") + chalk.bold(TestConfig.store.test.period + " seconds, " + diffStr.toUpperCase()))
 			console.log("")
 			out.shortcuts()
 			console.log("")

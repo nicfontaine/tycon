@@ -7,10 +7,7 @@
 const keypress = require("keypress")
 const inquirer = require("inquirer")
 
-
-var State = {
-
-}
+var State = {}
 
 module.exports = State
 
@@ -28,8 +25,10 @@ const Menu = require("./menu.js")
 const InputHandler = require("./input-handler.js")
 
 State.now = "stopped" // "stopped" "init" "waiting" "running"
+
 State.f = {
 
+	// On run, initialize test config before menu, because menu is revisited
 	launch: function() {
 
 		// Initialize with default settings. Menu will update
@@ -39,6 +38,8 @@ State.f = {
 
 	},
 
+	// Run inquirer prompt, and generate test config from options
+	// State.f.init() when done.
 	menu: function() {
 		State.now = "menu"
 
@@ -59,10 +60,8 @@ State.f = {
 						State.f.init()
 
 					}, err => {
-						throw(err)
-					}).catch(err => {
-						throw(err)
-					})
+						throw(err) })
+						.catch(err => { throw(err) })
 
 			}
 			// Bypass additional settings
@@ -72,13 +71,13 @@ State.f = {
 			}
 
 			}, err => {
-				throw(err)
-			}).catch(err => {
-				throw(err)
-			})
+				throw(err) })
+				.catch(err => { throw(err) })
 
 	},
 
+	// Generate handler and data after menu. And setup key input handler
+	// Waits for shortcut input to trigger state change
 	init: function() {
 		State.now = "init"
 
@@ -90,16 +89,6 @@ State.f = {
 		if (process.stdin.setRawMode) process.stdin.setRawMode(true)
 		process.stdin.resume()
 
-		// Quit & reset if running
-		if (TestData.store.system != undefined) {
-			if (TestData.store.system.time.timer != undefined) {
-				TestData.store.system.time.timer.stop()
-			}
-		}
-
-		// Would create a blank config here, if we ran the app from here
-		// TestConfig.create()
-
 		// Initialize test-session specific data from base prototype
 		TestData.create()
 		// Initialize EntryHandler
@@ -110,27 +99,7 @@ State.f = {
 		Out.state.init()
 	},
 
-	reset: function() {
-		State.now = "reset"
-
-		Out.clear()
-
-		// (NOTE) This is working. otherwise we'd get double input when going back and forth to menu
-		process.stdin.pause()
-		process.stdin.removeListener("keypress", InputHandler)
-		// process.stdin.removeAllListeners()
-
-		// Quit & reset if running
-		if (TestData.store.system != undefined) {
-			if (TestData.store.system.time.timer != undefined) {
-				TestData.store.system.time.timer.stop()
-			}
-		}
-
-	},
-
-	// Begin, reset values
-	// (Note) clean this up
+	// Reset values. Wait to start test
 	waiting: function() {
 		State.now = "waiting"
 
@@ -142,12 +111,9 @@ State.f = {
 		}
 
 		TestData.create()
-
 		ColourManager.f.good()
-		
 		// Set/reset test length
 		TimeHandler.f.reset()
-
 		SystemWordHandler.f.newSet()
 
 		Out.clear()
@@ -155,16 +121,14 @@ State.f = {
 		Out.system.words()
 		Out.user.clear()
 
-		},
+	},
 
 	// Start running test & create interval
 	run: function() {
 		State.now = "running"
 		TestData.store.system.time.begin = Date.now()
 		// Wrap step in a closure so interval can run it
-		let work = function() {
-			return TimeHandler.f.step(State.f.complete)
-		}
+		let work = () => { TimeHandler.f.step(State.f.complete) }
 		// Init & start timer
 		TestData.store.system.time.timer = new Interval(work, 1000)
 		TestData.store.system.time.timer.start()
@@ -178,14 +142,28 @@ State.f = {
 
 	// Quit app. log exit message, and exit process
 	quit: function() {
-		// If this happens before TestData is initialized
+		Out.state.quit()
+		process.exit()
+	},
+
+	// Clear output. Remove key input handler. Stop timer.
+	reset: function() {
+		State.now = "reset"
+
+		Out.clear()
+
+		// Stop handling key input, because inquirer will do so in the menu, or we'll exit.
+		process.stdin.pause()
+		process.stdin.removeListener("keypress", InputHandler)
+
+		// Quit & reset if running
+		// This shouldn't be called before TestData is initialized, but just in case, we'll check
 		if (TestData.store.system != undefined) {
 			if (TestData.store.system.time.timer != undefined) {
 				TestData.store.system.time.timer.stop()
 			}
 		}
-		Out.state.quit()
-		process.exit()
+
 	}
 
 }
