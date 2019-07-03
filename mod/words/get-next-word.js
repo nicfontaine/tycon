@@ -7,20 +7,33 @@ var next = function() {
 
 	let wordSet = TestData.store.system.wordSet
 	let difficulty = TestConfig.store.test.difficulty
+	let mode = TestConfig.store.test.mode
+	let src = source[mode]
 
-	// Grab random word from source
-	let len = source[difficulty].length
-	let word = source[difficulty][Math.floor((Math.random() * len))]
+	if (mode === "basic") {
 
-	// If same as previous, re-roll ;v
-	if (wordSet.indexOf(word) > -1) {
-		word = source[difficulty][Math.floor((Math.random() * len))]
+		// Get the right index using difficulty number
+		src = src[difficulty]
+
+		// Grab random word from source
+		let len = src.length
+		let word = src[Math.floor((Math.random() * len))]
+
+		// If same as previous, re-roll ;v
+		if (wordSet.indexOf(word) > -1) {
+			word = src[Math.floor((Math.random() * len))]
+		}
+
+		// Caps flag is on. First-caps random words, scale randomness w/ difficulty
+		if (TestConfig.store.test.caps) {
+			word = randomCaps(word)
+		}
+
+	}
+	else if (mode === "sentence") {
+		// (NOTE) To-Do
 	}
 
-	// Caps flag is on. First-caps random words, scale randomness w/ difficulty
-	if (TestConfig.store.test.caps) {
-		word = randomCaps(word)
-	}
 
 	return word
 

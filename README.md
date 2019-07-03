@@ -13,10 +13,10 @@ $ tycon
 
 ## Menu Options
 
-- Test Length (seconds): `10`, `30`, `60`, `120`, `180`
-- Difficulty: `easy`, `med`, `hard`   
+- Test Length (seconds): `10`, `30`, `60`, `120`, `180` 
 
 **Additional Test Settings..** `y/N`
+- Difficulty: `easy`, `med`, `hard`  
 - Require Correct Word Entry: `y/N`
 - Colourblind Mode (blue/green): `y/N`
 - Randomly Capitalize First Letter (scales with difficulty): `y/N`
@@ -36,6 +36,10 @@ Windows is in alpha. Performance may vary, and there are probably some ANSI code
 - Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Support custom word lists from file (validate format)
 - Record local lifetime stats
+- Mode support (easy, med, hard will be part of `basic` mode)
+- Launch parameters to define settings
+- User config (settings) file support
+- Record time between all keypresses for consistency data, & display in graph
 
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  

@@ -1,6 +1,7 @@
 (function(){"use strict"})()
 
 const inquirer = require("inquirer")
+const AppConfig = require("./app-config.js")
 
 /*
 period             5-300 seconds
@@ -8,6 +9,8 @@ source             easy, med, hard, custom
 require correct    true false
 colour-blind       true false
 caps               true false
+showTime           true false
+showAvg            true false
 */
 
 const Menu = {
@@ -18,20 +21,20 @@ const Menu = {
 		  type: "list",
 		  name: "period",
 		  message: "Test Length (seconds)",
-		  choices: ["10", "30", "60", "120", "180"],
+		  choices: AppConfig.test.periodOptions,
 		  default: "60"
 		},
 
 		{
 	    type: "confirm",
-	    name: "flags",
+	    name: "settings",
 	    message: "Edit Additional Settings...",
 	    default: false
 		}		
 
 	],
 
-	flags: [
+	settings: [
 
 		{
 	    type: "list",
@@ -41,38 +44,51 @@ const Menu = {
 	    default: "med"
 		},
 
+		// {
+		// 	type: "checkbox",
+		// 	name: "flags",
+		// 	message: "Test Settings",
+		// 	choices: [
+		// 		{name: "Require Correct Word"},
+		// 		{name: "Colourblind Mode"},
+		// 		{name: "Random First Caps"},
+		// 		{name: "Display Time Remaining During Test", checked: true},
+		// 		{name: "Display Average During Test", checked: true}
+		// 	]
+		// }
+
 		{
 	    type: "confirm",
 	    name: "requireCorrect",
-	    message: "Require Correct Word",
+	    message: AppConfig.test.flagOptions.correct,
 	    default: false
 		},
 
 	  {
 	    type: "confirm",
 	    name: "colourBlind",
-	    message: "Colourblind Mode",
+	    message: AppConfig.test.flagOptions.cb,
 	    default: false
 	  },
 
 		{
 	    type: "confirm",
 	    name: "caps",
-	    message: "Random First Caps",
+	    message: AppConfig.test.flagOptions.caps,
 	    default: false
 		},
 
 		{
 	    type: "confirm",
 	    name: "showTime",
-	    message: "Display Time During Test",
+	    message: AppConfig.test.flagOptions.time,
 	    default: true
 		},
 
 		{
 	    type: "confirm",
 	    name: "showAvg",
-	    message: "Display Average During Test",
+	    message: AppConfig.test.flagOptions.avg,
 	    default: true
 		}
 

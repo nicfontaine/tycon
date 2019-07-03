@@ -31,9 +31,13 @@ var Test = {
 
 				Test.store.test.period = Number(answers.period)
 
-				// Flags
-				if (answers.flags) {
+				// (NOTE) Placeholder. Will specify options later. "Basic" for now
+				Test.store.test.mode = AppConfig.test.mode
+
+				// Settings
+				if (answers.settings) {
 					Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
+					// Flags
 					Test.store.display.colourBlind = answers.colourBlind
 					if (answers.colourBlind) {
 						Test.store.display.colour.good = AppConfig.display.colour.goodCB
@@ -70,7 +74,7 @@ All data is set before a test, and remains unchanged during
 function proto() {
 
 	this.display = {
-		maxWordsPerLine: 5, // Test prompt words to display in single line
+		maxWordsPerLine: AppConfig.display.maxWordsPerLine, // Test prompt words to display in single line
 		colourBlind: false, // Flag for blue/red instead of green/red
 		// (NOTE) Currently unused, but option is supported in code
 		show: {
@@ -84,6 +88,7 @@ function proto() {
 	}
 
 	this.test = {
+		mode: AppConfig.test.mode, // Basic, etc
 		period: 60, // In seconds
 		difficulty: 1, // easy med hard indices
 		requireCorrect: false, // If true, force correct entry before next word

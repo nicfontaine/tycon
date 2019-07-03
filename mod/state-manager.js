@@ -50,12 +50,12 @@ State.f = {
 		// Prompt settings questions
 		inquirer.prompt(Menu.main).then(answers => {
 			// Second prompt set when editing additional settings
-			if (answers.flags) {
+			if (answers.settings) {
 
-				Out.state.flags()
-				inquirer.prompt(Menu.flags).then(flags => {
+				Out.state.settings()
+				inquirer.prompt(Menu.settings).then(settings => {
 
-						Object.assign(answers, flags)
+						Object.assign(answers, settings)
 						TestConfig.update(answers)
 						State.f.init()
 

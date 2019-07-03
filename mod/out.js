@@ -38,7 +38,7 @@ var out = {
 			console.log("")
 		},
 
-		flags: function() {
+		settings: function() {
 			out.clear()
 			let colour = ""
 			// (NOTE) shouldn't duplicate from above. Move externally?
