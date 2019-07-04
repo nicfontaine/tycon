@@ -10,6 +10,8 @@ var next = function() {
 	let mode = TestConfig.store.test.mode
 	let src = source[mode]
 
+	let word = ""
+
 	if (mode === "basic") {
 
 		// Get the right index using difficulty number
@@ -17,7 +19,7 @@ var next = function() {
 
 		// Grab random word from source
 		let len = src.length
-		let word = src[Math.floor((Math.random() * len))]
+		word = src[Math.floor((Math.random() * len))]
 
 		// If same as previous, re-roll ;v
 		if (wordSet.indexOf(word) > -1) {
@@ -33,7 +35,6 @@ var next = function() {
 	else if (mode === "sentence") {
 		// (NOTE) To-Do
 	}
-
 
 	return word
 
