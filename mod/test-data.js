@@ -32,6 +32,7 @@ Data will be initialized, then updated during test run
 function proto() {
 
 	this.system = {
+		source: undefined,  // Hold source text determined by menu select, so we can lookup here
 		// Holds words generated, to be typed by user
 		wordSet: [],
 		colour: {
@@ -56,7 +57,8 @@ function proto() {
 			incorrect: 0,
 			backspace: 0,
 			avgs: []  // Hold avg wpm at interval
-		}
+		},
+		index: 0 // Keep track of uses location when typing sentences (not needed when random)
 
 	}
 

@@ -63,16 +63,22 @@ function proto() {
 		return num
 	}
 
-	// Handle key input for output
-	this.proc = function(key) {
+	// Handle key input for typing characters, like letters, that may need shift/ctrl data
+	this.key = function(load) {
 		// Shift to upper
-		if (key.shift) {
-			TestData.store.user.current += key.name.toUpperCase()
+		if (load.shift) {
+			TestData.store.user.current += load.name.toUpperCase()
 		} else {
-			TestData.store.user.current += key.name
+			TestData.store.user.current += load.name
 		}
 		parent.check()
-	}
+	},
+
+	// Handle key input for basic characters, like punctuation
+	this.char = function(load) {
+		TestData.store.user.current += load
+		parent.check()
+	},
 
 	// Clear input log
 	this.clear = function() {

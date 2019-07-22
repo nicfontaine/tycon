@@ -83,6 +83,7 @@ State.f = {
 
 		// Route input to keypress
 		keypress(process.stdin)
+
 		// Handle console input
 		process.stdin.addListener("keypress", InputHandler)
 		// Windows doesn't recognize this, so only not on windows
@@ -114,7 +115,11 @@ State.f = {
 		ColourManager.f.good()
 		// Set/reset test length
 		TimeHandler.f.reset()
-		SystemWordHandler.f.newSet()
+
+		// Create & store source set, using test mode, in TestData
+		// Create a new word set using test mode
+		SystemWordHandler.f.getSource()
+		SystemWordHandler.f[TestConfig.store.test.mode].newSet()
 
 		Out.clear()
 		Out.stats()

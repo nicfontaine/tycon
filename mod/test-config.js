@@ -30,9 +30,10 @@ var Test = {
 			if (answers) {
 
 				Test.store.test.period = Number(answers.period)
+				// (NOTE) Need to convert long string into an array of single-word strings, and store in TestData
 
-				// (NOTE) Placeholder. Will specify options later. "Basic" for now
-				Test.store.test.mode = AppConfig.test.mode
+				// Set test mode
+				Test.store.test.mode = answers.mode			
 
 				// Settings
 				if (answers.settings) {

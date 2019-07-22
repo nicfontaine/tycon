@@ -26,6 +26,14 @@ const Menu = {
 		},
 
 		{
+			type: "list",
+			name: "mode",
+			message: "Test Mode",
+			choices: AppConfig.test.modeOptions,
+			default: AppConfig.test.modeDefault
+		},
+		
+		{
 	    type: "confirm",
 	    name: "settings",
 	    message: "Edit Additional Settings...",
@@ -36,12 +44,13 @@ const Menu = {
 
 	settings: [
 
+
 		{
 	    type: "list",
 	    name: "difficulty",
 	    message: "Word Difficulty",
-	    choices: ["easy", "med", "hard"],
-	    default: "med"
+	    choices: AppConfig.test.diffOptions,
+	    default: AppConfig.test.diffDefault
 		},
 
 		// {

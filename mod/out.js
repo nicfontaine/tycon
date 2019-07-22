@@ -19,8 +19,10 @@ var out = {
 
 	// Clear console
 	clear: function() {
-		// (NOTE) This ANSI sequence may not work on all terminals, need to check
-		process.stdout.write("\u001b[2J\u001b[0;0H")
+		// (NOTE) This ANSI sequence isn't working on windows
+		// process.stdout.write("\u001b[2J\u001b[0;0H")
+		// (NOTE) Check this windows-fix in other OSs
+		process.stdout.write("\033c")
 	},
 
 	state: {

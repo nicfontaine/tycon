@@ -16,9 +16,11 @@ module.exports = {
 	test: {
 		
 		// (NOTE) placeholder. Will add options later.
-		mode: "basic",
+		modeOptions: ["basic", "sentence"],
+		modeDefault: "basic",
 
 		diffOptions: ["easy", "med", "hard"],
+		diffDefault: "med",
 		periodOptions: ["10", "30", "60", "120", "180"],
 		flagOptions: {
 			correct: "Require Correct Word",
@@ -41,6 +43,19 @@ module.exports = {
 			"home",
 			"end",
 			"delete"
+		],
+		// Punctuation characters
+		punc: [
+			",",
+			".",
+			"?",
+			"!",
+			"-",
+			"_",
+			"/",
+			"&",
+			"'",
+			'"'
 		]
 	}
 

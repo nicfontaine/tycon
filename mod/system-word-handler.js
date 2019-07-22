@@ -7,8 +7,12 @@
 const chalk = require("chalk") // Console text styling
 const source = require("./words/source.js") // Source text
 const TestConfig = require("./test-config.js")
-const getNextWord = require("./words/get-next-word.js")
-const getNextSet = require("./words/get-next-set.js")
+
+const randomNextWord = require("./words/random-next-word.js")
+const randomNextSet = require("./words/random-next-set.js")
+const incrementNextWord = require("./words/increment-next-word.js")
+const incrementNextSet = require("./words/increment-next-set.js")
+
 const TestData = require("./test-data.js")
 const ColourManager = require("./colour-manager.js")
 
@@ -16,25 +20,72 @@ var Handler = {}
 
 module.exports = Handler
 
-
 const InputHandler = require("./input-handler.js")
 
 Handler.f = {
 
-	// Remove first word when typed correctly
-	// Push new one to end
-	next: function() {
+	getSource: function() {
 
-		let word = getNextWord()
-		TestData.store.system.wordSet.shift()
-		TestData.store.system.wordSet.push(word)
+		let mode = TestConfig.store.test.mode
+		let diff = TestConfig.store.test.difficulty
+		let src = undefined
+
+		if (mode === "basic") {
+
+			src = source[mode][diff]
+
+		}
+
+		else if (mode === "sentence") {
+
+			// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
+			src = source[mode].split(" ")
+
+		}
+
+		TestData.store.system.source = src
 
 	},
 
-	// Generate set of words
-	newSet: function() {
+	// For basic (random) mode. Create random set of words, and get random during test
+	basic: {
+		
+		// Generate set of words
+		newSet: function() {
 
-		TestData.store.system.wordSet = getNextSet(TestConfig.store)
+			TestData.store.system.wordSet = randomNextSet()
+
+		},
+
+		// Remove first word when typed correctly
+		// Push new one to end
+		next: function() {
+
+			let word = randomNextWord()
+			TestData.store.system.wordSet.shift()
+			TestData.store.system.wordSet.push(word)
+
+		}
+
+	},
+
+	// For sentence (increment) mode. Get set limited to max, then increment through indices
+	sentence: {
+
+		newSet: function() {
+
+			TestData.store.system.wordSet = incrementNextSet()
+
+		},
+
+		next: function() {
+			// (NOTE) keep track of index here, or externally?
+			let word = incrementNextWord()
+			TestData.store.system.wordSet.shift()
+			TestData.store.system.wordSet.push(word)
+
+		}
+
 
 	}
 
