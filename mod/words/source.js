@@ -9,7 +9,8 @@ var source = {
 	],
 
 	// Continous sentences
-	sentence: "This is a sentence of several words and punctuation."
+	// sentence: "This is a sentence of several words and punctuation."
+	sentence: "Suddenly Frodo noticed that a strange-looking weather-beaten man, sitting in the shadows near the wall, was also listening intently to the hobbit-talk. He had a tall tankard in front of him, and was smoking a long-stemmed pipe curiously carved. His legs were stretched out before him, showing high boots of supple leather that fitted him well, but had seen much wear and were now caked with mud. A travel -stained cloak of heavy dark- green cloth was drawn close about him, and in spite of the heat of the room he wore a hood that overshadowed his face; but the gleam of his eyes could be seen as he watched the hobbits."
 	// sentence: ["This", "is", "a", "sentence", "of", "several", "words", "and", "punctuation."]
 
 }
