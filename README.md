@@ -13,10 +13,11 @@ $ tycon
 
 ## Menu Options
 
+- Test Mode: `basic`, `sentence`
 - Test Length (seconds): `10`, `30`, `60`, `120`, `180` 
 
 **Additional Test Settings..** `y/N`
-- Difficulty: `easy`, `med`, `hard`  
+- Difficulty _(basic mode only)_: `easy`, `med`, `hard`    
 - Require Correct Word Entry: `y/N`
 - Colourblind Mode (blue/green): `y/N`
 - Randomly Capitalize First Letter (scales with difficulty): `y/N`
@@ -29,13 +30,14 @@ Written in and runs great on Linux. Haven't tried yet on MacOS, but should be si
 Windows is in alpha. Performance may vary, and there are probably some ANSI code issues, particulary with key combinations (ctrl + `key` for menu, ctrl + backspace) between different terminals. Feel free to give feedback.   
 
 ## Features
+- **Basic Mode**: Randomly selected words from 3 difficulties.
+- **Sentence Mode**: Paragraphs from popular books, including capitalization and punctuation.
 - **Restarting Test**: `^R` Is used to start/re-start a test, and can also be used while a test is running.
 - **Word Deletion**: `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
 
 ### To-Do
-- Difficulty for basic mode. Source selection for sentence
-- Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Support custom word lists from file (validate format)
+- Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Record local lifetime stats
 - Launch parameters to define settings
 - User config (settings) file support
