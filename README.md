@@ -33,10 +33,10 @@ Windows is in alpha. Performance may vary, and there are probably some ANSI code
 - **Word Deletion**: `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
 
 ### To-Do
+- Difficulty for basic mode. Source selection for sentence
 - Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Support custom word lists from file (validate format)
 - Record local lifetime stats
-- Mode support (easy, med, hard will be part of `basic` mode)
 - Launch parameters to define settings
 - User config (settings) file support
 - Record time between all keypresses for consistency data, & display in graph

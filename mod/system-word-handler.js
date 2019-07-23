@@ -38,8 +38,12 @@ Handler.f = {
 
 		else if (mode === "sentence") {
 
+			// Get a random index from the sentence array
+			let len = source[mode].length
+			let ran = Math.floor(Math.random() * len)
 			// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
-			src = source[mode].split(" ")
+			src = source[mode][ran].replace(/\s\s+/g, " ")
+			src = src.split(" ")
 
 		}
 

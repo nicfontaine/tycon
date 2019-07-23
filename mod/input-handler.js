@@ -44,7 +44,7 @@ module.exports = function(ch, key) {
 		if (AppConfig.test.reject.indexOf(key.name) < 0) {
 
 			// Alpha & punc keys for typing, space/return entry, and backspace
-			if (!/[^a-zA-Z]/.test(key.name) || AppConfig.test.punc.indexOf(ch)) {
+			if (!/[^a-zA-Z]/.test(key.name) || AppConfig.test.punc.indexOf(ch) > -1) {
 
 				// Test is waiting for first keypress to begin, when timer is started
 				if (StateMgr.now === "waiting") {

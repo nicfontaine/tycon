@@ -62,7 +62,6 @@ var out = {
 			console.log("")
 			out.shortcuts()
 			console.log("")
-			process.stdout.write("\x1B[?25l")
 		},
 
 		// Complete state, show Correct, Incorrect, and Hotkeys
@@ -71,7 +70,8 @@ var out = {
 			// Reset, in case we finish on incorrect letter
 			ColourManager.f.good()
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
-			console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + " seconds, " + chalk.bold(diffStr.toUpperCase()))
+			// console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + "s, " + chalk.bold(diffStr.toUpperCase()))
+			console.log(TestData.store.system.colour.current("[Complete] ") + chalk.bold(TestConfig.store.test.mode) + ", " + TestConfig.store.test.period + "s")
 			console.log("")
 			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
 			if (TestConfig.store.test.period !== 60) {
@@ -88,6 +88,7 @@ var out = {
 			console.log("")
 			out.shortcuts()
 			console.log("")
+			// process.stdout.write("\x1B[?25l")
 		},
 
 		// Quit app. log exit message, and exit process
@@ -112,7 +113,7 @@ var out = {
 			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
 			process.stdout.write(words + "\n")
-
+			process.stdout.write("\x1B[?25l")
 			// Indent
 			process.stdout.cursorTo(1, TestData.store.lines.test.user)
 		},
@@ -223,6 +224,7 @@ var out = {
 		console.log(" " + chalk.inverse("^R") + "  Run Test")
 		console.log(" " + chalk.inverse("^A") + "  Settings")
 		console.log(" " + chalk.inverse("^C") + "  Exit App")
+		process.stdout.write("\x1B[?25l")
 	},
 
 	// Just for testing. Clear & output message

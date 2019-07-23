@@ -4,8 +4,8 @@ const inquirer = require("inquirer")
 const AppConfig = require("./app-config.js")
 
 /*
+mode               basic (random), sentence (increment)
 period             5-300 seconds
-source             easy, med, hard, custom
 require correct    true false
 colour-blind       true false
 caps               true false
@@ -48,7 +48,7 @@ const Menu = {
 		{
 	    type: "list",
 	    name: "difficulty",
-	    message: "Word Difficulty",
+	    message: "Word Difficulty (basic mode only)",
 	    choices: AppConfig.test.diffOptions,
 	    default: AppConfig.test.diffDefault
 		},
