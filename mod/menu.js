@@ -18,14 +18,6 @@ const Menu = {
 	main: [
 
 		{
-		  type: "list",
-		  name: "period",
-		  message: "Test Length (seconds)",
-		  choices: AppConfig.test.periodOptions,
-		  default: "60"
-		},
-
-		{
 			type: "list",
 			name: "mode",
 			message: "Test Mode",
@@ -33,6 +25,14 @@ const Menu = {
 			default: AppConfig.test.modeDefault
 		},
 		
+		{
+		  type: "list",
+		  name: "period",
+		  message: "Test Length (seconds)",
+		  choices: AppConfig.test.periodOptions,
+		  default: "60"
+		},
+
 		{
 	    type: "confirm",
 	    name: "settings",
