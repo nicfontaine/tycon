@@ -6,8 +6,7 @@ Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortc
 
 # Setup
 
-1. Install NodeJS   
-![download](https://nodejs.org/en/download/)
+1. ![Install NodeJS](https://nodejs.org/en/download/)   
 
 2. Install Tycon   
 ```bash
