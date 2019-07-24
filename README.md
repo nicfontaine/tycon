@@ -4,10 +4,18 @@ Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortc
 
 ![tycon recording](https://nicfontaine.com/dev/tycon-rec-04.gif)   
 
-# Run
+# Setup
 
+1. Install NodeJS
+![download](https://nodejs.org/en/download/)
+
+2. Install Tycon
 ```bash
-$ sudo npm i tycon -g   # Install
+$ sudo npm i tycon -g
+```
+
+3. Run
+```bash
 $ tycon
 ```  
 
@@ -23,11 +31,6 @@ $ tycon
 - Randomly Capitalize First Letter (scales with difficulty): `y/N`
 - Display Time During Test: `Y/n`
 - Display Average During Test: `Y/n`   
-
-# Platforms
-Written in and runs great on Linux. Haven't tried yet on MacOS, but should be similar.   
-
-Windows is in alpha. Performance may vary, and there are probably some ANSI code issues, particulary with key combinations (ctrl + `key` for menu, ctrl + backspace) between different terminals. Feel free to give feedback.   
 
 ## Features
 - **Basic Mode**: Randomly selected words from 3 difficulties.
