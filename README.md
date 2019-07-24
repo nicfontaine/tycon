@@ -6,15 +6,15 @@ Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortc
 
 # Setup
 
-1. Install NodeJS
+1. Install NodeJS   
 ![download](https://nodejs.org/en/download/)
 
-2. Install Tycon
+2. Install Tycon   
 ```bash
 $ sudo npm i tycon -g
 ```
 
-3. Run
+3. Run   
 ```bash
 $ tycon
 ```  
