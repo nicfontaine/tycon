@@ -34,8 +34,9 @@ $ tycon
 ## Features
 - **Basic Mode**: Randomly selected words from 3 difficulties.
 - **Sentence Mode**: Paragraphs from popular books, including capitalization and punctuation.
-- **Restarting Test**: `^R` Is used to start/re-start a test, and can also be used while a test is running.
+- **Restarting Test**: `^R` Is used to start/re-start a test. Can be used while test is running (will re-random sentence selection)
 - **Word Deletion**: `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
+- **Speed Graph**: Every 2 seconds, your average WPM (up to that point) is calculated
 
 ### To-Do
 - Support custom word lists from file (validate format)
