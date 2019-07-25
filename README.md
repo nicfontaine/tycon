@@ -2,7 +2,7 @@
 Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts   
 [npmjs.com/package/tycon](https://www.npmjs.com/package/tycon)    
 
-![tycon recording](https://nicfontaine.com/dev/tycon-rec-04.gif)   
+![tycon recording](https://nicfontaine.com/dev/tycon-rec-09.gif)   
 
 # Setup
 
