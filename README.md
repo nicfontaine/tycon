@@ -46,6 +46,15 @@ $ tycon
 - User config (settings) file support
 - Record time between all keypresses for consistency data, & display in graph
 
+### Text Excerpts
+- _The Fellowship of the Ring_, J.R.R Tolkein
+- _Harry Potter and the Chamber of Secrets_, J.K. Rowling
+- _Anna Karenina_, Leo Tolstoy
+- _The Eye of the World_, Robert Jordan
+- _Animal Farm_, George Orwell
+- _The Hitchhiker's Guide to the Galaxy_, Douglas Adams
+- _The Name of the Wind_, Patrick Rothfuss
+
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  
 twitter: [@ngpfontaine](https://twitter.com/ngpfontaine)

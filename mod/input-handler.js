@@ -73,11 +73,12 @@ module.exports = function(ch, key) {
 				// Don't respond if test is over
 				else if (StateMgr.now === "running" && TestData.store.system.time.remaining > 0) {
 
-					// Space
+					// Space, for word entry
 					if (key.name === "space" || key.name === "return") {
 
-						// Contains non-whitespace characters
+						// Check if user current contains anything other than whitespace characters
 						// This is to prevent space or enter from registering as an incorrect word
+						// (NOTE) May want a flag to toggle this check, not sure.
 						if (/\S/.test(TestData.store.user.current)) {
 
 							// Reference stat output here to keep simpler in cases below
