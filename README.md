@@ -45,6 +45,7 @@ $ tycon
 - Launch parameters to define settings
 - User config (settings) file support
 - Record time between all keypresses for consistency data, & display in graph
+- Infinite test length
 
 ### Text Excerpts
 - _The Fellowship of the Ring_, J.R.R Tolkein

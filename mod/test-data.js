@@ -42,6 +42,7 @@ function proto() {
 		time: {
 			begin: undefined, // Stamp start time for calc remaining
 			remaining: 0, // Countdown number from test length. Helps determine if running, or complete
+			spent: 0, // Keep track of test running. Needed for "infinite" tests, when there's never time remaining
 			timer: undefined // Keep reference of timer
 		}
 	}

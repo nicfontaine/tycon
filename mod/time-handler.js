@@ -27,18 +27,27 @@ function proto() {
 	// Reset time remaining in test-data.js, from test-config.js value
 	this.reset = function() {
 		TestData.store.system.time.remaining = TestConfig.store.test.period
+		TestData.store.system.time.spent = 0
 	}
 	
-	// Calculate time remaining & show tick stats
+	// Calculate time remaining (fix for wander), time spent, & show tick stats
 	this.check = function() {
 
-		let begin = TestData.store.system.time.begin
-		let period = TestConfig.store.test.period
-		let remain = Number(period - (Math.floor((Date.now() - begin)/1000)))
+		if (TestConfig.store.test.period != Infinity) {
 
-		TestData.store.system.time.remaining = remain
+			let begin = TestData.store.system.time.begin
+			let period = TestConfig.store.test.period
+			let remain = Number(period - (Math.floor((Date.now() - begin)/1000)))
+
+			// Update time
+			TestData.store.system.time.remaining = remain
+
+		}
+		TestData.store.system.time.spent++
+
 		let avg = EntryHandler.f.avg()
 		Out.statsTick(avg)
+
 	}
 
 	// Interval timer
@@ -46,20 +55,28 @@ function proto() {
 	this.step = function(complete) {
 
 		parent.check()
-		let remain = TestData.store.system.time.remaining
+
+		let spent = TestData.store.system.time.spent
 		
-		if (remain > 0) {
+		// Show stats every other tick
+		if (spent > 0) {
 			// Only log every other second
-			if (remain%2 === 0) {
+			if (spent%2 === 0) {
 				let avg = EntryHandler.f.avg()
 				TestData.store.user.stats.avgs.push(avg)
 			}
 			Out.user.focus()
 		}
-		// End
-		else {
-			complete()
-			TestData.store.system.time.timer.stop()
+
+		// Only if test has a number value period
+		if (TestConfig.store.test.period != Infinity) {
+
+			let remain = TestData.store.system.time.remaining
+			if (remain <= 0) {
+				complete()
+				TestData.store.system.time.timer.stop()
+			}
+
 		}
 
 		return

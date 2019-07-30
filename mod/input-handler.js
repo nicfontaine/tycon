@@ -88,8 +88,8 @@ module.exports = function(ch, key) {
 
 							// Correct word. Move to next
 							if (TestData.store.user.current === TestData.store.system.wordSet[0]) {
-								stat()
 								TestData.store.user.stats.correct++
+								stat()
 								Out.user.clear()
 								EntryHandler.f.clear()
 								SystemWordHandler.f[TestConfig.store.test.mode].next()

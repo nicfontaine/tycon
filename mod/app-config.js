@@ -15,13 +15,20 @@ module.exports = {
 
 	test: {
 		
-		// (NOTE) placeholder. Will add options later.
 		modeOptions: ["basic", "sentence"],
 		modeDefault: "basic",
 
 		diffOptions: ["easy", "med", "hard"],
 		diffDefault: "med",
-		periodOptions: ["10", "30", "60", "120", "180"],
+		
+		periodOptions: [
+			{value: 10, name: "10"},
+			{value: 30, name: "30"},
+			{value: 60, name: "60"},
+			{value: 120, name: "120"},
+			{value: 180, name: "180"},
+			{value: Infinity, name: "endless"}
+		],
 		flagOptions: {
 			correct: "Require Correct Word",
 			cb: "Colourblind Mode",

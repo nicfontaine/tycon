@@ -54,7 +54,8 @@ function proto() {
 
 	// Calculate average wpm at any time by taking current time & typed words
 	this.avg = function() {
-		let num = Math.floor((TestData.store.user.stats.correct * 60) / (TestConfig.store.test.period - TestData.store.system.time.remaining))
+		// let num = Math.floor((TestData.store.user.stats.correct * 60) / (TestConfig.store.test.period - TestData.store.system.time.remaining))
+		let num = Math.floor((TestData.store.user.stats.correct * 60) / TestData.store.system.time.spent)
 		// NaN on first tick
 		if (isNaN(num) || num === Infinity) { num = 0 }
 		if (TestData.store.system.remaining < 1) { num = 0 }

@@ -5,7 +5,7 @@ const AppConfig = require("./app-config.js")
 
 /*
 mode               basic (random), sentence (increment)
-period             5-300 seconds
+period             # seconds, or infinite
 require correct    true false
 colour-blind       true false
 caps               true false
@@ -30,7 +30,7 @@ const Menu = {
 		  name: "period",
 		  message: "Test Length (seconds)",
 		  choices: AppConfig.test.periodOptions,
-		  default: "60"
+		  default: 2
 		},
 
 		{

@@ -58,7 +58,14 @@ var out = {
 			ColourManager.f.good()
 			let colour = TestData.store.system.colour.current
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
-			console.log(colour("[" + AppConfig.name + "] ") + chalk.bold(TestConfig.store.test.period + " seconds, " + diffStr.toUpperCase()))
+			let timeTxt = ""
+			if (TestConfig.store.test.period === Infinity) {
+				timeTxt = "Endless, "
+			}
+			else {
+				timeTxt = TestConfig.store.test.period + " seconds, "	
+			}
+			console.log(colour("[" + AppConfig.name + "] ") + chalk.bold(timeTxt + diffStr.toUpperCase()))
 			console.log("")
 			out.shortcuts()
 			console.log("")
@@ -70,7 +77,6 @@ var out = {
 			// Reset, in case we finish on incorrect letter
 			ColourManager.f.good()
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
-			// console.log(TestData.store.system.colour.current("[Complete] ") + TestConfig.store.test.period + "s, " + chalk.bold(diffStr.toUpperCase()))
 			console.log(TestData.store.system.colour.current("[Complete] ") + chalk.bold(TestConfig.store.test.mode) + ", " + TestConfig.store.test.period + "s")
 			console.log("")
 			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
@@ -80,10 +86,17 @@ var out = {
 			console.log("Incorrect: " + TestData.store.user.stats.incorrect)
 			console.log("Backspace: " + TestData.store.user.stats.backspace)
 			console.log("")
-			// (Note) sporadic issue here from asciichart complaining about array length.
-			// (NOTE) also not working if no correct words
+			// Log chart if avgs array has any usable values (numbers > 0)
 			if (TestData.store.user.stats.avgs.length > 0) {
-				console.log(chart.plot(TestData.store.user.stats.avgs, { height: 5}))
+				let i = 0
+				let arr = TestData.store.user.stats.avgs
+				let len = arr.length
+				for (i; i<len; i++) {
+					if (arr[i] > 0) {
+						console.log(chart.plot(TestData.store.user.stats.avgs, { height: 5}))
+						break
+					}
+				}
 			}
 			console.log("")
 			out.shortcuts()
@@ -171,16 +184,23 @@ var out = {
 
 		let avgTxt = ""
 		let timeTxt = ""
+		let correctTxt = ""
+		// (NOTE) Clean all of this below crap up. It's ugly.
 		if (TestConfig.store.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(avg))
 		}
 		if (TestConfig.store.display.show.time) {
-			timeTxt = zero(TestData.store.system.time.remaining)
+			if (TestConfig.store.test.period === Infinity) {
+				timeTxt = zero(TestData.store.system.time.spent)
+			} else {
+				timeTxt = zero(TestData.store.system.time.remaining)
+			}
 		}
+		correctTxt = "Words: " + TestData.store.user.stats.correct
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			process.stdout.write("[Test Running]" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt + "  " + correctTxt + "  " + avgTxt + "]") + "   " + "\n")
 		} else {
 			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
 		}
@@ -200,16 +220,22 @@ var out = {
 
 		let avgTxt = ""
 		let timeTxt = ""
+		let correctTxt = ""
 		if (TestConfig.store.display.show.avg) {
 			avgTxt = "Avg: " + chalk.bold(zero(TestData.store.user.prevAvg))
 		}
 		if (TestConfig.store.display.show.time) {
-			timeTxt = zero(TestData.store.system.time.remaining)
+			if (TestConfig.store.test.period === Infinity) {
+				timeTxt = zero(TestData.store.system.time.spent)
+			} else {
+				timeTxt = zero(TestData.store.system.time.remaining)
+			}
 		}
+		correctTxt = "Words: " + TestData.store.user.stats.correct
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
 			process.stdout.write("[Test Running]" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + " " + avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold("[" + timeTxt + "  " + correctTxt + "  " + avgTxt + "]") + "   " + "\n")
 		} else {
 			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
 		}
