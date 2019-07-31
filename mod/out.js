@@ -205,30 +205,19 @@ var out = {
     // Just overwrite, instead of clearing line. Because this always stays the same length
 		process.stdout.cursorTo(0, y)
 
-		let avgTxt = ""
-		let timeTxt = ""
-		let correctTxt = ""
 		let cGray = chalk[TestConfig.store.display.colour.gray]
-		// (NOTE) Clean all of this below crap up. It's ugly.
-		if (TestConfig.store.display.show.avg) {
-			avgTxt = cGray("A ") + chalk.bold(zero(avg))
-		}
-		if (TestConfig.store.display.show.time) {
-			if (TestConfig.store.test.period === Infinity) {
-				timeTxt = zero(TestData.store.system.time.spent)
-			} else {
-				timeTxt = zero(TestData.store.system.time.remaining)
-			}
+		let avgTxt = cGray("A ")
+		let timeTxt = cGray("T ")
+		let correctTxt = ""
+		avgTxt += chalk.bold(zero(avg))
+		if (TestConfig.store.test.period === Infinity) {
+			timeTxt += zero(TestData.store.system.time.spent)
+		} else {
+			timeTxt += zero(TestData.store.system.time.remaining)
 		}
 		correctTxt = cGray("W ") + TestData.store.user.stats.correct
-		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			process.stdout.write("Test Running" + "\n")
-		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold(cGray("T ") + timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
-		} else {
-			process.stdout.write(chalk.bold(cGray("T ") + timeTxt +  avgTxt + "") + "   " + "\n")
-		}
 
+		process.stdout.write(chalk.bold(timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
 		process.stdout.write("\n")
 		process.stdout.cursorTo(0, y+1)
 		process.stdout.write("\n")
@@ -241,29 +230,19 @@ var out = {
 
 		process.stdout.cursorTo(0, y)
 
-		let avgTxt = ""
-		let timeTxt = ""
-		let correctTxt = ""
 		let cGray = chalk[TestConfig.store.display.colour.gray]
-		if (TestConfig.store.display.show.avg) {
-			avgTxt = cGray("A ") + chalk.bold(zero(TestData.store.user.prevAvg))
-		}
-		if (TestConfig.store.display.show.time) {
-			if (TestConfig.store.test.period === Infinity) {
-				timeTxt = zero(TestData.store.system.time.spent)
-			} else {
-				timeTxt = zero(TestData.store.system.time.remaining)
-			}
+		let avgTxt = cGray("A ")
+		let timeTxt = cGray("T ")
+		let correctTxt = ""
+		avgTxt +=chalk.bold(zero(TestData.store.user.prevAvg))
+		if (TestConfig.store.test.period === Infinity) {
+			timeTxt += zero(TestData.store.system.time.spent)
+		} else {
+			timeTxt += zero(TestData.store.system.time.remaining)
 		}
 		correctTxt = cGray("W ") + TestData.store.user.stats.correct
-		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			process.stdout.write("Test Running" + "\n")
-		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold(cGray("T ") + timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
-		} else {
-			process.stdout.write(chalk.bold(cGray("T ") + timeTxt +  avgTxt + "") + "   " + "\n")
-		}
-
+		
+		process.stdout.write(chalk.bold(timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
 		process.stdout.write("\n")
 		process.stdout.cursorTo(0, y+1)
 		process.stdout.write("\n")

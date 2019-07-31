@@ -60,9 +60,7 @@ const Menu = {
 		// 	choices: [
 		// 		{name: "Require Correct Word"},
 		// 		{name: "Colourblind Mode"},
-		// 		{name: "Random First Caps"},
-		// 		{name: "Display Time Remaining During Test", checked: true},
-		// 		{name: "Display Average During Test", checked: true}
+		// 		{name: "Random First Caps"}
 		// 	]
 		// }
 
@@ -85,21 +83,21 @@ const Menu = {
 	    name: "caps",
 	    message: AppConfig.test.flagOptions.caps,
 	    default: false
-		},
-
-		{
-	    type: "confirm",
-	    name: "showTime",
-	    message: AppConfig.test.flagOptions.time,
-	    default: true
-		},
-
-		{
-	    type: "confirm",
-	    name: "showAvg",
-	    message: AppConfig.test.flagOptions.avg,
-	    default: true
 		}
+
+		// {
+	 //    type: "confirm",
+	 //    name: "showTime",
+	 //    message: AppConfig.test.flagOptions.time,
+	 //    default: true
+		// },
+
+		// {
+	 //    type: "confirm",
+	 //    name: "showAvg",
+	 //    message: AppConfig.test.flagOptions.avg,
+	 //    default: true
+		// }
 
 	]
 

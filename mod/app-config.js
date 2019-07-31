@@ -42,9 +42,9 @@ module.exports = {
 		flagOptions: {
 			correct: "Require Correct Word",
 			cb: "Colourblind Mode",
-			caps: "Random First Caps",
-			time: "Display Time Remaining During Test",
-			avg: "Display Average During Test"
+			caps: "Random First Caps"
+			// time: "Display Time Remaining During Test",
+			// avg: "Display Average During Test"
 		},
 		// Key input to ignore when typing
 		reject: [
