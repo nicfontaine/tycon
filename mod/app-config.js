@@ -8,9 +8,19 @@ module.exports = {
 		colour: {
 			good: "green",
 			bad: "red",
-			goodCB: "blue"
+			goodCB: "blue",
+			gray: "gray"
 		},
-		maxWordsPerLine: 5
+		maxWordsPerLine: 5,
+		// Line printout y placement
+		lines: {
+			test: {
+				header: 0,
+				stats: 1,
+				words: 3,
+				user: 4
+			}
+		}
 	},
 
 	test: {
@@ -64,6 +74,7 @@ module.exports = {
 			"'",
 			'"'
 		]
+
 	}
 
 }

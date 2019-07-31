@@ -65,9 +65,10 @@ function proto() {
 
 	this.lines = {
 		test: {
-			stats: 0,
-			words: 2,
-			user: 3
+			header: AppConfig.display.lines.test.header,
+			stats: AppConfig.display.lines.test.stats,
+			words: AppConfig.display.lines.test.words,
+			user: AppConfig.display.lines.test.user
 		}
 	}
 

@@ -85,6 +85,7 @@ function proto() {
 		colour: {
 			good: AppConfig.display.colour.good, // Green or blue, depending on colour blind status flag
 			bad: AppConfig.display.colour.bad,
+			gray: AppConfig.display.colour.gray
 		}
 	}
 

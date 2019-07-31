@@ -97,6 +97,9 @@ State.f = {
 		// Keep track of time: test started, remaining, total length
 		TimeHandler.create()
 
+		// (NOTE) If we want to skip init screen with shortcuts, we can just do this, and skip Out.state.init() below
+		// State.f.waiting()
+
 		Out.state.init()
 	},
 
@@ -121,16 +124,15 @@ State.f = {
 		SystemWordHandler.f.getSource()
 		SystemWordHandler.f[TestConfig.store.test.mode].newSet()
 
-		Out.clear()
-		Out.stats()
-		Out.system.words()
-		Out.user.clear()
+		Out.state.waiting()
 
 	},
 
 	// Start running test & create interval
 	run: function() {
 		State.now = "running"
+		// Output header text once
+		Out.header("running..")
 		TestData.store.system.time.begin = Date.now()
 		// Wrap step in a closure so interval can run it
 		let work = () => { TimeHandler.f.step(State.f.complete) }

@@ -29,34 +29,30 @@ var out = {
 
 		menu: function() {
 			out.clear()
-			let colour = ""
-			// In case we've already been through the menu, and set colour blind mode
-			if (TestConfig.store.display != undefined) {
-				colour = TestConfig.store.display.colour.good
-			} else {
-				colour = AppConfig.display.colour.good
-			}
-			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Settings")
-			console.log("")
+			let y = AppConfig.display.lines.test.header
+			process.stdout.cursorTo(0, y)
+			process.stdout.write(chalk.bold("[" + AppConfig.name + "]") + chalk[TestConfig.store.display.colour.gray](" settings"))
+			process.stdout.write("\n")
+			process.stdout.write("\n")
 		},
 
 		settings: function() {
 			out.clear()
 			let colour = ""
-			// (NOTE) shouldn't duplicate from above. Move externally?
+			// (NOTE) Kinda shoddy, fix?
 			if (TestConfig.store.display != undefined) {
 				colour = TestConfig.store.display.colour.good
 			} else {
 				colour = AppConfig.display.colour.good
 			}
-			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " Additional Settings")
-			console.log("")
+			process.stdout.write(chalk.bold("[" + AppConfig.name + "]") + chalk[TestConfig.store.display.colour.gray](" (additional settings)"))
+			process.stdout.write("\n")
+			process.stdout.write("\n")
 		},
 
 		init: function() {
 			out.clear()
 			ColourManager.f.good()
-			let colour = TestData.store.system.colour.current
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
 			let timeTxt = ""
 			if (TestConfig.store.test.period === Infinity) {
@@ -65,10 +61,18 @@ var out = {
 			else {
 				timeTxt = TestConfig.store.test.period + " seconds, "	
 			}
-			console.log(colour("[" + AppConfig.name + "] ") + chalk.bold(timeTxt + diffStr.toUpperCase()))
+			console.log(chalk.bold("[" + AppConfig.name + "] ") + chalk[TestConfig.store.display.colour.gray](returnTestInfo()))
 			console.log("")
 			out.shortcuts()
 			console.log("")
+		},
+
+		waiting: function() {
+			out.clear()
+			out.header(returnTestInfo())
+			out.instructions("start typing to begin")
+			out.system.words()
+			out.user.clear()
 		},
 
 		// Complete state, show Correct, Incorrect, and Hotkeys
@@ -77,7 +81,8 @@ var out = {
 			// Reset, in case we finish on incorrect letter
 			ColourManager.f.good()
 			let diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty]
-			console.log(TestData.store.system.colour.current("[Complete] ") + chalk.bold(TestConfig.store.test.mode) + ", " + TestConfig.store.test.period + "s")
+			// console.log(chalk.bold("[Complete] ") + chalk[TestConfig.store.display.colour.gray](returnTestInfo()))
+			console.log(chalk.bold("[" + AppConfig.name + "] ") + chalk[TestConfig.store.display.colour.gray](returnTestInfo()))
 			console.log("")
 			console.log("WPM:       " + chalk.bold((TestData.store.user.stats.correct * 60) / TestConfig.store.test.period))
 			if (TestConfig.store.test.period !== 60) {
@@ -107,10 +112,8 @@ var out = {
 		// Quit app. log exit message, and exit process
 		quit: function() {
 			out.clear()
-			let colour = AppConfig.display.colour.good
-			console.log(chalk.bold[colour]("[" + AppConfig.name + "]") + " says \"Bye!\"")
+			console.log(chalk.bold("[" + AppConfig.name + "]") + " says \"Bye!\"")
 			// Reset terminal cursor
-			// (NOTE) This ANSI sequence may not work on all terminals, need to check
 			process.stderr.write("\x1B[?25h")
 		}
 
@@ -137,7 +140,6 @@ var out = {
 			let y = TestData.store.lines.test.words
 			let word = SystemWordHandler.current()
 			process.stdout.cursorTo(1, y)
-			// (NOTE) finish..
 			process.stdout.write(word + "\n")
 		}
 
@@ -150,29 +152,50 @@ var out = {
 			let x = current.length-1
 			let y = TestData.store.lines.test.user
 			process.stdout.cursorTo(x+1, y)
-			process.stdout.write(current.charAt(x) + chalk.gray("_"))
+			process.stdout.write(current.charAt(x) + chalk[TestConfig.store.display.colour.gray]("_"))
 		},
 		rewrite: function() {
 			out.user.clear()
 			let y = TestData.store.lines.test.user
 			let current = TestData.store.user.current
 			process.stdout.cursorTo(1, y)
-			process.stdout.write(current + chalk.gray("_"))
+			process.stdout.write(current + chalk[TestConfig.store.display.colour.gray]("_"))
 		},
 		clear: function() {
 			let y = TestData.store.lines.test.user
 			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
 			process.stdout.write("\x1B[?25l")
-			process.stdout.write(chalk.gray("_"))
+			process.stdout.write(chalk[TestConfig.store.display.colour.gray]("_"))
 		},
 		focus: function() {
 			let current = TestData.store.user.current
 			let x = current.length
 			let y = TestData.store.lines.test.user
 			process.stdout.cursorTo(x+1, y)
-			process.stdout.write(chalk.gray("_"))
+			process.stdout.write(chalk[TestConfig.store.display.colour.gray]("_"))
 		}
+	},
+
+	header: function(msg) {
+		let y = TestData.store.lines.test.header
+		let msgTxt = ""
+		if (msg != undefined) {
+			msgTxt = chalk[TestConfig.store.display.colour.gray](" " + msg)
+		}
+		process.stdout.cursorTo(0, y)
+		process.stdout.write(chalk.bold("[" + AppConfig.name + "]") + msgTxt)
+		// process.stdout.write("\n")
+	},
+
+	instructions: function(msg) {
+		let y = TestData.store.lines.test.stats
+		let msgTxt = ""
+		if (msg != undefined) {
+			msgTxt = chalk[TestConfig.store.display.colour.gray]("(" + msg + ")")
+		}
+		process.stdout.cursorTo(0, y)
+		process.stdout.write(msgTxt)
 	},
 
 	//  Show typing stats, Time left, and Avg. typed
@@ -185,9 +208,10 @@ var out = {
 		let avgTxt = ""
 		let timeTxt = ""
 		let correctTxt = ""
+		let cGray = chalk[TestConfig.store.display.colour.gray]
 		// (NOTE) Clean all of this below crap up. It's ugly.
 		if (TestConfig.store.display.show.avg) {
-			avgTxt = "Avg: " + chalk.bold(zero(avg))
+			avgTxt = cGray("A ") + chalk.bold(zero(avg))
 		}
 		if (TestConfig.store.display.show.time) {
 			if (TestConfig.store.test.period === Infinity) {
@@ -196,13 +220,13 @@ var out = {
 				timeTxt = zero(TestData.store.system.time.remaining)
 			}
 		}
-		correctTxt = "Words: " + TestData.store.user.stats.correct
+		correctTxt = cGray("W ") + TestData.store.user.stats.correct
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			process.stdout.write("[Test Running]" + "\n")
+			process.stdout.write("Test Running" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + "  " + correctTxt + "  " + avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold(cGray("T ") + timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
 		} else {
-			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold(cGray("T ") + timeTxt +  avgTxt + "") + "   " + "\n")
 		}
 
 		process.stdout.write("\n")
@@ -216,13 +240,13 @@ var out = {
 		let y = TestData.store.lines.test.stats
 
 		process.stdout.cursorTo(0, y)
-		// process.stdout.clearLine()
 
 		let avgTxt = ""
 		let timeTxt = ""
 		let correctTxt = ""
+		let cGray = chalk[TestConfig.store.display.colour.gray]
 		if (TestConfig.store.display.show.avg) {
-			avgTxt = "Avg: " + chalk.bold(zero(TestData.store.user.prevAvg))
+			avgTxt = cGray("A ") + chalk.bold(zero(TestData.store.user.prevAvg))
 		}
 		if (TestConfig.store.display.show.time) {
 			if (TestConfig.store.test.period === Infinity) {
@@ -231,13 +255,13 @@ var out = {
 				timeTxt = zero(TestData.store.system.time.remaining)
 			}
 		}
-		correctTxt = "Words: " + TestData.store.user.stats.correct
+		correctTxt = cGray("W ") + TestData.store.user.stats.correct
 		if (!TestConfig.store.display.show.time && !TestConfig.store.display.show.avg) {
-			process.stdout.write("[Test Running]" + "\n")
+			process.stdout.write("Test Running" + "\n")
 		} else if (TestConfig.store.display.show.time && TestConfig.store.display.show.avg) {
-			process.stdout.write(chalk.bold("[" + timeTxt + "  " + correctTxt + "  " + avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold(cGray("T ") + timeTxt + "  " + correctTxt + "  " + avgTxt + "") + "   " + "\n")
 		} else {
-			process.stdout.write(chalk.bold("[" + timeTxt +  avgTxt + "]") + "   " + "\n")
+			process.stdout.write(chalk.bold(cGray("T ") + timeTxt +  avgTxt + "") + "   " + "\n")
 		}
 
 		process.stdout.write("\n")
@@ -247,7 +271,7 @@ var out = {
 
 	// Instructions for Start / Exit shortcuts
 	shortcuts: function() {
-		console.log(" " + chalk.inverse("^R") + "  Run Test")
+		console.log(" " + chalk.inverse("^R") + "  Run Test" + chalk[TestConfig.store.display.colour.gray](" (timer will start on first keypress)"))
 		console.log(" " + chalk.inverse("^A") + "  Settings")
 		console.log(" " + chalk.inverse("^C") + "  Exit App")
 		process.stdout.write("\x1B[?25l")
@@ -262,3 +286,22 @@ var out = {
 }
 
 module.exports = out
+
+// Lookup, format, and return test length, mode, and difficulty
+function returnTestInfo() {
+	let timeTxt = ""
+	let modeTxt = TestConfig.store.test.mode
+	let diffStr = ""
+	// If basic mode, will display difficulty after & need to format accordingly
+	if (modeTxt === "basic") {
+		diffStr = AppConfig.test.diffOptions[TestConfig.store.test.difficulty].toUpperCase()
+		modeTxt += ", "
+	}
+	if (TestConfig.store.test.period === Infinity) {
+		timeTxt = "Endless, "
+	}
+	else {
+		timeTxt = TestConfig.store.test.period + "s, "	
+	}
+	return timeTxt + modeTxt + diffStr
+}
