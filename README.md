@@ -27,9 +27,7 @@ $ tycon
 - Difficulty _(basic mode only)_: `easy`, `med`, `hard`    
 - Require Correct Word Entry: `y/N`
 - Colourblind Mode (blue/green): `y/N`
-- Randomly Capitalize First Letter (scales with difficulty): `y/N`
-- Display Time During Test: `Y/n`
-- Display Average During Test: `Y/n`   
+- Randomly Capitalize First Letter (scales with difficulty): `y/N`   
 
 ## Features
 - **Basic Mode**: Randomly selected words from 3 difficulties.
@@ -54,6 +52,10 @@ $ tycon
 - _Animal Farm_, George Orwell
 - _The Hitchhiker's Guide to the Galaxy_, Douglas Adams
 - _The Name of the Wind_, Patrick Rothfuss
+
+### Issues?
+1. **Tycon not recognized command** (Windows)
+- Probably a path var issue with node. Add npm path to your environment variables & restart terminal. [Link](https://stackoverflow.com/questions/27864040/fixing-npm-path-in-windows-8-and-10)
 
 ### More
 website: [nicfontaine.com](https://nicfontaine.com)  
