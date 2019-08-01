@@ -54,7 +54,7 @@ $ tycon
 - _The Name of the Wind_, Patrick Rothfuss
 
 ### Issues?
-1. **Tycon not recognized command** (Windows)
+1. **Tycon not recognized command** (Windows)   
 Probably a path var issue with node. Add npm path to your environment variables & restart terminal. [Link](https://stackoverflow.com/questions/27864040/fixing-npm-path-in-windows-8-and-10)
 
 ### More
