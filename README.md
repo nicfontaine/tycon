@@ -25,9 +25,9 @@ $ tycon
 
 **Additional Test Settings..** `y/N`
 - Difficulty _(basic mode only)_: `easy`, `med`, `hard`    
-- Require Correct Word Entry: `y/N`
-- Colourblind Mode (blue/green): `y/N`
-- Randomly Capitalize First Letter (scales with difficulty): `y/N`   
+- Require Correct Word _(don't skip on incorrect)_: `y/N`
+- Colourblind Mode _(blue/green)_: `y/N`
+- Randomly Capitalize First Letter _(scales with difficulty)_: `y/N`   
 
 ## Features
 - **Basic Mode**: Randomly selected words from 3 difficulties.
