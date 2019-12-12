@@ -37,7 +37,10 @@ $ tycon
 - **Speed Graph**: Every 2 seconds, your average WPM (up to that point) is calculated
 
 ### To-Do
-- Support custom word lists from file (validate format)
+- Support custom word lists from file (validate format, and navigate directories to locate. launch flag `-f` and file path)
+- % incorrect by each character, not just incorrect words, and backspaces
+- Display random typing tips
+- Add random punctuation mode (insert punctuation, and reformat text, like hyphens w/o space, caps after period, etc.)
 - Re-do intervaled avg to average in segments, instead of over progress of the test (so chart is more relevant)
 - Record local lifetime stats
 - Launch parameters to define settings
@@ -54,7 +57,7 @@ $ tycon
 - _The Name of the Wind_, Patrick Rothfuss
 
 ### Issues?
-1. **Tycon not recognized command** (Windows)   
+1. **Tycon not recognized command** (Windows), when trying to launch   
 Probably a path var issue with node. Add npm path to your environment variables & restart terminal. [Link](https://stackoverflow.com/questions/27864040/fixing-npm-path-in-windows-8-and-10)
 
 ### More
