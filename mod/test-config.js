@@ -90,7 +90,7 @@ function proto() {
 	}
 
 	this.test = {
-		mode: AppConfig.test.mode, // Basic, etc
+		mode: AppConfig.test.modeDefault, // Basic, etc
 		period: 60, // In seconds
 		difficulty: 1, // easy med hard indices
 		requireCorrect: false, // If true, force correct entry before next word

@@ -16,11 +16,21 @@ showAvg            true false
 const Menu = {
 
 	main: [
+		{
+			type: "list",
+			name: "options",
+			message: "Choose One:",
+			default: AppConfig.menu.optionsDefault,
+			choices: AppConfig.menu.options
+		}
+	],
+
+	settings: [
 
 		{
 			type: "list",
 			name: "mode",
-			message: "Test Mode",
+			message: "Test Mode:",
 			choices: AppConfig.test.modeOptions,
 			default: AppConfig.test.modeDefault
 		},
@@ -28,7 +38,7 @@ const Menu = {
 		{
 		  type: "list",
 		  name: "period",
-		  message: "Test Length (seconds)",
+		  message: "Test Length (seconds):",
 		  choices: AppConfig.test.periodOptions,
 		  default: 2
 		},
@@ -42,7 +52,7 @@ const Menu = {
 
 	],
 
-	settings: [
+	subSettings: [
 
 
 		{

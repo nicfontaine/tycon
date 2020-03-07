@@ -4,6 +4,11 @@ module.exports = {
 
 	name: "Tycon",
 
+	menu: {
+		options: ["Run Test", "Settings"],
+		optionsDefault: "Run Test"
+	},
+
 	display: {
 		colour: {
 			good: "green",
