@@ -52,6 +52,7 @@ State.f = {
 		// Main menu
 		inquirer.prompt(Menu.main).then(answers => {
 			if (answers.options === "Run Test") {
+				// Initialize, then go to test ready (waiting for input)
 				State.f.init(State.f.ready)
 			} else {
 				// Settings menu
@@ -64,7 +65,7 @@ State.f = {
 
 								Object.assign(answers, settings)
 								TestConfig.update(answers)
-								State.f.init(State.f.waiting)
+								State.f.init(undefined)
 
 							}, err => { throw(err) })
 							.catch(err => { throw(err) })
@@ -73,7 +74,7 @@ State.f = {
 					// Bypass additional settings
 					else {
 						TestConfig.update(answers)
-						State.f.init(State.f.waiting)
+						State.f.init(undefined)
 					}
 
 					}, err => { throw(err) })
@@ -113,7 +114,9 @@ State.f = {
 		Out.state.init()
 
 		// Execute callback chain
-		next()
+		if (next !== undefined) {
+			next()			
+		}
 
 	},
 
