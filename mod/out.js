@@ -31,7 +31,7 @@ var out = {
 			out.clear()
 			let y = AppConfig.display.lines.test.header
 			process.stdout.cursorTo(0, y)
-			process.stdout.write(chalk.bold("[" + AppConfig.name + "]") + chalk[TestConfig.store.display.colour.gray](" settings"))
+			process.stdout.write(chalk.bold("[" + AppConfig.name + "]") + chalk[TestConfig.store.display.colour.gray](" menu"))
 			process.stdout.write("\n")
 			process.stdout.write("\n")
 		},

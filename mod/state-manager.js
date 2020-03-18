@@ -35,50 +35,59 @@ State.f = {
 		TestConfig.create()
 
 		State.f.menu()
+		// State.f.init()
 
 	},
 
 	// Run inquirer prompt, and generate test config from options
 	// State.f.init() when done.
 	menu: function() {
+
 		State.now = "menu"
 
 		State.f.reset()
 
 		Out.state.menu()
 
-		// Prompt settings questions
+		// Main menu
 		inquirer.prompt(Menu.main).then(answers => {
-			// Second prompt set when editing additional settings
-			if (answers.settings) {
+			if (answers.options === "Run Test") {
+				// Initialize, then go to test ready (waiting for input)
+				State.f.init(State.f.ready)
+			} else {
+				// Settings menu
+				inquirer.prompt(Menu.settings).then(answers => {
+					// Subsettings menu
+					if (answers.settings) {
 
-				Out.state.settings()
-				inquirer.prompt(Menu.settings).then(settings => {
+						Out.state.settings()
+						inquirer.prompt(Menu.subSettings).then(settings => {
 
-						Object.assign(answers, settings)
+								Object.assign(answers, settings)
+								TestConfig.update(answers)
+								State.f.init(undefined)
+
+							}, err => { throw(err) })
+							.catch(err => { throw(err) })
+
+					}
+					// Bypass additional settings
+					else {
 						TestConfig.update(answers)
-						State.f.init()
+						State.f.init(undefined)
+					}
 
-					}, err => {
-						throw(err) })
-						.catch(err => { throw(err) })
-
+					}, err => { throw(err) })
+					.catch(err => { throw(err) })
 			}
-			// Bypass additional settings
-			else {
-				TestConfig.update(answers)
-				State.f.init()
-			}
-
-			}, err => {
-				throw(err) })
-				.catch(err => { throw(err) })
+		}, err => { throw(err) })
+		.catch(err => { throw(err) })
 
 	},
 
 	// Generate handler and data after menu. And setup key input handler
 	// Waits for shortcut input to trigger state change
-	init: function() {
+	init: function(next) {
 		State.now = "init"
 
 		// Route input to keypress
@@ -92,15 +101,23 @@ State.f = {
 
 		// Initialize test-session specific data from base prototype
 		TestData.create()
+		ColourManager.f.good()
 		// Initialize EntryHandler
 		EntryHandler.create()
 		// Keep track of time: test started, remaining, total length
 		TimeHandler.create()
+		TimeHandler.f.reset()
 
-		// (NOTE) If we want to skip init screen with shortcuts, we can just do this, and skip Out.state.init() below
-		// State.f.waiting()
+		SystemWordHandler.f.getSource()
+		SystemWordHandler.f[TestConfig.store.test.mode].newSet()
 
 		Out.state.init()
+
+		// Execute callback chain
+		if (next !== undefined) {
+			next()			
+		}
+
 	},
 
 	// Reset values. Wait to start test
@@ -126,6 +143,12 @@ State.f = {
 
 		Out.state.waiting()
 
+	},
+
+	// Test instantly paused, waiting for first input to stat
+	ready: () => {
+		State.now = "waiting"
+		Out.state.waiting()
 	},
 
 	// Start running test & create interval
