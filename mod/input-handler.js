@@ -11,10 +11,17 @@ const Out = require("./out.js")
 module.exports = function(ch, key) {
 
 	// Just convert ch into a key-like object for sanity
-	if (key == undefined && ch) {
+	if (key == undefined && ch && AppConfig.test.punc.indexOf(ch) > -1) {
 		key = {}
 		key.name = ch
 		key.sequence = ch
+	}
+	// Only for punc
+	else if (key == undefined && ch && AppConfig.test.num.indexOf(ch) > -1) {
+		key = {}
+		key.name = ch
+		key.sequence = ch
+		key.isNum = true
 	}
 
 	// if (key != undefined && ch != undefined) {
@@ -44,7 +51,7 @@ module.exports = function(ch, key) {
 		if (AppConfig.test.reject.indexOf(key.name) < 0) {
 
 			// Alpha & punc keys for typing, space/return entry, and backspace
-			if (!/[^a-zA-Z]/.test(key.name) || AppConfig.test.punc.indexOf(ch) > -1) {
+			if (/^[a-z0-9]+$/i.test(key.name) || AppConfig.test.punc.indexOf(ch) > -1) {
 
 				// Test is waiting for first keypress to begin, when timer is started
 				if (StateMgr.now === "waiting") {
@@ -176,14 +183,8 @@ module.exports = function(ch, key) {
 					else {
 
 						Out.stats()
-						// Determine what to send. Char object or character (for punc)
-						if (key != undefined) {
-							EntryHandler.f.key(key)
-						}
-						else {
-							Out.test(ch)
-							EntryHandler.f.char(ch)
-						}
+						// Send key info
+						EntryHandler.f.key(key)
 						Out.system.current()
 						Out.user.letter()
 

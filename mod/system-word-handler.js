@@ -15,6 +15,7 @@ const incrementNextSet = require("./words/increment-next-set.js")
 
 const TestData = require("./test-data.js")
 const ColourManager = require("./colour-manager.js")
+const LaunchOptions = require("./launch-options.js")
 
 var Handler = {}
 
@@ -44,6 +45,23 @@ Handler.f = {
 			// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
 			src = source[mode][ran].replace(/\s\s+/g, " ")
 			src = src.split(" ")
+
+		}
+
+		// Valid launch option flag was detected. Use file content
+		else if (mode === "file") {
+
+			if (LaunchOptions.src !== undefined) {
+				src = LaunchOptions.src.replace(/\s\s+/g, " ")
+				// Get a random index from the sentence array
+				let len = src.length
+				let ran = Math.floor(Math.random() * len)
+				// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
+				src = src.split(" ")
+			}
+			else {
+				console.log("LaunchOptions.content is undefined")
+			}
 
 		}
 
@@ -90,6 +108,23 @@ Handler.f = {
 
 		}
 
+	},
+
+	file: {
+
+		newSet: function() {
+
+			TestData.store.system.wordSet = incrementNextSet()
+
+		},
+
+		next: function() {
+			// (NOTE) keep track of index here, or externally?
+			let word = incrementNextWord()
+			TestData.store.system.wordSet.shift()
+			TestData.store.system.wordSet.push(word)
+
+		}
 
 	}
 

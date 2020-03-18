@@ -38,6 +38,7 @@ $ tycon
 
 ### To-Do
 - Support custom word lists from file (validate format, and navigate directories to locate. launch flag `-f` and file path)
+- Support numbers (keypress just gives undefined for data)
 - % incorrect by each character, not just incorrect words, and backspaces
 - Display random typing tips
 - Add random punctuation mode (insert punctuation, and reformat text, like hyphens w/o space, caps after period, etc.)

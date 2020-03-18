@@ -20,6 +20,7 @@ const Out = require("./out.js") // Console clear & messaging object methods
 const Interval = require("./interval.js") // Step interval
 const TimeHandler = require("./time-handler.js")
 const Menu = require("./menu.js")
+const LaunchOptions = require("./launch-options.js")
 // We require input-handler.js at the bottom, after export b/c of circular dependency issue
 
 const InputHandler = require("./input-handler.js")
@@ -34,8 +35,19 @@ State.f = {
 		// Initialize with default settings. Menu will update
 		TestConfig.create()
 
-		State.f.menu()
-		// State.f.init()
+		LaunchOptions.check().then((res, err) => {
+			// No valid source file arg. Show main menu
+			if (LaunchOptions.src === undefined) {
+				State.f.menu()
+			}
+			// Valid source file arg. Init, and skip to ready
+			else {
+				State.f.init(State.f.ready)
+			}
+		}, err => { console.log(err) })
+		.catch(err => {
+			console.log("ERROR: " + err)
+		})
 
 	},
 

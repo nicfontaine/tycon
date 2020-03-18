@@ -75,12 +75,6 @@ function proto() {
 		parent.check()
 	},
 
-	// Handle key input for basic characters, like punctuation
-	this.char = function(load) {
-		TestData.store.user.current += load
-		parent.check()
-	},
-
 	// Clear input log
 	this.clear = function() {
 		TestData.store.user.current = ""
