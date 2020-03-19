@@ -48,6 +48,9 @@ $ tycon
 - User config (settings) file support
 - Record time between all keypresses for consistency data, & display in graph
 
+### Bugs
+- User text output incorrect (displaying some of source list), when approaching end of source length. apparent in short sources
+
 ### Text Excerpts
 - _The Fellowship of the Ring_, J.R.R Tolkein
 - _Harry Potter and the Chamber of Secrets_, J.K. Rowling

@@ -11,17 +11,10 @@ const Out = require("./out.js")
 module.exports = function(ch, key) {
 
 	// Just convert ch into a key-like object for sanity
-	if (key == undefined && ch && AppConfig.test.punc.indexOf(ch) > -1) {
+	if (key == undefined && ch) {
 		key = {}
 		key.name = ch
 		key.sequence = ch
-	}
-	// Only for punc
-	else if (key == undefined && ch && AppConfig.test.num.indexOf(ch) > -1) {
-		key = {}
-		key.name = ch
-		key.sequence = ch
-		key.isNum = true
 	}
 
 	// if (key != undefined && ch != undefined) {

@@ -42,7 +42,6 @@ Handler.f = {
 			// Get a random index from the sentence array
 			let len = source[mode].length
 			let ran = Math.floor(Math.random() * len)
-			// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
 			src = source[mode][ran].replace(/\s\s+/g, " ")
 			src = src.split(" ")
 
@@ -51,12 +50,8 @@ Handler.f = {
 		// Valid launch option flag was detected. Use file content
 		else if (mode === "file") {
 
-			if (LaunchOptions.src !== undefined) {
-				src = LaunchOptions.src.replace(/\s\s+/g, " ")
-				// Get a random index from the sentence array
-				let len = src.length
-				let ran = Math.floor(Math.random() * len)
-				// (NOTE) should cleanup & validate the source string, to plan for user-selecteg options later
+			if (LaunchOptions.source !== undefined) {
+				src = LaunchOptions.source.replace(/\s\s+/g, " ")
 				src = src.split(" ")
 			}
 			else {

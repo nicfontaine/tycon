@@ -7,7 +7,7 @@ const path = require("path")
 const LaunchOptions = {
 
 	// Store read file contents
-	src: undefined,
+	source: undefined,
 
 	check: () => {
 		let options = process.argv
@@ -32,7 +32,7 @@ const LaunchOptions = {
 										// Set flag, from "sentence" or "basic", to know which source to use
 										TestConfig.store.test.mode = "file"
 										// Store file content
-										LaunchOptions.src = content
+										LaunchOptions.source = content
 										resolve()
 										return
 									}, err => { reject("Error reading launch file: " + f) })

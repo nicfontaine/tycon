@@ -37,7 +37,7 @@ State.f = {
 
 		LaunchOptions.check().then((res, err) => {
 			// No valid source file arg. Show main menu
-			if (LaunchOptions.src === undefined) {
+			if (LaunchOptions.source === undefined) {
 				State.f.menu()
 			}
 			// Valid source file arg. Init, and skip to ready

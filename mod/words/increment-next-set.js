@@ -19,7 +19,6 @@ var next = function() {
 	// Get the right index using difficulty number
 	// src = src[difficulty]
 
-	// Should be 0 when initialized, but in case this is called again, we'll start where we left off.
 	let i = TestData.store.user.index
 
 	for (i; i<max; i++) {
