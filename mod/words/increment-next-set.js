@@ -14,16 +14,17 @@ var next = function() {
 
 	let mode = TestConfig.store.test.mode
 	let src = TestData.store.system.source
+	let len = src.length
 
-	// (NOTE) Re-enable when we have more than 1 simple test option
-	// Get the right index using difficulty number
-	// src = src[difficulty]
-
-	let i = TestData.store.user.index
+	let i = 0
 
 	for (i; i<max; i++) {
 
-		let word = src[i]
+		if (TestData.store.user.index >= len) {
+			TestData.store.user.index = 0
+		}
+
+		let word = src[TestData.store.user.index].replace(/(\r\n|\n|\r)/gm,"")
 
 		// Caps flag is on. First-caps random words, scale randomness w/ difficulty
 		if (TestConfig.store.test.caps) {
@@ -32,10 +33,9 @@ var next = function() {
 
 		set.push(word)
 
-	}
+		TestData.store.user.index++
 
-	// Record index
-	TestData.store.user.index = i
+	}
 
 	return set
 

@@ -12,24 +12,20 @@ var next = function() {
 
 	let word = ""
 
-	// Get the right index using difficulty number
-	// src = src[difficulty]
-
 	let len = src.length
-	let i = TestData.store.user.index
-	if (i >= len) {
-		i = 0
+
+	if (TestData.store.user.index >= len) {
+		TestData.store.user.index = 0
 	}
 
-	word = src[i]
-
-	i++
-	TestData.store.user.index = i
+	word = src[TestData.store.user.index].replace(/(\r\n|\n|\r)/gm,"")
 
 	// Caps flag is on. First-caps random words, scale randomness w/ difficulty
 	if (TestConfig.store.test.caps) {
 		word = randomCaps(word)
 	}
+
+	TestData.store.user.index++
 
 	return word
 

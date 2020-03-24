@@ -96,11 +96,9 @@ Handler.f = {
 		},
 
 		next: function() {
-			// (NOTE) keep track of index here, or externally?
 			let word = incrementNextWord()
 			TestData.store.system.wordSet.shift()
 			TestData.store.system.wordSet.push(word)
-
 		}
 
 	},
@@ -114,11 +112,9 @@ Handler.f = {
 		},
 
 		next: function() {
-			// (NOTE) keep track of index here, or externally?
 			let word = incrementNextWord()
 			TestData.store.system.wordSet.shift()
 			TestData.store.system.wordSet.push(word)
-
 		}
 
 	}
@@ -137,7 +133,7 @@ Handler.wordSet = function() {
 			words += colour(TestData.store.system.wordSet[i]) + " "
 		}
 		// Fade last word
-		else if (i === TestConfig.store.display.maxWordsPerLine - 1) {
+		else if (i === (TestConfig.store.display.maxWordsPerLine - 1)) {
 			words += chalk.gray(TestData.store.system.wordSet[i])
 		}
 		else {

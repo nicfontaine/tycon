@@ -128,7 +128,7 @@ var out = {
 			let words = SystemWordHandler.wordSet()
 			process.stdout.cursorTo(1, y)
 			process.stdout.clearLine()
-			process.stdout.write(words + "\n")
+			process.stdout.write(words)
 			process.stdout.write("\x1B[?25l")
 			// Indent
 			process.stdout.cursorTo(1, TestData.store.lines.test.user)
