@@ -52,8 +52,51 @@ const Menu = {
 
 	],
 
-	subSettings: [
+	fileSettings: [
+		
+		{
+		  type: "list",
+		  name: "period",
+		  message: "Test Length (seconds):",
+		  choices: AppConfig.test.periodOptions,
+		  default: 2
+		},
 
+		{
+	    type: "confirm",
+	    name: "settings",
+	    message: "Edit Additional Settings...",
+	    default: false
+		}
+
+	],
+
+	fileSubSettings: [
+
+		{
+	    type: "confirm",
+	    name: "requireCorrect",
+	    message: AppConfig.test.flagOptions.correct,
+	    default: false
+		},
+
+	  {
+	    type: "confirm",
+	    name: "colourBlind",
+	    message: AppConfig.test.flagOptions.cb,
+	    default: false
+	  },
+
+		{
+	    type: "confirm",
+	    name: "caps",
+	    message: AppConfig.test.flagOptions.caps,
+	    default: false
+		}
+
+	],
+
+	subSettings: [
 
 		{
 	    type: "list",

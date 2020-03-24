@@ -22,6 +22,7 @@ const LaunchOptions = {
 					let arg = args[i]
 					if (arg.indexOf("-") === 0) {
 						let sub = arg.substr(1)
+
 						// File input
 						if (sub === "f") {
 							let f = args[i+1]
@@ -38,6 +39,7 @@ const LaunchOptions = {
 									}, err => { reject("Error reading launch file: " + f) })
 							}
 						}
+						
 					}
 				}
 				// End of loop, and no valid file arg

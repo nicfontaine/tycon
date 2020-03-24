@@ -42,7 +42,8 @@ State.f = {
 			}
 			// Valid source file arg. Init, and skip to ready
 			else {
-				State.f.init(State.f.ready)
+				// State.f.init(State.f.ready)
+				State.f.menuFile()
 			}
 		}, err => { console.log(err) })
 		.catch(err => {
@@ -95,6 +96,35 @@ State.f = {
 		}, err => { throw(err) })
 		.catch(err => { throw(err) })
 
+	},
+
+	// Inquirer prompt, for file-mode-specified launch option
+	menuFile: () => {
+		State.now = "menuFile"
+		State.f.reset()
+		Out.state.menu()
+		inquirer.prompt(Menu.fileSettings).then(answers => {
+			// Additional settings
+			if (answers.settings) {
+
+				Out.state.settings()
+				inquirer.prompt(Menu.fileSubSettings).then(settings => {
+
+						Object.assign(answers, settings)
+						TestConfig.update(answers)
+						State.f.init(undefined)
+
+					}, err => { throw(err) })
+					.catch(err => { throw(err) })
+
+			}
+			// No additional settings
+			else {
+				TestConfig.update(answers)
+				State.f.init(undefined)
+			}
+		}, err => { throw(err) })
+		.catch(err => { throw(err) })
 	},
 
 	// Generate handler and data after menu. And setup key input handler

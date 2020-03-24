@@ -18,6 +18,7 @@ var next = function() {
 		TestData.store.user.index = 0
 	}
 
+	// remove any newline characters
 	word = src[TestData.store.user.index].replace(/(\r\n|\n|\r)/gm,"")
 
 	// Caps flag is on. First-caps random words, scale randomness w/ difficulty

@@ -56,6 +56,10 @@ $ tycon
 - _Animal Farm_, George Orwell
 - _The Hitchhiker's Guide to the Galaxy_, Douglas Adams
 - _The Name of the Wind_, Patrick Rothfuss
+- _Romeo and Juliet_, William Shakespeare
+
+### Bugs
+- No option to retain "file" mode, from launch, after entering sub-settings menu
 
 ### Issues?
 1. **Tycon not recognized command** (Windows), when trying to launch   

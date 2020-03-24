@@ -29,28 +29,35 @@ var Test = {
 			// In case we aren't setting new values from menu, just use default (works fine)
 			if (answers) {
 
-				Test.store.test.period = Number(answers.period)
-				// (NOTE) Need to convert long string into an array of single-word strings, and store in TestData
-
 				// Set test mode
-				Test.store.test.mode = answers.mode			
+				if (answers.mode != undefined) {
+					Test.store.test.mode = answers.mode
+				}
 
-				// Settings
-				if (answers.settings) {
+				if (answers.period !== undefined) {
+					Test.store.test.period = Number(answers.period)
+				}
+
+				// No difficulty in these modes
+				if (Test.store.test.mode !== "file" && Test.store.test.mode !== "sentence") {
 					Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
-					// Flags
+				}
+
+				// Flags
+				if (answers.colourBlind) {
 					Test.store.display.colourBlind = answers.colourBlind
-					if (answers.colourBlind) {
-						Test.store.display.colour.good = AppConfig.display.colour.goodCB
-					}
-					// Need to reset if changing from previous settings options
-					else {
-						Test.store.display.colour.good = AppConfig.display.colour.good
-					}
+					Test.store.display.colour.good = AppConfig.display.colour.goodCB
+				}
+				// Need to reset if changing from previous settings options
+				else {
+					Test.store.display.colour.good = AppConfig.display.colour.good
+				}
+
+				if (answers.requireCorrect !== undefined) {
 					Test.store.test.requireCorrect = answers.requireCorrect
+				}
+				if (answers.caps !== undefined) {
 					Test.store.test.caps = answers.caps
-					Test.store.display.show.avg = answers.showAvg
-					Test.store.display.show.time = answers.showTime
 				}
 
 			}
