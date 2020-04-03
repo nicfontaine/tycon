@@ -50,8 +50,8 @@ Handler.f = {
 		// Valid launch option flag was detected. Use file content
 		else if (mode === "file") {
 
-			if (LaunchOptions.source !== undefined) {
-				src = LaunchOptions.source.replace(/\s\s+/g, " ")
+			if (source.file !== undefined) {
+				src = source.file.replace(/\s\s+/g, " ")
 				src = src.split(" ")
 			}
 			else {

@@ -1,8 +1,10 @@
 (function(){"use strict"})()
 
-const TestConfig = require("./test-config.js")
 const fs = require("fs-then")
 const path = require("path")
+
+const TestConfig = require("./test-config.js")
+const source = require("./words/source.js")
 
 const LaunchOptions = {
 
@@ -33,7 +35,7 @@ const LaunchOptions = {
 										// Set flag, from "sentence" or "basic", to know which source to use
 										TestConfig.store.test.mode = "file"
 										// Store file content
-										LaunchOptions.source = content
+										source.file = content
 										resolve()
 										return
 									}, err => { reject("Error reading launch file: " + f) })

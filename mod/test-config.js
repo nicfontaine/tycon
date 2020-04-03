@@ -39,8 +39,10 @@ var Test = {
 				}
 
 				// No difficulty in these modes
-				if (Test.store.test.mode !== "file" && Test.store.test.mode !== "sentence") {
-					Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
+				if (Test.store.test.mode === "basic") {
+					if (answers.difficulty !== undefined) {
+						Test.store.test.difficulty = AppConfig.test.diffOptions.indexOf(answers.difficulty)
+					}
 				}
 
 				// Flags
