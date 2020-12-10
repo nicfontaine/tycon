@@ -57,6 +57,9 @@ $ tycon
 - _The Hitchhiker's Guide to the Galaxy_, Douglas Adams
 - _The Name of the Wind_, Patrick Rothfuss
 - _Romeo and Juliet_, William Shakespeare
+- _Charlie and the Chocolate Factory_, Roald Dahl
+- _Kidnapped_, Robert Louis Stevenson
+- _The Secret Garden_, Frances Hodgson Burnett
 
 ### Bugs
 - No option to retain "file" mode, from launch, after entering sub-settings menu
