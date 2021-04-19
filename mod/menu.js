@@ -16,16 +16,6 @@ showAvg            true false
 const Menu = {
 
 	main: [
-		{
-			type: "list",
-			name: "options",
-			message: "Choose One:",
-			default: AppConfig.menu.optionsDefault,
-			choices: AppConfig.menu.options
-		}
-	],
-
-	settings: [
 
 		{
 			type: "list",
@@ -35,6 +25,18 @@ const Menu = {
 			default: AppConfig.test.modeDefault
 		},
 		
+		{
+			type: "list",
+			name: "options",
+			message: "Choose One:",
+			default: AppConfig.menu.optionsDefault,
+			choices: AppConfig.menu.options
+		}
+
+	],
+
+	settings: [
+
 		{
 		  type: "list",
 		  name: "period",

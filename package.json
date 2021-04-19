@@ -1,6 +1,6 @@
 {
   "name": "tycon",
-  "version": "2.4.7",
+  "version": "2.4.8",
   "description": "Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts",
   "main": "app.js",
   "scripts": {

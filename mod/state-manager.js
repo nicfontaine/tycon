@@ -66,6 +66,7 @@ State.f = {
 		inquirer.prompt(Menu.main).then(answers => {
 			if (answers.options === "Run Test") {
 				// Initialize, then go to test ready (waiting for input)
+				TestConfig.update(answers)
 				State.f.init(State.f.ready)
 			} else {
 				// Settings menu
