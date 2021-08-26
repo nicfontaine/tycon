@@ -4,7 +4,8 @@
   "description": "Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+		"build": "pkg . --out-path build"
   },
   "repository": {
     "type": "git",
@@ -31,10 +32,10 @@
     "tycon": "./app.js"
   },
   "dependencies": {
-    "asciichart": "^1.5.9",
+    "asciichart": "^1.5.25",
     "chalk": "^3.0.0",
     "fs-then": "^0.2.0",
-    "inquirer": "^7.0.1",
+    "inquirer": "^7.3.3",
     "keypress": "^0.2.1"
   }
 }
