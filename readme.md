@@ -4,7 +4,7 @@ Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortc
 
 ![tycon recording](https://nicfontaine.com/dev/tycon-rec-09.gif)   
 
-# Setup
+# Setup NPM
 
 1. ![Install NodeJS](https://nodejs.org/en/download/)   
 
@@ -17,6 +17,10 @@ $ sudo npm i tycon -g
 ```bash
 $ tycon
 ```  
+
+# Run Build
+
+Binaries are built to `/build/` and are named according to operating system. Run from console: `./tycon-linux`   
 
 ## Menu Options
 
