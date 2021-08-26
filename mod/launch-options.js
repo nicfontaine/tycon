@@ -14,14 +14,11 @@ const LaunchOptions = {
 	check: () => {
 		let options = process.argv
 		let args = options.splice(2)
-		let i = 0
-		let len = args.length
 		return new Promise((resolve, reject) => {
 			(async function() {
 				// Hold file reference, if valid
 				// var file = undefined
-				for (i; i<len; i++) {
-					let arg = args[i]
+				for (let arg of args) {
 					if (arg.indexOf("-") === 0) {
 						let sub = arg.substr(1)
 
