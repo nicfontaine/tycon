@@ -1,11 +1,11 @@
 {
   "name": "tycon",
-  "version": "2.4.8",
+  "version": "2.4.9",
   "description": "Node.js console typing test. Easy, Med, & Hard Difficulties, Speed graph, Shortcuts",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-		"build": "pkg . --out-path build"
+    "build": "pkg . --out-path build"
   },
   "repository": {
     "type": "git",
