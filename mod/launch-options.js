@@ -18,6 +18,7 @@ const LaunchOptions = {
 			(async function() {
 				// Hold file reference, if valid
 				// var file = undefined
+				let i = 0
 				for (let arg of args) {
 					if (arg.indexOf("-") === 0) {
 						let sub = arg.substr(1)
@@ -40,6 +41,7 @@ const LaunchOptions = {
 						}
 						
 					}
+					i++
 				}
 				// End of loop, and no valid file arg
 				resolve()

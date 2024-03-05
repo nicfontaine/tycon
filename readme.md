@@ -18,10 +18,6 @@ $ sudo npm i tycon -g
 $ tycon
 ```  
 
-# Run From Build
-
-Binaries are built to `/build/` and are named according to operating system. Run from console: `./tycon-linux`   
-
 ## Menu Options
 
 - Test Mode: `basic`, `sentence`
@@ -39,6 +35,7 @@ Binaries are built to `/build/` and are named according to operating system. Run
 - **Restarting Test**: `^R` Is used to start/re-start a test. Can be used while test is running (will re-random sentence selection)
 - **Word Deletion**: `Ctrl + Backspace` is used to delete a typed word. `Shift + Home` is not supported, nor is `Ctrl + W` (for Unixers), though I'm considering it.
 - **Speed Graph**: Every 2 seconds, your average WPM (up to that point) is calculated
+- **Custom Text**: `tycon -f </path/file.txt>`
 
 ### To-Do
 - Support custom word lists from file (validate format, and navigate directories to locate. launch flag `-f` and file path)
